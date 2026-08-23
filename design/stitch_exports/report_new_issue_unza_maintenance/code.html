@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UNZA Maintenance | Report New Issue</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+        }
+        .segmented-control-active {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .drop-zone-active {
+            border-color: #0d631b;
+            background-color: #f1f5eb;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-background": "#181d17",
+                    "surface-tint": "#1b6d24",
+                    "on-secondary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "on-surface": "#181d17",
+                    "outline-variant": "#bfcaba",
+                    "inverse-primary": "#88d982",
+                    "on-secondary-container": "#00476e",
+                    "on-tertiary-fixed": "#3f001c",
+                    "primary": "#0d631b",
+                    "on-primary-fixed-variant": "#005312",
+                    "background": "#f7fbf0",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#88d982",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-high": "#e5eadf",
+                    "on-primary-container": "#cbffc2",
+                    "on-tertiary-fixed-variant": "#7f2448",
+                    "inverse-surface": "#2d322b",
+                    "secondary-fixed-dim": "#93ccff",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#b14b6f",
+                    "primary-fixed": "#a3f69c",
+                    "inverse-on-surface": "#eef2e8",
+                    "surface-variant": "#e0e4da",
+                    "on-primary-fixed": "#002204",
+                    "on-secondary-fixed": "#001d31",
+                    "surface": "#f7fbf0",
+                    "error": "#ba1a1a",
+                    "outline": "#707a6c",
+                    "on-tertiary-container": "#ffedf0",
+                    "secondary-fixed": "#cce5ff",
+                    "tertiary": "#923357",
+                    "on-surface-variant": "#40493d",
+                    "surface-dim": "#d7dbd2",
+                    "surface-bright": "#f7fbf0",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#ffb1c7",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f1f5eb",
+                    "secondary": "#006398",
+                    "on-secondary-fixed-variant": "#004b73",
+                    "tertiary-fixed": "#ffd9e2",
+                    "surface-container-highest": "#e0e4da",
+                    "secondary-container": "#5bb8fe",
+                    "primary-container": "#2e7d32",
+                    "surface-container": "#ebefe5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-padding": "24px",
+                    "sidebar-width": "260px",
+                    "sidebar-collapsed": "72px",
+                    "base": "8px",
+                    "section-gap": "32px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "headline-sm-mobile": ["Plus Jakarta Sans"],
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "body-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "label-md": ["Inter"],
+                    "headline-sm": ["Plus Jakarta Sans"]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+<!-- SideNavBar -->
+<aside class="h-screen w-sidebar-width fixed left-0 top-0 bg-surface dark:bg-inverse-surface border-r border-outline-variant dark:border-outline shadow-sm flex flex-col z-50 transition-all duration-300">
+<div class="p-6 flex flex-col gap-1">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-inverse-primary leading-none">UNZA Maintenance</h1>
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold opacity-70">Hostel Management</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 mt-6 px-3 space-y-1">
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant px-4 py-3 rounded-lg transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 bg-secondary-container text-on-secondary-container font-semibold border-l-4 border-primary px-4 py-3 rounded-r-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">build</span>
+<span class="font-body-md">Requests</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant px-4 py-3 rounded-lg transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">assessment</span>
+<span class="font-body-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant px-4 py-3 rounded-lg transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">home_repair_service</span>
+<span class="font-body-md">Maintenance Hub</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant px-4 py-3 rounded-lg transition-colors duration-200 group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+</nav>
+<div class="p-6 mt-auto">
+<button class="w-full bg-primary text-on-primary py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:opacity-90 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined">add_circle</span>
+                Report New Issue
+            </button>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] z-40 bg-surface/80 backdrop-blur-md dark:bg-inverse-surface/80 border-b border-outline-variant dark:border-outline flex justify-between items-center h-16 px-gutter ml-sidebar-width transition-all duration-300">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-label-md focus:ring-2 focus:ring-primary/20" placeholder="Search requests..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant transition-all text-on-surface-variant relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant transition-all text-on-surface-variant">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-3 pl-2">
+<div class="text-right hidden sm:block">
+<p class="font-label-md text-on-surface leading-none">Chansa Musonda</p>
+<p class="text-[10px] text-on-surface-variant">Student • 22019485</p>
+</div>
+<img class="w-10 h-10 rounded-full border-2 border-primary object-cover shadow-sm" data-alt="A professional high-quality headshot of a young Zambian university student with a friendly expression. He is wearing a clean, modern navy blue polo shirt. The background is a soft-focus academic setting with bright, natural lighting consistent with a clean and professional maintenance management dashboard aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmkmv5S5IfWzh6dEtfYaO3dDybsnWVRBqm9ducJSMjjh6BXQJxovhjMeHDSh02xVPqAGlIJMmR7Tg0cQO5z3f4z3ZXt8tyiUxZxJACszP1syR9dq8fH7ZqpUFBPV96rWnkgPpgDiL0G5mCdT_RamO5nH3Fsh_LLdsJhdBZccQ49rAc5dMDqAZKtilN4_LWRYDEVfDjlkQawKUPNiCpWdRsIrVWMQMlbUP9uOBUGg_XZEaH5XXXvLc"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-sidebar-width pt-16 min-h-screen">
+<div class="max-w-5xl mx-auto p-container-padding">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 text-on-surface-variant mb-8 animate-fade-in">
+<a class="text-label-md hover:text-primary flex items-center gap-1 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">home</span>
+                    Home
+                </a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="text-label-md hover:text-primary transition-colors" href="#">My Requests</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-label-md font-bold text-primary">Report New Issue</span>
+</nav>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left Column: Form -->
+<div class="lg:col-span-2">
+<div class="bg-surface-container-lowest rounded-2xl p-8 border border-outline-variant shadow-sm">
+<header class="mb-8">
+<h2 class="font-headline-md text-headline-md text-on-surface">Issue Details</h2>
+<p class="text-on-surface-variant">Please provide accurate details to help our maintenance team respond faster.</p>
+</header>
+<form class="space-y-6" id="reportForm">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="font-label-md text-on-surface-variant">Hostel Name</label>
+<select class="w-full bg-surface-container-low border border-outline-variant rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+<option value="">Select Hostel</option>
+<option>International Students Hostel</option>
+<option>October Hostel</option>
+<option>President's Hostel</option>
+<option>Soweto Hostel</option>
+<option>Kalingalinga Hostel</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-on-surface-variant">Room Number</label>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary transition-all" placeholder="e.g. Block A-12" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-on-surface-variant">Issue Category</label>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+<label class="relative flex items-center justify-center p-4 border border-outline-variant rounded-xl cursor-pointer hover:bg-surface-container-high transition-all group has-[:checked]:border-primary has-[:checked]:bg-primary-container/10">
+<input checked="" class="hidden" name="category" type="radio"/>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary">bolt</span>
+<span class="text-label-sm font-semibold">Electricity</span>
+</div>
+</label>
+<label class="relative flex items-center justify-center p-4 border border-outline-variant rounded-xl cursor-pointer hover:bg-surface-container-high transition-all group has-[:checked]:border-primary has-[:checked]:bg-primary-container/10">
+<input class="hidden" name="category" type="radio"/>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary">water_drop</span>
+<span class="text-label-sm font-semibold">Water</span>
+</div>
+</label>
+<label class="relative flex items-center justify-center p-4 border border-outline-variant rounded-xl cursor-pointer hover:bg-surface-container-high transition-all group has-[:checked]:border-primary has-[:checked]:bg-primary-container/10">
+<input class="hidden" name="category" type="radio"/>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary">plumbing</span>
+<span class="text-label-sm font-semibold">Plumbing</span>
+</div>
+</label>
+<label class="relative flex items-center justify-center p-4 border border-outline-variant rounded-xl cursor-pointer hover:bg-surface-container-high transition-all group has-[:checked]:border-primary has-[:checked]:bg-primary-container/10">
+<input class="hidden" name="category" type="radio"/>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary">chair</span>
+<span class="text-label-sm font-semibold">Furniture</span>
+</div>
+</label>
+<label class="relative flex items-center justify-center p-4 border border-outline-variant rounded-xl cursor-pointer hover:bg-surface-container-high transition-all group has-[:checked]:border-primary has-[:checked]:bg-primary-container/10">
+<input class="hidden" name="category" type="radio"/>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary">wifi</span>
+<span class="text-label-sm font-semibold">Internet</span>
+</div>
+</label>
+<label class="relative flex items-center justify-center p-4 border border-outline-variant rounded-xl cursor-pointer hover:bg-surface-container-high transition-all group has-[:checked]:border-primary has-[:checked]:bg-primary-container/10">
+<input class="hidden" name="category" type="radio"/>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary">more_horiz</span>
+<span class="text-label-sm font-semibold">Other</span>
+</div>
+</label>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-on-surface-variant">Priority Level</label>
+<div class="bg-surface-container-high p-1 rounded-xl flex gap-1">
+<button class="priority-btn flex-1 py-2 rounded-lg text-label-sm font-bold bg-surface-container-lowest text-on-surface-variant shadow-sm transition-all" data-priority="low" type="button">Low</button>
+<button class="priority-btn flex-1 py-2 rounded-lg text-label-sm font-bold text-on-surface-variant transition-all" data-priority="medium" type="button">Medium</button>
+<button class="priority-btn flex-1 py-2 rounded-lg text-label-sm font-bold text-on-surface-variant transition-all" data-priority="high" type="button">High</button>
+<button class="priority-btn flex-1 py-2 rounded-lg text-label-sm font-bold text-error transition-all" data-priority="emergency" type="button">Emergency</button>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-on-surface-variant">Description</label>
+<textarea class="w-full bg-surface-container-low border border-outline-variant rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary transition-all resize-none" placeholder="Please describe the issue in detail. For example: 'The tap in the bathroom is leaking constantly even when tightly closed...'" rows="5"></textarea>
+</div>
+<div class="flex items-center gap-6 pt-4">
+<button class="flex-1 bg-primary text-on-primary py-4 rounded-xl font-bold shadow-lg hover:brightness-110 active:scale-[0.99] transition-all" type="submit">Submit Request</button>
+<a class="text-on-surface-variant font-label-md hover:text-error transition-colors px-4" href="#">Cancel</a>
+</div>
+</form>
+</div>
+</div>
+<!-- Right Column: Upload & Tips -->
+<div class="space-y-6">
+<!-- Image Upload -->
+<div class="bg-surface-container-lowest rounded-2xl p-8 border border-outline-variant shadow-sm">
+<header class="mb-6">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Evidence</h2>
+<p class="text-label-sm text-on-surface-variant">Photos help us understand the problem.</p>
+</header>
+<div class="border-2 border-dashed border-outline-variant rounded-2xl p-8 flex flex-col items-center text-center gap-4 hover:border-primary hover:bg-surface-container-low transition-all cursor-pointer group" id="dropZone">
+<div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[32px]">cloud_upload</span>
+</div>
+<div>
+<p class="font-label-md text-on-surface">Drag &amp; drop photos</p>
+<p class="text-[12px] text-on-surface-variant mt-1">PNG, JPG up to 10MB</p>
+</div>
+<button class="mt-2 text-primary font-bold text-label-sm px-4 py-2 bg-primary/10 rounded-lg hover:bg-primary/20 transition-all" type="button">Browse Files</button>
+</div>
+<!-- Preview Area (Empty) -->
+<div class="mt-4 grid grid-cols-3 gap-2">
+<!-- Placeholder previews could go here -->
+</div>
+</div>
+<!-- Helpful Guidelines -->
+<div class="bg-primary text-on-primary p-8 rounded-2xl relative overflow-hidden">
+<div class="relative z-10 space-y-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">info</span>
+<h3 class="font-headline-sm text-headline-sm">Submission Tips</h3>
+</div>
+<ul class="space-y-3">
+<li class="flex gap-2 text-label-md">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                                    Include your block number.
+                                </li>
+<li class="flex gap-2 text-label-md">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                                    Mention specific fixture types.
+                                </li>
+<li class="flex gap-2 text-label-md">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                                    Upload clear, well-lit photos.
+                                </li>
+</ul>
+</div>
+<!-- Abstract decorative shape -->
+<div class="absolute -right-4 -bottom-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+</div>
+<!-- Campus Map Snippet -->
+<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-sm overflow-hidden h-48 relative">
+<div class="w-full h-full bg-cover bg-center grayscale brightness-90 contrast-75" data-alt="A stylized minimalist campus map of the University of Zambia in Lusaka. The map is rendered in the brand's primary green and soft neutral tones, highlighting key hostel locations with subtle pin markers. The aesthetic is clean, professional, and fits perfectly as a UI element in a modern maintenance dashboard." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBdROEW28uY9W8WmePkJlOa9oQ-5cyInTdeL_cf_rib9K2BrPn7bKBauMqPj098mSxR4PfTfqqsmWvIXVaoW4OWfxwIanG9pEnNBIUzvHfUo09xmkXbksHWFTB6kSeoVwKLMi2zclMRvLq0UrP3c815cPoN5xTWzI1cqaxEefP0GEq5hX2F-e299v48zi2kzifhRGJVi2K_vFjfVoK-Xtg7c8alrHBfAlzOhkhOnU2onLxQb1sgr2I')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+<div class="text-white">
+<p class="text-[10px] uppercase font-bold tracking-tighter opacity-80">Location Verification</p>
+<p class="font-label-md">University of Zambia, Lusaka</p>
+</div>
+</div>
+<div class="hidden" data-location="University of Zambia, Lusaka" style=""></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interactions for the form
+        
+        // Priority Segmented Control Logic
+        const priorityBtns = document.querySelectorAll('.priority-btn');
+        priorityBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                priorityBtns.forEach(b => {
+                    b.classList.remove('bg-surface-container-lowest', 'shadow-sm', 'text-on-surface');
+                    b.classList.add('text-on-surface-variant');
+                });
+                btn.classList.add('bg-surface-container-lowest', 'shadow-sm', 'text-on-surface');
+                btn.classList.remove('text-on-surface-variant');
+                
+                // Special handling for emergency color persistence
+                if (btn.dataset.priority === 'emergency') {
+                    btn.classList.add('text-error');
+                } else {
+                    priorityBtns[3].classList.add('text-error');
+                }
+            });
+        });
+
+        // Drag and Drop Visual Feedback
+        const dropZone = document.getElementById('dropZone');
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drop-zone-active');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drop-zone-active');
+            }, false);
+        });
+
+        // Mock Submission
+        document.getElementById('reportForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Submitting...';
+            
+            setTimeout(() => {
+                btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Success!';
+                btn.classList.replace('bg-primary', 'bg-tertiary-container');
+                btn.classList.replace('text-on-primary', 'text-on-tertiary-container');
+            }, 1500);
+        });
+
+        // Add subtle entry animations
+        document.querySelectorAll('.animate-fade-in').forEach((el, i) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(10px)';
+            el.style.transition = 'all 0.5s ease-out';
+            setTimeout(() => {
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            }, 100 * i);
+        });
+    </script>
+<style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+    </style>
+</body></html>

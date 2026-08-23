@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login | UNZA Maintenance Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-background": "#181d17",
+                    "surface-tint": "#1b6d24",
+                    "on-secondary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "on-surface": "#181d17",
+                    "outline-variant": "#bfcaba",
+                    "inverse-primary": "#88d982",
+                    "on-secondary-container": "#00476e",
+                    "on-tertiary-fixed": "#3f001c",
+                    "primary": "#0d631b",
+                    "on-primary-fixed-variant": "#005312",
+                    "background": "#f7fbf0",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#88d982",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-high": "#e5eadf",
+                    "on-primary-container": "#cbffc2",
+                    "on-tertiary-fixed-variant": "#7f2448",
+                    "inverse-surface": "#2d322b",
+                    "secondary-fixed-dim": "#93ccff",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#b14b6f",
+                    "primary-fixed": "#a3f69c",
+                    "inverse-on-surface": "#eef2e8",
+                    "surface-variant": "#e0e4da",
+                    "on-primary-fixed": "#002204",
+                    "on-secondary-fixed": "#001d31",
+                    "surface": "#f7fbf0",
+                    "error": "#ba1a1a",
+                    "outline": "#707a6c",
+                    "on-tertiary-container": "#ffedf0",
+                    "secondary-fixed": "#cce5ff",
+                    "tertiary": "#923357",
+                    "on-surface-variant": "#40493d",
+                    "surface-dim": "#d7dbd2",
+                    "surface-bright": "#f7fbf0",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#ffb1c7",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f1f5eb",
+                    "secondary": "#006398",
+                    "on-secondary-fixed-variant": "#004b73",
+                    "tertiary-fixed": "#ffd9e2",
+                    "surface-container-highest": "#e0e4da",
+                    "secondary-container": "#5bb8fe",
+                    "primary-container": "#2e7d32",
+                    "surface-container": "#ebefe5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-padding": "24px",
+                    "sidebar-width": "260px",
+                    "sidebar-collapsed": "72px",
+                    "base": "8px",
+                    "section-gap": "32px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "headline-sm-mobile": ["Plus Jakarta Sans"],
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "body-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "label-md": ["Inter"],
+                    "headline-sm": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-sm-mobile": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #F8FAFC;
+            font-family: 'Inter', sans-serif;
+            color: #181d17;
+            overflow-x: hidden;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.04);
+        }
+
+        .input-focus-ring:focus {
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
+            outline: none;
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+    </style>
+</head>
+<body class="bg-background">
+<main class="flex min-h-screen">
+<!-- Left Side: Brand Imagery (Split Screen) -->
+<section class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-primary-container">
+<div class="absolute inset-0 z-10 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent"></div>
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A cinematic, high-angle wide shot of the University of Zambia (UNZA) campus featuring the iconic modernist architecture of the library and main square. The scene is bathed in the warm, golden light of a late afternoon sun, casting long architectural shadows. The atmosphere is scholarly and serene, with lush green lawns and tropical trees framing the Brutalist concrete structures. The color palette is rich with natural greens, earth tones, and deep university green accents, conveying institutional authority and historical significance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgm5Mn_NAvs13LqV6hNZzWpBBHgpLIYxQdgzo7FzlVTHsFy5217nGfGYt2BPJwNxXxySGgbX8OdfORFdFmJ5_xkT6C8aPWq8_xnEvLDsVXU0etoh7yIfX2WGvCoAUzfQOB7jKFNp8x7sgnWpqZd7C3s4kKj4UQAgo6SfpHP7ppBnDeDfPYLjS66zS_A447eICp_5PALJcJ2e6IFKGZBJP4MH7R_IYnOhJtuFP5H9JzcffxQfdpzAc"/>
+<div class="relative z-20 flex flex-col justify-end p-16 h-full text-white">
+<div class="fade-in-up" style="animation-delay: 0.2s;">
+<div class="mb-6 flex items-center gap-3">
+<div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center p-2 shadow-lg">
+<img class="w-full h-full object-contain" data-alt="The official logo of the University of Zambia, featuring the shield with an eagle and book symbols, rendered in high-resolution vector format with crisp lines and authentic colors. The logo is set against a clean white background, emphasizing its prestigious academic heritage." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTZ2K7e42m7EOvCB6vyQi_PwdAUrrx5y0KNCwk122gWPkMgBIUl4-mnz_RDL_HxaZ7vgp1ctZ2TNtvue9vaj7ZhkCnTBKbgr6fP9JgWr_mv1bH_HVb5sVNRppjxxdSndJSjzh-KFa7XeE-YBhnaJyx3SqLKGCgbLeEnnzQ64FTUAQBqcLwAD2OPlmL18uODiGKVbZROBcugPB05oG1qy2eHd8jOdldv3AlG4APo0PE_LgkuEZesoA"/>
+</div>
+<h2 class="font-headline-lg text-headline-lg font-extrabold tracking-tight">Maintenance Hub</h2>
+</div>
+<p class="font-body-lg text-body-lg max-w-md text-on-primary-container leading-relaxed">
+                        Providing a streamlined digital environment for UNZA students and staff to manage hostel infrastructure and maintenance requests efficiently.
+                    </p>
+<div class="mt-8 flex gap-4">
+<div class="flex flex-col">
+<span class="text-3xl font-bold">12k+</span>
+<span class="text-sm opacity-80 uppercase tracking-widest">Residents</span>
+</div>
+<div class="w-px h-12 bg-white/20 mx-4"></div>
+<div class="flex flex-col">
+<span class="text-3xl font-bold">98%</span>
+<span class="text-sm opacity-80 uppercase tracking-widest">Resolution Rate</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Subtle atmospheric overlay -->
+<div class="absolute top-0 right-0 w-64 h-64 bg-white/5 blur-3xl -mr-32 -mt-32 rounded-full"></div>
+</section>
+<!-- Right Side: Login Form -->
+<section class="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-16 bg-surface">
+<div class="w-full max-w-md fade-in-up">
+<!-- Mobile Header -->
+<div class="lg:hidden mb-12 flex flex-col items-center text-center">
+<img class="w-16 h-16 mb-4" data-alt="A clean, minimalist version of the University of Zambia crest, optimized for mobile UI with sharp detail and professional institutional colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHVvrmrTB413U0fpt36qWTaZBj1pDAbqZ7h7bewSceeEYwWRxsHvou9_9mqNIeNmQYic9Z1VaIpmvkP1SXHBq3huS6koF0HyttCRJnrz6PXFiHvuYtUN52_c1AYYurnkDxricx-pYYjsAyJ0Q0NA5tSXnbkPu1H3iEj7G8-ck6dHodcQuYjBK1MmyqmhvDK0PRTo2Y6A_gbGoxJijG1AAzpiS0evQCCYBS5ribvQilVzwWKyuU4GM"/>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">UNZA Maintenance</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Hostel Management System</p>
+</div>
+<div class="mb-10">
+<h2 class="font-headline-lg text-headline-lg font-bold text-on-background mb-2">Welcome Back</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Sign in to your maintenance portal account</p>
+</div>
+<form class="space-y-6" id="loginForm">
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-2" for="id">Student or Staff ID</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">person</span>
+<input class="w-full pl-12 pr-4 py-4 rounded-xl bg-white border border-outline-variant font-body-md text-body-md input-focus-ring transition-all placeholder:text-outline-variant" id="id" name="id" placeholder="e.g. 2023001234" required="" type="text"/>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<label class="block font-label-md text-label-md text-on-surface-variant" for="password">Password</label>
+<a class="font-label-md text-label-md text-primary hover:underline transition-all" href="#">Forgot Password?</a>
+</div>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">lock</span>
+<input class="w-full pl-12 pr-12 py-4 rounded-xl bg-white border border-outline-variant font-body-md text-body-md input-focus-ring transition-all placeholder:text-outline-variant" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors" onclick="togglePassword()" type="button">
+<span class="material-symbols-outlined" id="eyeIcon">visibility</span>
+</button>
+</div>
+</div>
+<div class="flex items-center">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20" id="remember" type="checkbox"/>
+<label class="ml-3 font-body-sm text-body-sm text-on-surface-variant select-none" for="remember">Remember this device</label>
+</div>
+<button class="w-full py-4 bg-primary text-white font-label-md text-label-md rounded-xl shadow-lg shadow-primary/20 hover:bg-primary-container hover:shadow-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2" type="submit">
+<span>Sign In</span>
+<span class="material-symbols-outlined text-sm">login</span>
+</button>
+</form>
+<div class="mt-12 pt-8 border-t border-outline-variant text-center">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                        New student resident? 
+                        <a class="text-primary font-bold hover:underline transition-all ml-1" href="#">Sign up as Student</a>
+</p>
+</div>
+<footer class="mt-16 text-center">
+<p class="font-label-sm text-label-sm text-outline">
+                        © 2024 University of Zambia. All infrastructure managed by UNZA Estates &amp; Maintenance Department.
+                    </p>
+</footer>
+</div>
+</section>
+</main>
+<script>
+        // Micro-interaction: Toggle Password Visibility
+        function togglePassword() {
+            const pwdInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                eyeIcon.innerText = 'visibility_off';
+            } else {
+                pwdInput.type = 'password';
+                eyeIcon.innerText = 'visibility';
+            }
+        }
+
+        // Form handling simulation
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            const originalContent = btn.innerHTML;
+            
+            // Loading state
+            btn.disabled = true;
+            btn.innerHTML = `
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Authenticating...</span>
+            `;
+
+            // Mock redirect
+            setTimeout(() => {
+                alert('Success! Redirecting to Maintenance Dashboard...');
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+            }, 1500);
+        });
+
+        // Interactive visual feedback on ID input
+        const idInput = document.getElementById('id');
+        idInput.addEventListener('input', (e) => {
+            const val = e.target.value;
+            // Only numbers for IDs (example rule)
+            if (val && !/^\d*$/.test(val)) {
+                idInput.classList.add('border-error');
+                idInput.classList.remove('border-outline-variant');
+            } else {
+                idInput.classList.remove('border-error');
+                idInput.classList.add('border-outline-variant');
+            }
+        });
+    </script>
+</body></html>

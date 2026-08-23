@@ -1,0 +1,59 @@
+/* 1. Default styles = mobile (375px canvas) */
+.app-scaffold {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--margin-mobile);
+  text-align: center;
+}
+
+.app-scaffold-title {
+  font-size: var(--font-size-headline-sm-mobile);
+  line-height: var(--line-height-headline-sm-mobile);
+  font-weight: var(--font-weight-headline-sm-mobile);
+  color: var(--color-primary-brand);
+  max-width: 28ch;
+}
+
+.app-scaffold-subtitle {
+  color: var(--color-on-surface-variant);
+  font-size: var(--font-size-body-sm);
+}
+
+.app-scaffold-status {
+  font-size: var(--font-size-label-md);
+  font-weight: var(--font-weight-label-md);
+}
+
+.app-scaffold-status-ok {
+  color: var(--color-status-completed);
+}
+
+.app-scaffold-status-error {
+  color: var(--color-error);
+}
+
+/* 2. Then scale up for tablet */
+@media (min-width: 768px) {
+  .app-scaffold-title {
+    font-size: var(--font-size-headline-sm);
+    line-height: var(--line-height-headline-sm);
+    font-weight: var(--font-weight-headline-sm);
+  }
+}
+
+/* 3. Then scale up for desktop */
+@media (min-width: 1280px) {
+  .app-scaffold {
+    padding: var(--margin-desktop);
+  }
+
+  .app-scaffold-title {
+    font-size: var(--font-size-headline-md);
+    line-height: var(--line-height-headline-md);
+    font-weight: var(--font-weight-headline-md);
+  }
+}

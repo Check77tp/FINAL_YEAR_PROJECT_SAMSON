@@ -1,0 +1,166 @@
+/*
+  Design tokens translated from academic_infrastructure_framework.md.
+  This file is the single source of truth for colors, typography, spacing,
+  radii, and elevation across the app. Component/page CSS files should
+  reference these custom properties rather than hardcoding values.
+*/
+
+:root {
+  /* ---- Colors: surfaces & background ---- */
+  --color-surface: #f7fbf0;
+  --color-surface-dim: #d7dbd2;
+  --color-surface-bright: #f7fbf0;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f1f5eb;
+  --color-surface-container: #ebefe5;
+  --color-surface-container-high: #e5eadf;
+  --color-surface-container-highest: #e0e4da;
+  --color-surface-variant: #e0e4da;
+  --color-on-surface: #181d17;
+  --color-on-surface-variant: #40493d;
+  --color-inverse-surface: #2d322b;
+  --color-inverse-on-surface: #eef2e8;
+  --color-outline: #707a6c;
+  --color-outline-variant: #bfcaba;
+  --color-background: #f7fbf0;
+  --color-on-background: #181d17;
+
+  /* Layout background used by cards/shell (framework body text: Light Gray #F8FAFC) */
+  --color-app-background: #f8fafc;
+  --color-card-border: #e2e8f0;
+  --color-divider: #f1f5f9;
+
+  /* ---- Colors: primary (University Green) ---- */
+  --color-primary: #0d631b;
+  --color-primary-brand: #2e7d32;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #2e7d32;
+  --color-on-primary-container: #cbffc2;
+  --color-inverse-primary: #88d982;
+  --color-primary-fixed: #a3f69c;
+  --color-primary-fixed-dim: #88d982;
+  --color-on-primary-fixed: #002204;
+  --color-on-primary-fixed-variant: #005312;
+  --color-surface-tint: #1b6d24;
+
+  /* ---- Colors: secondary ---- */
+  --color-secondary: #006398;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #5bb8fe;
+  --color-on-secondary-container: #00476e;
+  --color-secondary-fixed: #cce5ff;
+  --color-secondary-fixed-dim: #93ccff;
+  --color-on-secondary-fixed: #001d31;
+  --color-on-secondary-fixed-variant: #004b73;
+
+  /* ---- Colors: tertiary ---- */
+  --color-tertiary: #923357;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #b14b6f;
+  --color-on-tertiary-container: #ffedf0;
+  --color-tertiary-fixed: #ffd9e2;
+  --color-tertiary-fixed-dim: #ffb1c7;
+  --color-on-tertiary-fixed: #3f001c;
+  --color-on-tertiary-fixed-variant: #7f2448;
+
+  /* ---- Colors: error ---- */
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  /* ---- Colors: status tints (badges, timeline nodes) ---- */
+  --color-status-in-progress-bg: #fef3c7;
+  --color-status-in-progress-text: #b45309;
+  --color-status-completed: #10b981;
+  --color-nav-active-bg: #e8f5e9;
+
+  /* ---- Typography: font families ---- */
+  --font-heading: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  /* ---- Typography: display & headline scale ---- */
+  --font-size-display-lg: 48px;
+  --line-height-display-lg: 56px;
+  --font-weight-display-lg: 700;
+  --letter-spacing-display-lg: -0.02em;
+
+  --font-size-headline-lg: 32px;
+  --line-height-headline-lg: 40px;
+  --font-weight-headline-lg: 600;
+
+  --font-size-headline-md: 24px;
+  --line-height-headline-md: 32px;
+  --font-weight-headline-md: 600;
+
+  --font-size-headline-sm: 20px;
+  --line-height-headline-sm: 28px;
+  --font-weight-headline-sm: 600;
+
+  --font-size-headline-sm-mobile: 18px;
+  --line-height-headline-sm-mobile: 24px;
+  --font-weight-headline-sm-mobile: 600;
+
+  /* ---- Typography: body & label scale ---- */
+  --font-size-body-lg: 18px;
+  --line-height-body-lg: 28px;
+  --font-weight-body-lg: 400;
+
+  --font-size-body-md: 16px;
+  --line-height-body-md: 24px;
+  --font-weight-body-md: 400;
+
+  --font-size-body-sm: 14px;
+  --line-height-body-sm: 20px;
+  --font-weight-body-sm: 400;
+
+  --font-size-label-md: 14px;
+  --line-height-label-md: 16px;
+  --font-weight-label-md: 600;
+  --letter-spacing-label-md: 0.01em;
+
+  --font-size-label-sm: 12px;
+  --line-height-label-sm: 16px;
+  --font-weight-label-sm: 500;
+
+  /* ---- Spacing (8px base rhythm) ---- */
+  --spacing-unit: 8px;
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+  --spacing-container-padding: 24px;
+  --spacing-gutter: 16px;
+  --spacing-section-gap: 32px;
+
+  /* ---- Layout ---- */
+  --sidebar-width: 260px;
+  --sidebar-width-collapsed: 72px;
+  --margin-mobile: 16px;
+  --margin-desktop: 24px;
+
+  /* Breakpoints (documented here for reference; @media queries can't read
+     custom properties, so component CSS must repeat these raw values —
+     see CLAUDE.md "Breakpoints" table: mobile <768px, tablet 768-1279px,
+     desktop 1280px+) */
+
+  /* ---- Radii ---- */
+  --radius-sm: 0.25rem;
+  --radius-default: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+  --radius-card: 16px;
+  --radius-button: 12px;
+  --radius-input: 12px;
+  --radius-badge: 9999px;
+
+  /* ---- Elevation ---- */
+  --shadow-level-1: 0px 4px 12px rgba(0, 0, 0, 0.03);
+  --shadow-level-2: 0px 12px 24px rgba(0, 0, 0, 0.08);
+
+  /* ---- Inputs & borders ---- */
+  --input-border-color: #cbd5e1;
+  --input-focus-glow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+}

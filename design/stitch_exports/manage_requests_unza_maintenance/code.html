@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Manage Requests | UNZA Maintenance</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .status-pill {
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #E2E8F0;
+            border-radius: 10px;
+        }
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-background": "#181d17",
+                      "surface-tint": "#1b6d24",
+                      "on-secondary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-surface": "#181d17",
+                      "outline-variant": "#bfcaba",
+                      "inverse-primary": "#88d982",
+                      "on-secondary-container": "#00476e",
+                      "on-tertiary-fixed": "#3f001c",
+                      "primary": "#0d631b",
+                      "on-primary-fixed-variant": "#005312",
+                      "background": "#f7fbf0",
+                      "on-error": "#ffffff",
+                      "primary-fixed-dim": "#88d982",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-high": "#e5eadf",
+                      "on-primary-container": "#cbffc2",
+                      "on-tertiary-fixed-variant": "#7f2448",
+                      "inverse-surface": "#2d322b",
+                      "secondary-fixed-dim": "#93ccff",
+                      "on-primary": "#ffffff",
+                      "tertiary-container": "#b14b6f",
+                      "primary-fixed": "#a3f69c",
+                      "inverse-on-surface": "#eef2e8",
+                      "surface-variant": "#e0e4da",
+                      "on-primary-fixed": "#002204",
+                      "on-secondary-fixed": "#001d31",
+                      "surface": "#f7fbf0",
+                      "error": "#ba1a1a",
+                      "outline": "#707a6c",
+                      "on-tertiary-container": "#ffedf0",
+                      "secondary-fixed": "#cce5ff",
+                      "tertiary": "#923357",
+                      "on-surface-variant": "#40493d",
+                      "surface-dim": "#d7dbd2",
+                      "surface-bright": "#f7fbf0",
+                      "on-error-container": "#93000a",
+                      "tertiary-fixed-dim": "#ffb1c7",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-low": "#f1f5eb",
+                      "secondary": "#006398",
+                      "on-secondary-fixed-variant": "#004b73",
+                      "tertiary-fixed": "#ffd9e2",
+                      "surface-container-highest": "#e0e4da",
+                      "secondary-container": "#5bb8fe",
+                      "primary-container": "#2e7d32",
+                      "surface-container": "#ebefe5"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-padding": "24px",
+                      "sidebar-width": "260px",
+                      "sidebar-collapsed": "72px",
+                      "base": "8px",
+                      "section-gap": "32px",
+                      "gutter": "16px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Inter"],
+                      "headline-sm-mobile": ["Plus Jakarta Sans"],
+                      "label-sm": ["Inter"],
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "body-sm": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "display-lg": ["Plus Jakarta Sans"],
+                      "label-md": ["Inter"],
+                      "headline-sm": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-sm-mobile": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-md": ["14px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-hidden">
+<!-- Side Navigation Bar -->
+<aside class="flex flex-col h-full h-screen w-sidebar-width fixed left-0 top-0 bg-surface dark:bg-inverse-surface border-r border-outline-variant dark:border-outline shadow-sm z-50 transition-all duration-300">
+<div class="p-6">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">school</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-inverse-primary leading-tight">UNZA Maintenance</h1>
+<p class="text-xs text-on-surface-variant font-medium">Hostel Management</p>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary font-label-md py-3 px-4 rounded-xl flex items-center justify-center gap-2 mb-8 hover:opacity-90 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined">add</span>
+                Report New Issue
+            </button>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant px-4 py-3 rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 bg-secondary-container text-on-secondary-container font-semibold border-l-4 border-primary px-4 py-3 rounded-r-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">build</span>
+<span>Requests</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant px-4 py-3 rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant px-4 py-3 rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">home_repair_service</span>
+<span>Maintenance Hub</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant px-4 py-3 rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-6 border-t border-outline-variant">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-variant">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of a University Administrator for the profile section, high-quality corporate photography, soft studio lighting, neutral background, reflecting reliable and institutional authority. The subject is wearing business casual attire." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIZtzDlVTOHo0qsC48xoiKiwK1UxSVI1WaUT48mVk1PITunElECWsBm3hkvIKpAGk95JtvR-iE60iuWdWQZ1gwb_heHCZN3gRHAkmbDplib9d89HQlXRWjr3dW4jx0eJptwG2604Z9yBdImOaX9NF-0K1eP7pRwkIUz6xfOAyCdvbk06jmgCRKAP0bO4D7TWzevlt5ikJ33Du6ztm1T1tE8BuAdLK0RkJ25x8BzIk3cTcVNq41r9M"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Admin Office</p>
+<p class="text-xs text-on-surface-variant">Hostel Control</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="ml-[260px] h-screen flex flex-col relative">
+<!-- Top App Bar -->
+<header class="h-16 px-gutter flex justify-between items-center bg-surface/80 backdrop-blur-md sticky top-0 z-40 border-b border-outline-variant">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="Search requests by ID or student name..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-variant rounded-full text-on-surface-variant transition-all relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 hover:bg-surface-variant rounded-full text-on-surface-variant transition-all">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-2 cursor-pointer group">
+<span class="text-label-md font-label-md">Export Data</span>
+<span class="material-symbols-outlined text-primary group-hover:translate-y-1 transition-transform">download</span>
+</div>
+</div>
+</header>
+<!-- Content Area with Sidebar Filters -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Filter Sidebar (Left of Content) -->
+<aside class="w-72 bg-surface-container-low p-6 overflow-y-auto border-r border-outline-variant custom-scrollbar">
+<div class="flex items-center justify-between mb-6">
+<h2 class="font-headline-sm text-headline-sm text-on-surface-variant">Filters</h2>
+<button class="text-primary text-xs font-bold hover:underline">Clear all</button>
+</div>
+<div class="space-y-6">
+<!-- Hostel -->
+<div>
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">Hostel Block</label>
+<select class="w-full bg-surface border border-outline-variant rounded-lg p-2 text-sm focus:ring-primary focus:border-primary">
+<option>All Hostels</option>
+<option>Soweto</option>
+<option>Kalingalinga</option>
+<option>International</option>
+<option>New Res</option>
+</select>
+</div>
+<!-- Category -->
+<div>
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">Category</label>
+<div class="space-y-2">
+<label class="flex items-center gap-2 text-sm cursor-pointer group">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="group-hover:text-primary transition-colors">Plumbing</span>
+</label>
+<label class="flex items-center gap-2 text-sm cursor-pointer group">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="group-hover:text-primary transition-colors">Electrical</span>
+</label>
+<label class="flex items-center gap-2 text-sm cursor-pointer group">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="group-hover:text-primary transition-colors">Carpentry</span>
+</label>
+<label class="flex items-center gap-2 text-sm cursor-pointer group">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="group-hover:text-primary transition-colors">Internet/IT</span>
+</label>
+</div>
+</div>
+<!-- Status -->
+<div>
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">Status</label>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-full border border-primary bg-primary-container text-on-primary-container text-xs font-semibold">Submitted</button>
+<button class="px-3 py-1.5 rounded-full border border-outline-variant hover:border-primary text-xs">In Progress</button>
+<button class="px-3 py-1.5 rounded-full border border-outline-variant hover:border-primary text-xs">Resolved</button>
+<button class="px-3 py-1.5 rounded-full border border-outline-variant hover:border-primary text-xs">Escalated</button>
+</div>
+</div>
+<!-- Priority -->
+<div>
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">Priority</label>
+<div class="space-y-2">
+<label class="flex items-center gap-2 text-sm cursor-pointer">
+<input class="text-error focus:ring-error" name="priority" type="radio"/>
+<span class="text-error font-semibold">Critical</span>
+</label>
+<label class="flex items-center gap-2 text-sm cursor-pointer">
+<input class="text-tertiary focus:ring-tertiary" name="priority" type="radio"/>
+<span>High</span>
+</label>
+<label class="flex items-center gap-2 text-sm cursor-pointer">
+<input checked="" class="text-secondary focus:ring-secondary" name="priority" type="radio"/>
+<span>Medium</span>
+</label>
+</div>
+</div>
+<!-- Date Range -->
+<div>
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">Date Range</label>
+<div class="space-y-2">
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-2 text-xs" type="date"/>
+<div class="text-center text-on-surface-variant text-xs">to</div>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-2 text-xs" type="date"/>
+</div>
+</div>
+</div>
+</aside>
+<!-- Data Table Content Area -->
+<section class="flex-1 overflow-hidden flex flex-col bg-surface p-6">
+<!-- Table Header Actions -->
+<div class="flex justify-between items-center mb-6">
+<div class="flex items-center gap-3">
+<h2 class="font-headline-md text-headline-md">Manage Requests</h2>
+<span class="bg-surface-container-high px-3 py-1 rounded-full text-xs font-bold text-on-surface-variant">128 Total</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg hover:bg-surface-variant transition-all text-sm font-medium">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+                            PDF
+                        </button>
+<button class="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg hover:bg-surface-variant transition-all text-sm font-medium">
+<span class="material-symbols-outlined text-[18px]">table_view</span>
+                            Excel
+                        </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg shadow-sm hover:brightness-110 active:scale-95 transition-all text-sm font-bold ml-2" onclick="openModal('assignModal')">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+                            Bulk Assign
+                        </button>
+</div>
+</div>
+<!-- Advanced Data Table -->
+<div class="flex-1 overflow-auto border border-outline-variant rounded-xl bg-surface-container-lowest custom-scrollbar shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead class="sticky top-0 bg-surface-container-highest z-10">
+<tr class="text-on-surface-variant text-xs font-bold uppercase tracking-wider">
+<th class="px-6 py-4 border-b border-outline-variant w-12">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+</th>
+<th class="px-6 py-4 border-b border-outline-variant">Request ID</th>
+<th class="px-6 py-4 border-b border-outline-variant">Student Details</th>
+<th class="px-6 py-4 border-b border-outline-variant">Location</th>
+<th class="px-6 py-4 border-b border-outline-variant">Category</th>
+<th class="px-6 py-4 border-b border-outline-variant">Status</th>
+<th class="px-6 py-4 border-b border-outline-variant">Priority</th>
+<th class="px-6 py-4 border-b border-outline-variant text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+</td>
+<td class="px-6 py-4 font-semibold text-primary">#RQ-8291</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center text-[10px] font-bold">MK</div>
+<div>
+<p class="text-sm font-bold">Mulenga Kapambwe</p>
+<p class="text-xs text-on-surface-variant">21054322</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm">Soweto Block 4</p>
+<p class="text-xs text-on-surface-variant">Room 102, Bunk A</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-sm">
+<span class="material-symbols-outlined text-primary text-[18px]">plumbing</span>
+                                        Plumbing
+                                    </div>
+</td>
+<td class="px-6 py-4">
+<span class="status-pill bg-primary-fixed text-on-primary-fixed-variant border border-primary/20">Submitted</span>
+</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1 text-xs font-bold text-error uppercase">
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span> Critical
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="bg-primary text-on-primary px-3 py-1.5 rounded-lg text-xs font-bold hover:scale-105 active:scale-95 transition-all" onclick="openModal('assignModal')">Assign Tech</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+</td>
+<td class="px-6 py-4 font-semibold text-primary">#RQ-8290</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed flex items-center justify-center text-[10px] font-bold">JS</div>
+<div>
+<p class="text-sm font-bold">Jane Simasiku</p>
+<p class="text-xs text-on-surface-variant">22081190</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm">New Res Block A</p>
+<p class="text-xs text-on-surface-variant">Common Room</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-sm">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">bolt</span>
+                                        Electrical
+                                    </div>
+</td>
+<td class="px-6 py-4">
+<span class="status-pill bg-secondary-fixed text-on-secondary-fixed-variant border border-secondary/20">In Progress</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-bold text-tertiary uppercase">High</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 hover:bg-surface-variant rounded-full text-on-surface-variant transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+</td>
+<td class="px-6 py-4 font-semibold text-primary">#RQ-8285</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-[10px] font-bold text-on-surface-variant">ZM</div>
+<div>
+<p class="text-sm font-bold">Zione Mwale</p>
+<p class="text-xs text-on-surface-variant">21092233</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm">International Block 2</p>
+<p class="text-xs text-on-surface-variant">Room 203</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-sm">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">chair</span>
+                                        Carpentry
+                                    </div>
+</td>
+<td class="px-6 py-4">
+<span class="status-pill bg-surface-container-high text-on-surface-variant border border-outline-variant">Resolved</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-bold text-on-surface-variant uppercase">Medium</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 hover:bg-surface-variant rounded-full text-on-surface-variant transition-all">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+</td>
+<td class="px-6 py-4 font-semibold text-primary">#RQ-8282</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-error-container flex items-center justify-center text-[10px] font-bold text-on-error-container">PM</div>
+<div>
+<p class="text-sm font-bold">Peter Musonda</p>
+<p class="text-xs text-on-surface-variant">23010444</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm">Soweto Block 1</p>
+<p class="text-xs text-on-surface-variant">Kitchen Area</p>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-sm">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">plumbing</span>
+                                        Plumbing
+                                    </div>
+</td>
+<td class="px-6 py-4">
+<span class="status-pill bg-error-container text-on-error-container border border-error/20">Escalated</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-xs font-bold text-tertiary uppercase">High</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 hover:bg-surface-variant rounded-full text-on-surface-variant transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination & Bottom Action Bar -->
+<footer class="mt-6 flex justify-between items-center bg-surface-container-low p-4 rounded-xl border border-outline-variant">
+<div class="flex items-center gap-4 text-sm text-on-surface-variant">
+<span class="font-medium">Selected: <strong class="text-primary" id="selectedCount">0</strong></span>
+<div class="h-4 w-[1px] bg-outline-variant"></div>
+<p>Showing 1-10 of 128 results</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary font-bold text-xs">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface text-xs">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface text-xs">3</button>
+<span class="px-2">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface text-xs">13</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface transition-all">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</footer>
+</section>
+</div>
+</main>
+<!-- Assign Technician Modal -->
+<div class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4" id="assignModal">
+<div class="modal-overlay absolute inset-0" onclick="closeModal('assignModal')"></div>
+<div class="bg-surface w-full max-w-lg rounded-2xl shadow-2xl relative animate-in fade-in zoom-in duration-200 overflow-hidden">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Assign Technician</h3>
+<p class="text-sm text-on-surface-variant">Select an available staff member for #RQ-8291</p>
+</div>
+<button class="p-2 hover:bg-surface-variant rounded-full transition-all" onclick="closeModal('assignModal')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 max-h-[614px] overflow-y-auto custom-scrollbar">
+<div class="relative mb-6">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 border border-outline-variant rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="Search by name or specialty..." type="text"/>
+</div>
+<div class="space-y-3">
+<!-- Tech 1 -->
+<label class="flex items-center justify-between p-4 rounded-xl border border-outline-variant hover:border-primary hover:bg-primary-container/10 cursor-pointer transition-all group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close-up portrait of a university maintenance technician, smiling confidently, wearing a professional green uniform with the university crest. Bright morning daylight, urban campus background blurred, sharp focus on subject." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBg7O6hwNhk7yocYPISTnQIbvfy6ofwyq3Hj5FVDeoKrDbMu-uCRZ4y4N7jqKEa0hH-Xk7RI5XWWC5kt9Yg_e4UItcdU8aRFK_QpFHRbSiGjsbMgAi_RnsUaG8VGSfogUyZI0xLrIh2Iq_qpz2qlUIcKbSK2MxFvm-YL4jB-a6erilG80ETXlpuMzivc8-A6w2aoMbghBMFB_FvkWrj2psDzJAq9MvxH5X5Eud2pav_oFyjTFotq1U"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Bwalya Tembo</p>
+<p class="text-xs text-primary font-medium">Plumbing Specialist</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="text-[10px] font-bold text-primary bg-primary-container px-2 py-0.5 rounded uppercase">Available Now</span>
+<input class="text-primary focus:ring-primary group-hover:scale-110 transition-transform" name="tech" type="radio"/>
+</div>
+</label>
+<!-- Tech 2 -->
+<label class="flex items-center justify-between p-4 rounded-xl border border-outline-variant hover:border-primary hover:bg-primary-container/10 cursor-pointer transition-all group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of an experienced maintenance engineer in a clean blue overall, holding a digital tablet. The background is a modern industrial workshop with soft lighting and professional workspace aesthetics. Clear focus, high definition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdLI6ECR4xfZXUs_VjQ8O3OTjCUhobOD00gxG6a_hEL57d2IpjADltJEHE8wVyapnkZ0xwfNFeNCxTzz7Vzea32pFwLynMri59xXoIw-3p6eXSlMmjgyqjxkjI6LXfUhUxBDzVm2D80_Jx6c5uZRIZUoyw4E9qFF7QrIlN8frEcCoh5kiRFzaW5Mk3MG7fe7tZv7uLxDQfNzbp74UcSq_wUTnx_qqga4DYnEvBpEA_dtUPWsdK-j4"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Chanda Mubanga</p>
+<p class="text-xs text-on-surface-variant">General Maintenance</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="text-[10px] font-bold text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded uppercase">2 Tasks Active</span>
+<input class="text-primary focus:ring-primary group-hover:scale-110 transition-transform" name="tech" type="radio"/>
+</div>
+</label>
+<!-- Tech 3 -->
+<label class="flex items-center justify-between p-4 rounded-xl border border-outline-variant hover:border-primary hover:bg-primary-container/10 cursor-pointer transition-all group opacity-75">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden grayscale">
+<img class="w-full h-full object-cover" data-alt="Candid photo of a technician working on electrical wiring, professional photography, high-key lighting, focused on hands and tools, modern workspace background, institutional maintenance environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiBYm8IIEjV8oo5_U-zrgt7Cw5qXVJK5LoAAJOlUPJaC78KoFrfMw0qQUQyYYfQlqplBMBJuF5WodlJXdj2DNE88zxx2f0assd8GceMiMWgnNraGg86SGPT7OCYZFUfH6ba_eU3pZLqpOLXDZ1VF7uKp_zBM9fL0ywDgRFKabFE6-BrZf2De0kOFNvql4eOH3brN4FN-aSekvX9WFjN6q5NQf7PvHH-f4La0SCJFwC_fdZ72Yztrk"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Emmanuel Zulu</p>
+<p class="text-xs text-on-surface-variant">Electrical Engineer</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="text-[10px] font-bold text-error bg-error-container px-2 py-0.5 rounded uppercase">On Break</span>
+<input class="text-primary focus:ring-primary" disabled="" name="tech" type="radio"/>
+</div>
+</label>
+</div>
+</div>
+<div class="p-6 border-t border-outline-variant bg-surface-container-lowest flex gap-3">
+<button class="flex-1 py-2.5 border border-outline-variant rounded-xl text-sm font-bold hover:bg-surface-variant transition-all" onclick="closeModal('assignModal')">Cancel</button>
+<button class="flex-1 py-2.5 bg-primary text-on-primary rounded-xl text-sm font-bold hover:brightness-110 shadow-md active:scale-95 transition-all" onclick="confirmAssignment()">Confirm Assignment</button>
+</div>
+</div>
+</div>
+<script>
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function confirmAssignment() {
+            // Simplified micro-interaction for demonstration
+            alert("Technician assigned successfully! Student notified via SMS.");
+            closeModal('assignModal');
+        }
+
+        // Handle Checkbox Selection Tracking
+        const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+        const countDisplay = document.getElementById('selectedCount');
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                const checkedCount = document.querySelectorAll('tbody input[type="checkbox"]:checked').length;
+                countDisplay.textContent = checkedCount;
+                
+                // Visual feedback for row
+                if (cb.checked) {
+                    cb.closest('tr').classList.add('bg-primary-container/5');
+                } else {
+                    cb.closest('tr').classList.remove('bg-primary-container/5');
+                }
+            });
+        });
+
+        // Global Select All
+        const selectAll = document.querySelector('thead input[type="checkbox"]');
+        selectAll.addEventListener('change', (e) => {
+            checkboxes.forEach(cb => {
+                cb.checked = e.target.checked;
+                const event = new Event('change');
+                cb.dispatchEvent(event);
+            });
+        });
+    </script>
+</body></html>

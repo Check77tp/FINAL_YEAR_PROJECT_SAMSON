@@ -1,0 +1,121 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&amp;family=Source+Serif+4:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-surface-variant": "#40493d", "secondary-container": "#acf4a4", "surface-container-low": "#f5f3f3", "primary-fixed-dim": "#88d982", "secondary": "#2a6b2c", "surface-container-high": "#eae8e7", "error": "#ba1a1a", "on-primary-container": "#cbffc2", "background": "#fbf9f8", "on-secondary-fixed": "#002203", "surface-tint": "#1b6d24", "on-primary-fixed": "#002204", "inverse-surface": "#303030", "primary-fixed": "#a3f69c", "on-tertiary-fixed": "#1a1c1c", "on-secondary-container": "#307231", "surface-container-lowest": "#ffffff", "surface": "#fbf9f8", "secondary-fixed": "#acf4a4", "outline": "#707a6c", "on-tertiary": "#ffffff", "tertiary": "#545656", "on-tertiary-container": "#f1f1f1", "on-error": "#ffffff", "on-primary-fixed-variant": "#005312", "tertiary-container": "#6c6e6e", "surface-dim": "#dcd9d9", "tertiary-fixed-dim": "#c6c6c7", "on-secondary": "#ffffff", "on-error-container": "#93000a", "tertiary-fixed": "#e2e2e2", "outline-variant": "#bfcaba", "surface-container": "#f0eded", "surface-bright": "#fbf9f8", "on-surface": "#1b1c1c", "primary-container": "#2e7d32", "error-container": "#ffdad6", "on-background": "#1b1c1c", "inverse-on-surface": "#f2f0f0", "on-secondary-fixed-variant": "#0c5216", "surface-variant": "#e4e2e1", "primary": "#0d631b", "on-primary": "#ffffff", "secondary-fixed-dim": "#91d78a", "surface-container-highest": "#e4e2e1", "on-tertiary-fixed-variant": "#454747", "inverse-primary": "#88d982" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "stack-md": "16px", "stack-lg": "24px", "stack-sm": "8px", "gutter-mobile": "12px", "touch-target-min": "44px", "margin-mobile": "16px" }, "fontFamily": { "headline-md-mobile": ["Source Serif 4"], "label-caps": ["Source Sans 3"], "body-md": ["Source Sans 3"], "body-lg": ["Source Sans 3"], "button-text": ["Source Sans 3"], "headline-sm-mobile": ["Source Serif 4"], "headline-lg-mobile": ["Source Serif 4"] } } } }</script><style>@layer base { body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; } .pb-safe { padding-bottom: env(safe-area-inset-bottom); } .pt-safe { padding-top: env(safe-area-inset-top); } } </style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-background text-on-background font-body-md"><header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-margin-mobile flex items-center justify-between"><div class="flex items-center gap-2"><div class="w-10 h-10 bg-primary flex items-center justify-center rounded-lg"><span class="material-symbols-outlined text-on-primary">account_balance</span></div><div class="flex flex-col"><span class="font-headline-sm-mobile text-headline-sm-mobile text-primary leading-tight">UNZA</span><span class="text-[10px] uppercase font-bold tracking-widest text-on-surface-variant">Maintenance</span></div></div><div class="flex items-center gap-2"><button class="w-touch-target-min h-touch-target-min flex items-center justify-center text-on-surface-variant"><span class="material-symbols-outlined">notifications</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="pt-16 pb-24 min-h-screen bg-surface"><div class="flex flex-col w-full min-h-full">
+<!-- Header/Filter Bar -->
+<div class="sticky top-0 z-10 bg-surface/95 backdrop-blur-sm px-margin-mobile py-stack-md shadow-[0_4px_16px_rgba(0,0,0,0.02)]">
+<div class="flex gap-2 items-center">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/50 text-[20px]">search</span>
+<input class="w-full h-touch-target-min pl-10 pr-4 rounded-xl bg-surface-container-low text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search tickets..." type="text"/>
+</div>
+<button class="w-touch-target-min h-touch-target-min flex items-center justify-center rounded-xl bg-surface-container-low text-on-surface-variant active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</button>
+</div>
+<!-- Quick Filters -->
+<div class="flex gap-2 overflow-x-auto mt-stack-md pb-1 scrollbar-hide -mx-margin-mobile px-margin-mobile">
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-primary text-on-primary font-button-text text-button-text">All Requests</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-container text-on-surface-variant font-button-text text-button-text">In Progress</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-container text-on-surface-variant font-button-text text-button-text">Pending</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-surface-container text-on-surface-variant font-button-text text-button-text">Resolved</button>
+</div>
+</div>
+<!-- Request List -->
+<div class="px-margin-mobile py-stack-md flex flex-col gap-stack-sm">
+<!-- Card 1: In Progress -->
+<a class="block bg-surface-container-lowest rounded-2xl p-4 shadow-sm active:scale-[0.98] transition-transform relative overflow-hidden group" href="#">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">#REQ-4029</span>
+<span class="px-2 py-1 rounded-md bg-primary/10 text-primary font-label-caps text-[10px]">IN PROGRESS</span>
+</div>
+<span class="text-on-surface-variant/70 text-[12px]">2h ago</span>
+</div>
+<h3 class="font-headline-sm-mobile text-headline-sm-mobile text-on-surface mb-1">Leaking Pipe in Science Lab 4</h3>
+<p class="text-body-md text-on-surface-variant line-clamp-2 mb-4">Water is dripping from the ceiling pipe near the fume hood. Plumber dispatched.</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-tertiary">water_drop</span>
+</div>
+<span class="text-[12px] font-semibold text-on-surface-variant">Plumbing</span>
+</div>
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full shadow-sm object-cover" data-alt="A small circular avatar of a maintenance worker wearing a green uniform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYcIHHp8jd7ROhjbyMXdUNRS_X9X6r_59WWAaN7w9RKEH17VVmUX-0Prw7Ett7CZRmbQY_rviJCDfVCs4gI5jOUF6bmjZOPFYuBOn3oHizf8LCML6PT8rPUFkCxFA_fNu7CgWhVe53m81uOwxj7sKdQU3-Ej6Y1i1a91NEyUtXi-RVKP3o_E-k6m3-2atAQSVx_-3Jk8AR3aRIP-ni8a6cHjlx8lEYKnRWH-z5ORKD0FuF8S3XERg"/>
+</div>
+</div>
+</a>
+<!-- Card 2: Pending -->
+<a class="block bg-surface-container-lowest rounded-2xl p-4 shadow-sm active:scale-[0.98] transition-transform relative overflow-hidden group" href="#">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-error/80"></div>
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant">#REQ-4028</span>
+<span class="px-2 py-1 rounded-md bg-error/10 text-error font-label-caps text-[10px]">PENDING APPROVAL</span>
+</div>
+<span class="text-on-surface-variant/70 text-[12px]">Yesterday</span>
+</div>
+<h3 class="font-headline-sm-mobile text-headline-sm-mobile text-on-surface mb-1">Projector Mount Broken</h3>
+<p class="text-body-md text-on-surface-variant line-clamp-2 mb-4">The ceiling mount for the main projector in Lecture Hall B is loose and unsafe.</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-tertiary">videocam</span>
+</div>
+<span class="text-[12px] font-semibold text-on-surface-variant">AV Equipment</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/30">chevron_right</span>
+</div>
+</a>
+<!-- Card 3: Resolved -->
+<a class="block bg-surface-container-lowest rounded-2xl p-4 shadow-sm opacity-75 active:scale-[0.98] transition-transform relative overflow-hidden group" href="#">
+<div class="absolute inset-0 bg-surface-variant/20 z-0 pointer-events-none"></div>
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-tertiary"></div>
+<div class="relative z-10 flex justify-between items-start mb-3">
+<div class="flex items-center gap-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant line-through">#REQ-4021</span>
+<span class="px-2 py-1 rounded-md bg-surface-container-highest text-on-surface-variant font-label-caps text-[10px]">RESOLVED</span>
+</div>
+<span class="text-on-surface-variant/70 text-[12px]">Oct 12</span>
+</div>
+<h3 class="font-headline-sm-mobile text-headline-sm-mobile text-on-surface mb-1 relative z-10">Flickering Lights in Library</h3>
+<p class="text-body-md text-on-surface-variant line-clamp-2 mb-4 relative z-10">Replaced 4 fluorescent tubes in the quiet study zone on the 3rd floor.</p>
+<div class="relative z-10 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-tertiary">lightbulb</span>
+</div>
+<span class="text-[12px] font-semibold text-on-surface-variant">Electrical</span>
+</div>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span class="text-[12px] font-bold">Done</span>
+</div>
+</div>
+</a>
+<!-- Empty State (Hidden by default, shown via JS if search yields 0) -->
+<div class="hidden flex-col items-center justify-center py-stack-lg text-center mt-8" id="empty-state">
+<div class="w-24 h-24 bg-surface-container rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-[48px] text-on-surface-variant/50">search_off</span>
+</div>
+<h3 class="font-headline-sm-mobile text-headline-sm-mobile text-on-surface mb-2">No requests found</h3>
+<p class="text-body-md text-on-surface-variant max-w-[200px]">Try adjusting your search or filters to find what you're looking for.</p>
+</div>
+</div>
+</div>
+<script>
+    // Simple filter pill toggle behavior
+    document.querySelectorAll('.overflow-x-auto button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.overflow-x-auto button').forEach(b => {
+                b.className = 'whitespace-nowrap px-4 py-2 rounded-full bg-surface-container text-on-surface-variant font-button-text text-button-text';
+            });
+            e.target.className = 'whitespace-nowrap px-4 py-2 rounded-full bg-primary text-on-primary font-button-text text-button-text';
+        });
+    });
+</script></main><nav class="fixed bottom-0 w-full z-50 bg-surface/90 backdrop-blur-xl pb-safe shadow-[0_-1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-bold"><div class="flex justify-around items-center h-16 px-2"><a class="flex flex-col items-center justify-center w-touch-target-min h-touch-target-min text-on-surface-variant" data-path="home" href="#"><span class="material-symbols-outlined">dashboard</span><span class="font-label-caps text-[10px]">HOME</span></a><a aria-current="page" class="flex flex-col items-center justify-center w-touch-target-min h-touch-target-min text-primary font-bold" data-path="requests" href="#"><span class="material-symbols-outlined">assignment</span><span class="font-label-caps text-[10px]">REQUESTS</span></a><div class="-mt-8"><button class="w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center transition-transform active:scale-95" data-path="report-issue"><span class="material-symbols-outlined text-[32px]">add</span></button></div><a class="flex flex-col items-center justify-center w-touch-target-min h-touch-target-min text-on-surface-variant" data-path="tasks" href="#"><span class="material-symbols-outlined">build</span><span class="font-label-caps text-[10px]">TASKS</span></a><a class="flex flex-col items-center justify-center w-touch-target-min h-touch-target-min text-on-surface-variant" data-path="profile" href="#"><span class="material-symbols-outlined">person</span><span class="font-label-caps text-[10px]">PROFILE</span></a></div></nav></body></html>

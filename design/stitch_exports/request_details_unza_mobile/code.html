@@ -1,0 +1,137 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&amp;family=Source+Serif+4:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-surface-variant": "#40493d", "secondary-container": "#acf4a4", "surface-container-low": "#f5f3f3", "primary-fixed-dim": "#88d982", "secondary": "#2a6b2c", "surface-container-high": "#eae8e7", "error": "#ba1a1a", "on-primary-container": "#cbffc2", "background": "#fbf9f8", "on-secondary-fixed": "#002203", "surface-tint": "#1b6d24", "on-primary-fixed": "#002204", "inverse-surface": "#303030", "primary-fixed": "#a3f69c", "on-tertiary-fixed": "#1a1c1c", "on-secondary-container": "#307231", "surface-container-lowest": "#ffffff", "surface": "#fbf9f8", "secondary-fixed": "#acf4a4", "outline": "#707a6c", "on-tertiary": "#ffffff", "tertiary": "#545656", "on-tertiary-container": "#f1f1f1", "on-error": "#ffffff", "on-primary-fixed-variant": "#005312", "tertiary-container": "#6c6e6e", "surface-dim": "#dcd9d9", "tertiary-fixed-dim": "#c6c6c7", "on-secondary": "#ffffff", "on-error-container": "#93000a", "tertiary-fixed": "#e2e2e2", "outline-variant": "#bfcaba", "surface-container": "#f0eded", "surface-bright": "#fbf9f8", "on-surface": "#1b1c1c", "primary-container": "#2e7d32", "error-container": "#ffdad6", "on-background": "#1b1c1c", "inverse-on-surface": "#f2f0f0", "on-secondary-fixed-variant": "#0c5216", "surface-variant": "#e4e2e1", "primary": "#0d631b", "on-primary": "#ffffff", "secondary-fixed-dim": "#91d78a", "surface-container-highest": "#e4e2e1", "on-tertiary-fixed-variant": "#454747", "inverse-primary": "#88d982" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "stack-md": "16px", "stack-lg": "24px", "stack-sm": "8px", "gutter-mobile": "12px", "touch-target-min": "44px", "margin-mobile": "16px" }, "fontFamily": { "headline-md-mobile": ["Source Serif 4"], "label-caps": ["Source Sans 3"], "body-md": ["Source Sans 3"], "body-lg": ["Source Sans 3"], "button-text": ["Source Sans 3"], "headline-sm-mobile": ["Source Serif 4"], "headline-lg-mobile": ["Source Serif 4"] } } } }</script><style>@layer base { body { -webkit-tap-highlight-color: transparent; } .pb-safe { padding-bottom: env(safe-area-inset-bottom); } .pt-safe { padding-top: env(safe-area-inset-top); } } </style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-background text-on-background font-body-md"><header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-4 flex items-center gap-2"><button class="w-touch-target-min h-touch-target-min flex items-center justify-center text-on-surface" onclick="history.back()"><span class="material-symbols-outlined">arrow_back</span></button><h1 class="text-headline-sm-mobile font-headline-sm-mobile text-on-surface truncate">Request Details</h1><div class="ml-auto w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="pt-16 pb-safe bg-surface min-h-screen"><div class="flex flex-col w-full px-margin-mobile gap-stack-lg pt-stack-sm">
+<!-- Header Status Section -->
+<div class="bg-primary-container text-on-primary-container rounded-xl p-stack-md flex flex-col gap-stack-sm shadow-sm">
+<div class="flex justify-between items-center">
+<h2 class="font-headline-sm-mobile text-headline-sm-mobile">REQ-2024-0891</h2>
+<span class="bg-on-primary-container text-primary-container px-2 py-1 rounded font-label-caps text-label-caps">URGENT</span>
+</div>
+<p class="font-body-md text-body-md opacity-90">HVAC Failure - Science Building Rm 302</p>
+</div>
+<!-- Progress Timeline -->
+<div class="bg-surface-container-low rounded-xl p-stack-md shadow-sm flex flex-col gap-stack-sm">
+<h3 class="font-button-text text-button-text text-on-surface">Status Timeline</h3>
+<div class="relative pt-stack-sm pb-stack-sm">
+<!-- Connecting Line -->
+<div class="absolute left-4 top-stack-sm bottom-stack-sm w-0.5 bg-outline-variant rounded-full"></div>
+<!-- Active Line Fill (Progress) -->
+<div class="absolute left-4 top-stack-sm h-1/2 w-0.5 bg-primary rounded-full"></div>
+<div class="flex flex-col gap-stack-md relative z-10">
+<!-- Step 1: Completed -->
+<div class="flex gap-stack-md items-start">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-sm mt-1">
+<span class="material-symbols-outlined text-[16px] text-on-primary" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-button-text text-button-text text-on-surface">Submitted</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Oct 24, 08:15 AM - by Dr. Aris Thorne</span>
+</div>
+</div>
+<!-- Step 2: Completed -->
+<div class="flex gap-stack-md items-start">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-sm mt-1">
+<span class="material-symbols-outlined text-[16px] text-on-primary" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-button-text text-button-text text-on-surface">Assigned</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Oct 24, 09:30 AM - to Tech Unit 4</span>
+</div>
+</div>
+<!-- Step 3: Current -->
+<div class="flex gap-stack-md items-start">
+<div class="w-8 h-8 rounded-full bg-surface-container-lowest ring-2 ring-primary flex items-center justify-center shrink-0 mt-1">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">build</span>
+</div>
+<div class="flex flex-col">
+<span class="font-button-text text-button-text text-primary">In Progress</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Technician on site</span>
+</div>
+</div>
+<!-- Step 4: Pending -->
+<div class="flex gap-stack-md items-start">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center shrink-0 mt-1">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+</div>
+<div class="flex flex-col">
+<span class="font-button-text text-button-text text-outline">Completed</span>
+<span class="font-body-md text-body-md text-outline-variant">Awaiting resolution</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Description & Details -->
+<div class="bg-surface-container-lowest rounded-xl p-stack-md shadow-sm flex flex-col gap-stack-md">
+<div class="flex flex-col gap-stack-sm">
+<h3 class="font-button-text text-button-text text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">description</span> Description
+            </h3>
+<p class="font-body-md text-body-md text-on-surface-variant bg-surface-container-low p-stack-sm rounded-lg">
+                The main ventilation unit in the biology lab (Room 302) is making a loud grinding noise and no cold air is coming through the vents. Temperature has risen to 28°C, threatening ongoing sensitive experiments. Needs immediate attention to prevent equipment damage.
+            </p>
+</div>
+<div class="flex flex-col gap-stack-sm">
+<h3 class="font-button-text text-button-text text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">image</span> Evidence Photos
+            </h3>
+<div class="flex gap-gutter-mobile overflow-x-auto pb-stack-sm hide-scrollbar">
+<div class="w-28 h-28 shrink-0 rounded-lg bg-surface-container-high overflow-hidden shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A close up photo of a dirty, industrial HVAC vent in an academic laboratory setting, showing signs of dust and condensation. Corporate institutional lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGNLMRfCJlSep80r9pGiKBvdEc1D4tke2nntm9qzJ-1V5fEmyC4yCMa_h1tA-r-fggj4F4UFbhIB4GzD1KdmJYD_Qy5fmqHveXDTLPfpELDWpFmxyVjEdwgbJ528oWBHNOMiNyccgEVN4u-Z0Eqiar6n1GzHfiCRUB_x9wAlthYUELh1i1CZiMG6ZWP9WGmt8L4MQAWc-pWphEyvruxGDlgrbsaVK32UVFttWGqU1tl9nv-2_W2GM"/>
+</div>
+<div class="w-28 h-28 shrink-0 rounded-lg bg-surface-container-high overflow-hidden shadow-sm">
+<img class="w-full h-full object-cover" data-alt="A digital thermostat on a white brick wall showing a high temperature of 28 degrees celsius in a laboratory. Fluorescent lighting, institutional modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAiTrkK8jKp7WJU2WoOLEbsABT9eyaey4DQ8YnNsiqLoYTdgN0yGUKi7Fz8IafbfXm0U8VZreap96kaVgOqx-UYSrY847BvdoYf-IIAhS5BtakuWVauyXqaasE25pwlO26XoYXePZYz7DFuyEsD2rsDJ9umwm5fTVHqDhN3hSDNdk9p5I8mrggMkok8CkXOFgASSpSYMkFJnocBGWoxwo35r3WQISHSX4ckkINvEXeUl-9DscrIUQ"/>
+</div>
+<button class="w-28 h-28 shrink-0 rounded-lg bg-surface-container-low flex flex-col items-center justify-center gap-1 text-primary active:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[24px]">add_a_photo</span>
+<span class="font-label-caps text-label-caps">Add Photo</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-gutter-mobile mt-2">
+<div class="bg-surface-container p-stack-sm rounded-lg flex flex-col">
+<span class="font-label-caps text-label-caps text-outline">LOCATION</span>
+<span class="font-body-md text-body-md text-on-surface">Science Bldg, Rm 302</span>
+</div>
+<div class="bg-surface-container p-stack-sm rounded-lg flex flex-col">
+<span class="font-label-caps text-label-caps text-outline">CATEGORY</span>
+<span class="font-body-md text-body-md text-on-surface">HVAC / Climate</span>
+</div>
+</div>
+</div>
+<!-- Action Area -->
+<div class="flex flex-col gap-stack-sm pt-stack-sm pb-stack-lg">
+<h3 class="font-button-text text-button-text text-on-surface px-1">Technician Actions</h3>
+<div class="flex flex-col gap-gutter-mobile">
+<!-- Add Note Input -->
+<div class="relative">
+<textarea class="w-full bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded-xl p-stack-sm pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm resize-none placeholder:text-outline-variant" placeholder="Add work note or parts required..." rows="2"></textarea>
+<button class="absolute right-2 bottom-2 w-10 h-10 flex items-center justify-center text-primary bg-primary-container/20 rounded-full active:bg-primary-container/40 transition-colors">
+<span class="material-symbols-outlined text-[20px]">send</span>
+</button>
+</div>
+<!-- Primary Actions -->
+<button class="w-full h-touch-target-min bg-primary text-on-primary font-button-text text-button-text rounded-full shadow-md flex items-center justify-center gap-2 active:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">task_alt</span>
+                Mark as Completed
+            </button>
+<button class="w-full h-touch-target-min bg-surface-container-low text-primary font-button-text text-button-text rounded-full shadow-sm flex items-center justify-center gap-2 active:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_horiz</span>
+                More Actions (Reassign, Hold)
+            </button>
+</div>
+</div>
+</div>
+<style>
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style></main></body></html>
