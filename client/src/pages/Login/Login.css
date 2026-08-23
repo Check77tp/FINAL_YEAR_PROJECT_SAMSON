@@ -1,0 +1,180 @@
+/* 1. Default styles = mobile (375px canvas, must not break down to 320px) */
+.login-page {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-app-background);
+}
+
+.login-page-brand {
+  background: linear-gradient(160deg, var(--color-primary-brand), var(--color-primary));
+  color: var(--color-on-primary);
+  padding: var(--spacing-lg) var(--margin-mobile);
+}
+
+.login-page-brand-title {
+  font-size: var(--font-size-headline-sm-mobile);
+  line-height: var(--line-height-headline-sm-mobile);
+  font-weight: var(--font-weight-headline-sm-mobile);
+  margin-bottom: var(--spacing-xs);
+}
+
+.login-page-brand-tagline {
+  font-size: var(--font-size-body-sm);
+  line-height: var(--line-height-body-sm);
+  opacity: 0.9;
+  max-width: 60ch;
+}
+
+.login-page-form-panel {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-lg) var(--margin-mobile);
+}
+
+.login-page-form-card {
+  width: 100%;
+  max-width: 420px;
+}
+
+.login-page-title {
+  font-size: var(--font-size-headline-sm-mobile);
+  line-height: var(--line-height-headline-sm-mobile);
+  font-weight: var(--font-weight-headline-sm-mobile);
+  color: var(--color-on-surface);
+}
+
+.login-page-subtitle {
+  margin-top: var(--spacing-xs);
+  color: var(--color-on-surface-variant);
+  font-size: var(--font-size-body-sm);
+}
+
+.login-page-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-md);
+}
+
+.login-page-label {
+  font-size: var(--font-size-label-md);
+  font-weight: var(--font-weight-label-md);
+  letter-spacing: var(--letter-spacing-label-md);
+  color: var(--color-on-surface);
+}
+
+.login-page-input {
+  width: 100%;
+  padding: 12px var(--spacing-xs);
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--radius-input);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-md);
+  background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+}
+
+.login-page-input:focus {
+  outline: none;
+  border-color: var(--color-primary-brand);
+  box-shadow: var(--input-focus-glow);
+}
+
+.login-page-password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.login-page-password-field .login-page-input {
+  padding-right: 56px;
+}
+
+.login-page-toggle-password {
+  position: absolute;
+  right: var(--spacing-xs);
+  background: none;
+  border: none;
+  color: var(--color-primary-brand);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.login-page-error {
+  color: var(--color-error);
+  font-size: var(--font-size-body-sm);
+  margin: 0;
+}
+
+.login-page-submit {
+  margin-top: var(--spacing-xs);
+  padding: 14px var(--spacing-sm);
+  border: none;
+  border-radius: var(--radius-button);
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-md);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.login-page-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-page-signup {
+  margin-top: var(--spacing-md);
+  text-align: center;
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.login-page-signup a {
+  color: var(--color-primary-brand);
+  font-weight: var(--font-weight-label-md);
+  text-decoration: none;
+}
+
+/* 2. Then scale up for tablet */
+@media (min-width: 768px) {
+  .login-page-form-panel {
+    padding: var(--spacing-lg);
+  }
+}
+
+/* 3. Then scale up for desktop: two-column split per login_unza_maintenance */
+@media (min-width: 1280px) {
+  .login-page {
+    flex-direction: row;
+  }
+
+  .login-page-brand {
+    flex: 0 0 42%;
+    display: flex;
+    align-items: flex-end;
+    padding: var(--spacing-section-gap);
+  }
+
+  .login-page-brand-title {
+    font-size: var(--font-size-headline-lg);
+    line-height: var(--line-height-headline-lg);
+    font-weight: var(--font-weight-headline-lg);
+  }
+
+  .login-page-form-panel {
+    flex: 1;
+    align-items: center;
+    padding: var(--margin-desktop);
+  }
+
+  .login-page-title {
+    font-size: var(--font-size-headline-lg);
+    line-height: var(--line-height-headline-lg);
+    font-weight: var(--font-weight-headline-lg);
+  }
+}

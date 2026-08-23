@@ -4,6 +4,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 
 import healthRoutes from './src/routes/health.routes.js';
+import authRoutes from './src/routes/auth.routes.js';
 import { errorHandler } from './src/middleware/errorHandler.js';
 import { PORT, NODE_ENV } from './src/config/env.js';
 
@@ -14,8 +15,9 @@ app.use(express.json());
 app.use(morgan(NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 app.use('/api/health', healthRoutes);
+app.use('/api/auth', authRoutes);
 
-// Placeholder for future routers (auth, requests, categories, assignments...)
+// Placeholder for future routers (requests, categories, assignments...)
 // app.use('/api/requests', requestRoutes);
 
 app.use(errorHandler);
