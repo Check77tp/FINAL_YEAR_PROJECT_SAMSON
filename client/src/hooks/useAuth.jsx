@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { getCurrentUser, loginRequest, registerRequest } from '../services/authService';
+import { saveSession, getAccessToken, clearSession } from '../services/tokenStorage';
 
 const AuthContext = createContext(null);
 
@@ -8,25 +9,24 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (!token) {
+    if (!getAccessToken()) {
       setLoading(false);
       return;
     }
 
     getCurrentUser()
       .then(setUser)
-      .catch(() => {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-      })
+      .catch(clearSession)
       .finally(() => setLoading(false));
   }, []);
 
-  async function login({ idNumber, email, password }) {
+  async function login({ idNumber, email, password, remember }) {
     const { session, user: profile } = await loginRequest({ idNumber, email, password });
-    localStorage.setItem('access_token', session.access_token);
-    localStorage.setItem('refresh_token', session.refresh_token);
+    saveSession({
+      accessToken: session.access_token,
+      refreshToken: session.refresh_token,
+      remember,
+    });
     setUser(profile);
     return profile;
   }
@@ -36,8 +36,7 @@ export function AuthProvider({ children }) {
   }
 
   function logout() {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
+    clearSession();
     setUser(null);
   }
 

@@ -257,6 +257,21 @@ The PWA client must be designed and built **mobile-first**. This is a decided ap
 
 When implementing any screen from the Stitch exports (see above), start from the mobile export where one exists (`_unza_mobile` folders) as the default styles, then layer in the desktop export (`_unza_maintenance` folders) inside the `min-width: 1280px` query — not the other way around.
 
+**Exception — split-hero / two-panel auth screens (Login, Register):** the breakpoint table above governs app/dashboard screens (sidebar, data grid, tables). For Login and Register specifically, which use a two-panel layout (image/hero panel + form panel), the two panels switch from stacked (single column) to side-by-side (horizontal) **at the tablet breakpoint (768px), not the desktop breakpoint (1280px)** — there's enough horizontal room by tablet width for this simpler two-panel layout, unlike the denser dashboard/table screens which genuinely need the extra space desktop provides. So for these two screens only:
+
+```css
+/* Default = mobile, panels stacked vertically */
+.login-panels { display: flex; flex-direction: column; }
+
+/* Tablet AND desktop = panels side-by-side (note: same rule applies from 768px up,
+   no separate change needed at 1280px for this specific layout) */
+@media (min-width: 768px) {
+  .login-panels { flex-direction: row; }
+}
+```
+
+Confirm this renders correctly by testing at all four reference widths: 320px and 375px (mobile — stacked, no horizontal overflow), 768px–1279px (tablet — side-by-side), and 1280px+ (desktop — side-by-side, unchanged from tablet).
+
 ---
 
 ## Functional Requirements Checklist

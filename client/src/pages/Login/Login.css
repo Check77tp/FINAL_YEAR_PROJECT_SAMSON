@@ -7,9 +7,64 @@
 }
 
 .login-page-brand {
-  background: linear-gradient(160deg, var(--color-primary-brand), var(--color-primary));
+  position: relative;
+  min-height: 60vh;
+  display: flex;
+  align-items: flex-end;
+  background-size: cover;
+  background-position: center;
+  padding: var(--spacing-md) var(--margin-mobile) var(--spacing-lg);
+}
+
+.login-page-brand::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 26, 12, 0.8) 0%,
+    rgba(13, 61, 27, 0.4) 45%,
+    rgba(13, 61, 27, 0.05) 100%
+  );
+}
+
+.login-page-brand-card {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+  background: rgba(20, 40, 22, 0.45);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-card);
+  padding: var(--spacing-md);
   color: var(--color-on-primary);
-  padding: var(--spacing-lg) var(--margin-mobile);
+}
+
+.login-page-brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: var(--radius-full);
+  padding: 4px 14px 4px 4px;
+  margin-bottom: var(--spacing-sm);
+}
+
+.login-page-brand-badge-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+}
+
+.login-page-brand-badge-text {
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-primary-brand);
 }
 
 .login-page-brand-title {
@@ -22,8 +77,39 @@
 .login-page-brand-tagline {
   font-size: var(--font-size-body-sm);
   line-height: var(--line-height-body-sm);
-  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.88);
+  margin-bottom: var(--spacing-sm);
   max-width: 60ch;
+}
+
+.login-page-brand-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.login-page-brand-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-page-brand-stat-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-headline-sm);
+  font-weight: 700;
+}
+
+.login-page-brand-stat-label {
+  font-size: var(--font-size-label-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.login-page-brand-stat-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .login-page-form-panel {
@@ -36,6 +122,11 @@
 .login-page-form-card {
   width: 100%;
   max-width: 420px;
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-level-1);
+  padding: var(--spacing-md);
 }
 
 .login-page-title {
@@ -58,6 +149,12 @@
   margin-top: var(--spacing-md);
 }
 
+.login-page-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .login-page-label {
   font-size: var(--font-size-label-md);
   font-weight: var(--font-weight-label-md);
@@ -65,9 +162,31 @@
   color: var(--color-on-surface);
 }
 
+.login-page-forgot {
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-primary-brand);
+  cursor: default;
+}
+
+.login-page-input-field {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+}
+
+.login-page-input-icon {
+  position: absolute;
+  z-index: 1;
+  left: var(--spacing-xs);
+  color: var(--color-primary-brand);
+  pointer-events: none;
+}
+
 .login-page-input {
   width: 100%;
-  padding: 12px var(--spacing-xs);
+  padding: 12px var(--spacing-xs) 12px 44px;
   border: 1px solid var(--input-border-color);
   border-radius: var(--radius-input);
   font-family: var(--font-body);
@@ -82,24 +201,20 @@
   box-shadow: var(--input-focus-glow);
 }
 
-.login-page-password-field {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.login-page-password-field .login-page-input {
-  padding-right: 56px;
+.login-page-input-field .login-page-input {
+  padding-right: 44px;
 }
 
 .login-page-toggle-password {
   position: absolute;
+  z-index: 1;
   right: var(--spacing-xs);
+  display: flex;
+  align-items: center;
   background: none;
   border: none;
-  color: var(--color-primary-brand);
-  font-size: var(--font-size-label-sm);
-  font-weight: var(--font-weight-label-md);
+  color: var(--color-on-surface-variant);
+  padding: 4px;
   cursor: pointer;
 }
 
@@ -116,6 +231,22 @@
   text-decoration: underline;
 }
 
+.login-page-remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+  cursor: pointer;
+}
+
+.login-page-remember input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary-brand);
+  cursor: pointer;
+}
+
 .login-page-error {
   color: var(--color-error);
   font-size: var(--font-size-body-sm);
@@ -124,6 +255,10 @@
 
 .login-page-submit {
   margin-top: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   padding: 14px var(--spacing-sm);
   border: none;
   border-radius: var(--radius-button);
@@ -140,8 +275,13 @@
   cursor: not-allowed;
 }
 
+.login-page-divider {
+  height: 1px;
+  background: var(--color-divider);
+  margin: var(--spacing-md) 0 var(--spacing-sm);
+}
+
 .login-page-signup {
-  margin-top: var(--spacing-md);
   text-align: center;
   font-size: var(--font-size-body-sm);
   color: var(--color-on-surface-variant);
@@ -153,24 +293,33 @@
   text-decoration: none;
 }
 
-/* 2. Then scale up for tablet */
-@media (min-width: 768px) {
-  .login-page-form-panel {
-    padding: var(--spacing-lg);
-  }
+.login-page-footer {
+  margin-top: var(--spacing-sm);
+  text-align: center;
+  font-size: var(--font-size-label-sm);
+  line-height: 1.5;
+  color: var(--color-on-surface-variant);
 }
 
-/* 3. Then scale up for desktop: two-column split per login_unza_maintenance */
-@media (min-width: 1280px) {
+/* 2. Then scale up for tablet AND desktop: 60/40 side-by-side split per
+   login_unza_maintenance. Split-hero auth screens (Login, Register) switch
+   from stacked to side-by-side at the tablet breakpoint (768px), not the
+   desktop breakpoint (1280px) — see CLAUDE.md's "Mobile-First Design
+   Approach" exception for these two screens. Same rule applies from 768px
+   up; no separate change needed at 1280px for this layout. */
+@media (min-width: 768px) {
   .login-page {
     flex-direction: row;
   }
 
   .login-page-brand {
-    flex: 0 0 42%;
-    display: flex;
-    align-items: flex-end;
-    padding: var(--spacing-section-gap);
+    flex: 0 0 60%;
+    min-height: 100svh;
+    padding: var(--spacing-lg);
+  }
+
+  .login-page-brand-card {
+    max-width: 560px;
   }
 
   .login-page-brand-title {
@@ -182,12 +331,23 @@
   .login-page-form-panel {
     flex: 1;
     align-items: center;
-    padding: var(--margin-desktop);
+    padding: var(--spacing-lg);
   }
 
   .login-page-title {
     font-size: var(--font-size-headline-lg);
     line-height: var(--line-height-headline-lg);
     font-weight: var(--font-weight-headline-lg);
+  }
+}
+
+/* 3. Then scale up for desktop */
+@media (min-width: 1280px) {
+  .login-page-brand {
+    padding: var(--spacing-section-gap);
+  }
+
+  .login-page-form-panel {
+    padding: var(--margin-desktop);
   }
 }

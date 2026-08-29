@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { IdCardIcon, LockIcon, ArrowRightIcon, GraduationCapIcon } from '../../components/icons';
+import loginHero from '../../assets/login-hero.jpg';
 import './Register.css';
 
 function Register() {
   const { register } = useAuth();
-  const navigate = useNavigate();
 
   const [name, setName] = useState('');
   const [idNumber, setIdNumber] = useState('');
@@ -60,9 +61,16 @@ function Register() {
 
   return (
     <div className="register-page">
-      <aside className="register-page-brand">
-        <div className="register-page-brand-content">
-          <h2 className="register-page-brand-title">Maintenance Hub</h2>
+      <aside className="register-page-brand" style={{ backgroundImage: `url(${loginHero})` }}>
+        <div className="register-page-brand-card">
+          <div className="register-page-brand-badge">
+            <span className="register-page-brand-badge-icon">
+              <GraduationCapIcon width={20} height={20} />
+            </span>
+            <span className="register-page-brand-badge-text">UNZA Maintenance</span>
+          </div>
+
+          <h2 className="register-page-brand-title">Join the Maintenance Portal</h2>
           <p className="register-page-brand-tagline">
             Report hostel maintenance issues in minutes and track them through to resolution.
           </p>
@@ -93,16 +101,19 @@ function Register() {
             <label className="register-page-label" htmlFor="register-id-number">
               Student or Staff ID
             </label>
-            <input
-              id="register-id-number"
-              type="text"
-              className="register-page-input"
-              placeholder="e.g. 2023001234"
-              value={idNumber}
-              onChange={(event) => setIdNumber(event.target.value)}
-              autoComplete="username"
-              required
-            />
+            <div className="register-page-input-field">
+              <IdCardIcon className="register-page-input-icon" />
+              <input
+                id="register-id-number"
+                type="text"
+                className="register-page-input"
+                placeholder="e.g. 2023001234"
+                value={idNumber}
+                onChange={(event) => setIdNumber(event.target.value)}
+                autoComplete="username"
+                required
+              />
+            </div>
 
             <label className="register-page-label" htmlFor="register-email">
               Email Address
@@ -120,30 +131,36 @@ function Register() {
             <label className="register-page-label" htmlFor="register-password">
               Password
             </label>
-            <input
-              id="register-password"
-              type="password"
-              className="register-page-input"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              autoComplete="new-password"
-              minLength={8}
-              required
-            />
+            <div className="register-page-input-field">
+              <LockIcon className="register-page-input-icon" />
+              <input
+                id="register-password"
+                type="password"
+                className="register-page-input"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                autoComplete="new-password"
+                minLength={8}
+                required
+              />
+            </div>
 
             <label className="register-page-label" htmlFor="register-confirm-password">
               Confirm Password
             </label>
-            <input
-              id="register-confirm-password"
-              type="password"
-              className="register-page-input"
-              value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              autoComplete="new-password"
-              minLength={8}
-              required
-            />
+            <div className="register-page-input-field">
+              <LockIcon className="register-page-input-icon" />
+              <input
+                id="register-confirm-password"
+                type="password"
+                className="register-page-input"
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                autoComplete="new-password"
+                minLength={8}
+                required
+              />
+            </div>
 
             {error && (
               <p className="register-page-error" role="alert">
@@ -153,6 +170,7 @@ function Register() {
 
             <button type="submit" className="register-page-submit" disabled={submitting}>
               {submitting ? 'Creating account…' : 'Sign Up'}
+              {!submitting && <ArrowRightIcon />}
             </button>
           </form>
 

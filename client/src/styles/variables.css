@@ -25,8 +25,10 @@
   --color-background: #f7fbf0;
   --color-on-background: #181d17;
 
-  /* Layout background used by cards/shell (framework body text: Light Gray #F8FAFC) */
-  --color-app-background: #f8fafc;
+  /* Layout background used by cards/shell. Uses the pale green-tinted
+     surface token (#f7fbf0) rather than the framework prose's neutral
+     "#F8FAFC" so the app reads as branded rather than flat gray. */
+  --color-app-background: var(--color-surface);
   --color-card-border: #e2e8f0;
   --color-divider: #f1f5f9;
 
