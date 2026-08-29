@@ -7,6 +7,10 @@ function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  // ID number is the default/primary credential per CLAUDE.md's
+  // "Authentication: ID-Based Login" — email is a secondary, toggled path.
+  const [useEmailLogin, setUseEmailLogin] = useState(false);
+  const [idNumber, setIdNumber] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -19,7 +23,7 @@ function Login() {
     setSubmitting(true);
 
     try {
-      await login(email, password);
+      await login(useEmailLogin ? { email, password } : { idNumber, password });
       navigate('/');
     } catch (err) {
       setError(err.message);
@@ -46,19 +50,39 @@ function Login() {
           <p className="login-page-subtitle">Sign in to your maintenance portal account</p>
 
           <form className="login-page-form" onSubmit={handleSubmit} noValidate>
-            <label className="login-page-label" htmlFor="login-email">
-              Email Address
-            </label>
-            <input
-              id="login-email"
-              type="email"
-              className="login-page-input"
-              placeholder="e.g. jdoe@unza.zm"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              autoComplete="email"
-              required
-            />
+            {useEmailLogin ? (
+              <>
+                <label className="login-page-label" htmlFor="login-email">
+                  Email Address
+                </label>
+                <input
+                  id="login-email"
+                  type="email"
+                  className="login-page-input"
+                  placeholder="e.g. jdoe@unza.zm"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  autoComplete="email"
+                  required
+                />
+              </>
+            ) : (
+              <>
+                <label className="login-page-label" htmlFor="login-id-number">
+                  Student or Staff ID
+                </label>
+                <input
+                  id="login-id-number"
+                  type="text"
+                  className="login-page-input"
+                  placeholder="e.g. 2023001234"
+                  value={idNumber}
+                  onChange={(event) => setIdNumber(event.target.value)}
+                  autoComplete="username"
+                  required
+                />
+              </>
+            )}
 
             <label className="login-page-label" htmlFor="login-password">
               Password
@@ -83,6 +107,17 @@ function Login() {
                 {showPassword ? 'Hide' : 'Show'}
               </button>
             </div>
+
+            <button
+              type="button"
+              className="login-page-toggle-method"
+              onClick={() => {
+                setError('');
+                setUseEmailLogin((useEmail) => !useEmail);
+              }}
+            >
+              {useEmailLogin ? 'Log in with Student/Staff ID instead' : 'Log in with email instead'}
+            </button>
 
             {error && (
               <p className="login-page-error" role="alert">

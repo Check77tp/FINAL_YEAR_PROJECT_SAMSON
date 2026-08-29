@@ -8,6 +8,7 @@ function Register() {
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
+  const [idNumber, setIdNumber] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -30,7 +31,7 @@ function Register() {
 
     setSubmitting(true);
     try {
-      await register(name, email, password);
+      await register({ name, email, idNumber, password });
       setSubmitted(true);
     } catch (err) {
       setError(err.message);
@@ -86,6 +87,20 @@ function Register() {
               value={name}
               onChange={(event) => setName(event.target.value)}
               autoComplete="name"
+              required
+            />
+
+            <label className="register-page-label" htmlFor="register-id-number">
+              Student or Staff ID
+            </label>
+            <input
+              id="register-id-number"
+              type="text"
+              className="register-page-input"
+              placeholder="e.g. 2023001234"
+              value={idNumber}
+              onChange={(event) => setIdNumber(event.target.value)}
+              autoComplete="username"
               required
             />
 

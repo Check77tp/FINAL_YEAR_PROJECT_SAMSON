@@ -101,7 +101,8 @@ Build these five tables first. Use foreign keys to enforce relationships; don't 
 **users**
 - `user_id` (PK)
 - `name`
-- `email` (unique)
+- `email` (unique) — always required; used as the underlying Supabase Auth identifier and for account recovery/notifications.
+- `id_number` (unique, e.g. student ID or staff ID) — the default login credential shown to the user (see "Authentication: ID-Based Login" below).
 - `role` (enum: student | administrator | technician)
 - `password_hash` (handled by Supabase Auth — don't roll your own)
 - `created_at`
@@ -134,6 +135,26 @@ Build these five tables first. Use foreign keys to enforce relationships; don't 
 - `changed_at`
 
 Set up **Row Level Security (RLS) policies** on all tables as a second layer of defense: students can only `SELECT` their own requests; technicians can only `SELECT`/`UPDATE` requests they're assigned to; administrators have broader access. Don't treat RLS as optional — it's part of the architecture, not an afterthought.
+
+---
+
+## Authentication: ID-Based Login (decided)
+
+Students (and staff) log in with their **ID number by default**, not their email — email remains a required field on every account and works as an alternative login method, but it is not the primary field shown on the login screen. This matches the original Stitch mockup's "Student or Staff ID" field.
+
+**Why not just use ID number as the sole credential and drop email entirely:** Supabase Auth is inherently email-based under the hood — every account still needs a real email on file for Supabase Auth itself to function (password reset flows, account recovery, etc.). So email isn't removed from the system; it's just not the field the user types into by default.
+
+**How login must work (server-side resolution, not client-side):**
+1. Client submits `{ id_number, password }` to the server's login route — never talks to Supabase directly, per the existing architecture.
+2. The server (business logic layer) looks up which `email` corresponds to that `id_number` in the `users` table.
+3. The server then calls Supabase Auth's sign-in with that resolved `email` + the submitted `password`.
+4. Supabase Auth verifies the password and returns a session as normal.
+
+This keeps the "client never talks to Supabase directly" rule intact — the ID-to-email resolution is just one more repository lookup before the existing auth call, not a new architectural exception.
+
+**UI implication:** the login screen's default/primary field is labeled "Student or Staff ID" (matching the Stitch mockup), with a secondary link/toggle such as "Log in with email instead" for the alternative path. Both paths ultimately call the same server-side login logic described above.
+
+**Registration:** still collects a real email (required, for Supabase Auth) alongside the `id_number`, name, and password — the student fills in both fields once at signup, then only needs their ID number for every login afterward.
 
 ---
 
@@ -242,7 +263,7 @@ When implementing any screen from the Stitch exports (see above), start from the
 
 Build in roughly this order (mirrors the Agile sprint plan from the project's methodology chapter):
 
-1. Auth: registration + login (Supabase Auth), role assignment
+1. Auth: registration + login (Supabase Auth), role assignment — login uses ID number by default per the "Authentication: ID-Based Login" section above, with email as a fallback
 2. Student: submit a maintenance request (category, description, optional photo)
 3. Request lifecycle + status field on `maintenance_requests`
 4. Administrator: view incoming requests, assign to technician

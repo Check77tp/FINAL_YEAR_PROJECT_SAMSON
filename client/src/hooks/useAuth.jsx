@@ -23,16 +23,16 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false));
   }, []);
 
-  async function login(email, password) {
-    const { session, user: profile } = await loginRequest(email, password);
+  async function login({ idNumber, email, password }) {
+    const { session, user: profile } = await loginRequest({ idNumber, email, password });
     localStorage.setItem('access_token', session.access_token);
     localStorage.setItem('refresh_token', session.refresh_token);
     setUser(profile);
     return profile;
   }
 
-  async function register(name, email, password) {
-    return registerRequest(name, email, password);
+  async function register({ name, email, idNumber, password }) {
+    return registerRequest({ name, email, idNumber, password });
   }
 
   function logout() {

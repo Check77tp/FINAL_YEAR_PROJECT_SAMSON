@@ -13,7 +13,7 @@ function httpError(message, statusCode) {
 // see the login_unza_maintenance design ("Sign up as Student"). Technician
 // and administrator accounts are provisioned separately by an administrator,
 // not through this open endpoint.
-export async function registerStudent({ name, email, password }) {
+export async function registerStudent({ name, email, idNumber, password }) {
   const { data: authData, error: authError } = await supabase.auth.admin.createUser({
     email,
     password,
@@ -29,21 +29,45 @@ export async function registerStudent({ name, email, password }) {
       userId: authData.user.id,
       name,
       email,
+      idNumber,
       role: 'student',
     });
   } catch (profileError) {
     // Compensating action: don't leave an orphaned auth.users row if the
-    // profile insert fails (e.g. duplicate email at the table level).
+    // profile insert fails (e.g. duplicate email/ID number at the table level).
     await supabase.auth.admin.deleteUser(authData.user.id);
-    throw httpError('Could not create user profile', 400);
+    const message =
+      profileError.code === '23505'
+        ? 'Email or Student/Staff ID is already registered'
+        : 'Could not create user profile';
+    throw httpError(message, 400);
   }
 }
 
-export async function login({ email, password }) {
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+// Per CLAUDE.md "Authentication: ID-Based Login": the client sends either an
+// ID number (default/primary field) or an email (fallback). The ID number is
+// resolved to an email here, server-side, before calling Supabase Auth — the
+// client never talks to Supabase directly and never needs to know the email
+// exists behind the ID number.
+export async function login({ idNumber, email, password }) {
+  let resolvedEmail = email;
+  let invalidCredentialsMessage = 'Invalid email or password';
+
+  if (idNumber) {
+    invalidCredentialsMessage = 'Invalid ID number or password';
+    resolvedEmail = await usersRepository.findEmailByIdNumber(idNumber);
+    if (!resolvedEmail) {
+      throw httpError(invalidCredentialsMessage, 401);
+    }
+  }
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: resolvedEmail,
+    password,
+  });
 
   if (error) {
-    throw httpError('Invalid email or password', 401);
+    throw httpError(invalidCredentialsMessage, 401);
   }
 
   const profile = await usersRepository.findUserProfileById(data.user.id);

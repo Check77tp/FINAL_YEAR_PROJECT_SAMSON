@@ -12,10 +12,15 @@ function isValidEmail(email) {
 
 router.post('/register', async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, id_number: idNumber } = req.body;
 
     if (!name || !name.trim()) {
       return res.status(400).json({ status: 'error', message: 'Name is required' });
+    }
+    if (!idNumber || !String(idNumber).trim()) {
+      return res
+        .status(400)
+        .json({ status: 'error', message: 'Student or Staff ID is required' });
     }
     if (!isValidEmail(email)) {
       return res.status(400).json({ status: 'error', message: 'A valid email is required' });
@@ -26,7 +31,12 @@ router.post('/register', async (req, res, next) => {
         .json({ status: 'error', message: 'Password must be at least 8 characters' });
     }
 
-    const profile = await authService.registerStudent({ name: name.trim(), email, password });
+    const profile = await authService.registerStudent({
+      name: name.trim(),
+      email,
+      idNumber: String(idNumber).trim(),
+      password,
+    });
     res.status(201).json({ status: 'ok', user: profile });
   } catch (err) {
     next(err);
@@ -35,15 +45,23 @@ router.post('/register', async (req, res, next) => {
 
 router.post('/login', async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { id_number: idNumber, email, password } = req.body;
 
-    if (!isValidEmail(email) || !password) {
+    if (!password) {
+      return res.status(400).json({ status: 'error', message: 'Password is required' });
+    }
+    if (!idNumber && !email) {
       return res
         .status(400)
-        .json({ status: 'error', message: 'Email and password are required' });
+        .json({ status: 'error', message: 'Student/Staff ID or email is required' });
+    }
+    // Email format is only validated on the fallback path — the ID number
+    // path doesn't require (or receive) an email from the client at all.
+    if (!idNumber && !isValidEmail(email)) {
+      return res.status(400).json({ status: 'error', message: 'A valid email is required' });
     }
 
-    const result = await authService.login({ email, password });
+    const result = await authService.login({ idNumber, email, password });
     res.status(200).json({ status: 'ok', ...result });
   } catch (err) {
     next(err);

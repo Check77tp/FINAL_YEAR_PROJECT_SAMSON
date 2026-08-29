@@ -103,6 +103,19 @@
   cursor: pointer;
 }
 
+.login-page-toggle-method {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-primary-brand);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .login-page-error {
   color: var(--color-error);
   font-size: var(--font-size-body-sm);
