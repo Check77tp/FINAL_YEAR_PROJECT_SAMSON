@@ -14,3 +14,18 @@ if (!supabaseUrl || !supabaseServiceKey) {
 // Service role key is used because the server enforces access control itself
 // (routes/services), with RLS policies as a second line of defense.
 export const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+// A throwaway client for anything under supabase.auth.* that verifies a USER
+// (signInWithPassword, getUser, etc.) — never the shared `supabase` client
+// above. supabase-js mutates a client's own session after calls like
+// signInWithPassword(), which then swaps that SAME client's outgoing
+// Authorization header from the service role key to the signed-in user's own
+// JWT for every later request — silently downgrading every subsequent
+// service-role table query, for every user, until the next sign-in
+// overwrites it again. A fresh, disposable client per call keeps that
+// mutation from ever touching the shared admin client.
+export function createAuthClient() {
+  return createClient(supabaseUrl, supabaseServiceKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+}

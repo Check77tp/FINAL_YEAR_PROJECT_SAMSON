@@ -59,6 +59,15 @@ create table public.status_history (
 -- case a future code path queries Supabase with a user-scoped key/JWT.
 -- ---------------------------------------------------------------------------
 
+-- RLS bypass and table-level GRANTs are separate things in Postgres — the
+-- service role still needs standard privileges on these tables, or every
+-- query from the server fails with "permission denied for table ..." even
+-- though RLS itself would have allowed it.
+grant all on all tables in schema public to service_role;
+grant all on all sequences in schema public to service_role;
+alter default privileges in schema public grant all on tables to service_role;
+alter default privileges in schema public grant all on sequences to service_role;
+
 alter table public.users enable row level security;
 alter table public.categories enable row level security;
 alter table public.maintenance_requests enable row level security;

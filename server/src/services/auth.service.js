@@ -1,6 +1,6 @@
 // Business logic layer for authentication. Framework-agnostic — no req/res
 // objects here, so this is unit-testable in isolation.
-import { supabase } from '../config/supabaseClient.js';
+import { supabase, createAuthClient } from '../config/supabaseClient.js';
 import * as usersRepository from '../repositories/users.repository.js';
 
 function httpError(message, statusCode) {
@@ -36,6 +36,7 @@ export async function registerStudent({ name, email, idNumber, password }) {
     // Compensating action: don't leave an orphaned auth.users row if the
     // profile insert fails (e.g. duplicate email/ID number at the table level).
     await supabase.auth.admin.deleteUser(authData.user.id);
+    console.error('Profile insert failed during registration:', profileError);
     const message =
       profileError.code === '23505'
         ? 'Email or Student/Staff ID is already registered'
@@ -61,7 +62,7 @@ export async function login({ idNumber, email, password }) {
     }
   }
 
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await createAuthClient().auth.signInWithPassword({
     email: resolvedEmail,
     password,
   });
@@ -83,7 +84,7 @@ export async function login({ idNumber, email, password }) {
 }
 
 export async function verifyToken(accessToken) {
-  const { data, error } = await supabase.auth.getUser(accessToken);
+  const { data, error } = await createAuthClient().auth.getUser(accessToken);
 
   if (error || !data.user) {
     throw httpError('Invalid or expired token', 401);
