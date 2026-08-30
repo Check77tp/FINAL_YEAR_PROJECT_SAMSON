@@ -1,8 +1,9 @@
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import './Home.css';
 
 // Placeholder landing page — confirms authentication works end-to-end.
-// Replace with the real role-specific dashboards (checklist items 2, 4, 5).
+// Replace with the real role-specific dashboards (checklist items 4, 5).
 function Home() {
   const { user, logout } = useAuth();
 
@@ -14,6 +15,11 @@ function Home() {
         The {user?.role} dashboard hasn&rsquo;t been built yet — this page just confirms
         registration, login, and role assignment are working end-to-end.
       </p>
+      {user?.role === 'student' && (
+        <Link to="/requests" className="home-page-link">
+          View My Requests
+        </Link>
+      )}
       <button type="button" className="home-page-logout" onClick={logout}>
         Log Out
       </button>

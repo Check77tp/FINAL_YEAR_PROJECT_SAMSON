@@ -30,6 +30,14 @@
   color: var(--color-on-surface-variant);
 }
 
+.home-page-link {
+  margin-top: var(--spacing-sm);
+  color: var(--color-primary-brand);
+  font-size: var(--font-size-body-md);
+  font-weight: var(--font-weight-label-md);
+  text-decoration: none;
+}
+
 .home-page-logout {
   margin-top: var(--spacing-sm);
   padding: 12px var(--spacing-md);

@@ -71,3 +71,45 @@ export function GraduationCapIcon(props) {
     </svg>
   );
 }
+
+export function DropletIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <path d="M12 2.5s7 7.6 7 12.2a7 7 0 0 1-14 0c0-4.6 7-12.2 7-12.2Z" />
+    </svg>
+  );
+}
+
+export function BoltIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" />
+    </svg>
+  );
+}
+
+export function ArmchairIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <path d="M5 11V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4" />
+      <path d="M4 11h16a1 1 0 0 1 1 1v3a2 2 0 0 1-2 2v3M20 20v-3" />
+      <path d="M4 20v-3a2 2 0 0 1-1-1v-3a1 1 0 0 1 1-1M4 20v-3" />
+    </svg>
+  );
+}
+
+export function WrenchIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.8 2.8-2-2 2.8-2.8Z" />
+    </svg>
+  );
+}
+
+export function PlusIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}

@@ -71,9 +71,20 @@
   --color-error-container: #ffdad6;
   --color-on-error-container: #93000a;
 
-  /* ---- Colors: status tints (badges, timeline nodes) ---- */
+  /* ---- Colors: status tints (badges, timeline nodes) ----
+     Low-saturation background + high-saturation text, per
+     academic_infrastructure_framework.md's "Status Badges" guidance. One
+     pair per maintenance_requests.status enum value. */
+  --color-status-open-bg: #e5eadf;
+  --color-status-open-text: #40493d;
+  --color-status-assigned-bg: #dbeafe;
+  --color-status-assigned-text: #1d4ed8;
   --color-status-in-progress-bg: #fef3c7;
   --color-status-in-progress-text: #b45309;
+  --color-status-resolved-bg: #d1fae5;
+  --color-status-resolved-text: #047857;
+  --color-status-closed-bg: #e5e7eb;
+  --color-status-closed-text: #374151;
   --color-status-completed: #10b981;
   --color-nav-active-bg: #e8f5e9;
 

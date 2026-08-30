@@ -5,6 +5,7 @@ import morgan from 'morgan';
 
 import healthRoutes from './src/routes/health.routes.js';
 import authRoutes from './src/routes/auth.routes.js';
+import requestsRoutes from './src/routes/requests.routes.js';
 import { errorHandler } from './src/middleware/errorHandler.js';
 import { PORT, NODE_ENV } from './src/config/env.js';
 
@@ -16,9 +17,9 @@ app.use(morgan(NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/requests', requestsRoutes);
 
-// Placeholder for future routers (requests, categories, assignments...)
-// app.use('/api/requests', requestRoutes);
+// Placeholder for future routers (categories, assignments...)
 
 app.use(errorHandler);
 
