@@ -27,3 +27,54 @@ export async function findRequestsByStudentId(studentId) {
   if (error) throw error;
   return data;
 }
+
+export async function findRequestById(requestId) {
+  const { data, error } = await supabase
+    .from('maintenance_requests')
+    .select('request_id, student_id, category_id, status, created_at')
+    .eq('request_id', requestId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateRequestStatus(requestId, newStatus) {
+  const { error } = await supabase
+    .from('maintenance_requests')
+    .update({ status: newStatus })
+    .eq('request_id', requestId);
+
+  if (error) throw error;
+}
+
+export async function insertStatusHistory({ requestId, previousStatus, newStatus }) {
+  const { error } = await supabase
+    .from('status_history')
+    .insert({ request_id: requestId, previous_status: previousStatus, new_status: newStatus });
+
+  if (error) throw error;
+}
+
+export async function insertTechnicianAssignment({ requestId, technicianId }) {
+  const { error } = await supabase
+    .from('technician_assignments')
+    .insert({ request_id: requestId, technician_id: technicianId });
+
+  if (error) throw error;
+}
+
+// A request is assigned once today, but the schema allows one-to-many, so
+// the most recent row is treated as the current assignment.
+export async function findCurrentAssignment(requestId) {
+  const { data, error } = await supabase
+    .from('technician_assignments')
+    .select('technician_id, assigned_at')
+    .eq('request_id', requestId)
+    .order('assigned_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+}

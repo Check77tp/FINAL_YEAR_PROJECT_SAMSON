@@ -2,12 +2,7 @@
 // objects here, so this is unit-testable in isolation.
 import { supabase, createAuthClient } from '../config/supabaseClient.js';
 import * as usersRepository from '../repositories/users.repository.js';
-
-function httpError(message, statusCode) {
-  const err = new Error(message);
-  err.statusCode = statusCode;
-  return err;
-}
+import { httpError } from '../utils/httpError.js';
 
 // Public self-registration is intentionally limited to the student role —
 // see the login_unza_maintenance design ("Sign up as Student"). Technician
