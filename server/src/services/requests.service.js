@@ -155,6 +155,15 @@ export async function createRequest({ studentId, categoryId, description, photoD
 
   try {
     const row = await requestsRepository.insertRequest({ studentId, categoryId, description, photoUrl });
+    // Every request needs a real status_history row from the moment it
+    // exists, not just a "Submitted" entry synthesized for display from
+    // created_at — item 8's analytics (e.g. resolution time) need an actual
+    // queryable 'open' timestamp to measure from.
+    await requestsRepository.insertStatusHistory({
+      requestId: row.request_id,
+      previousStatus: null,
+      newStatus: 'open',
+    });
     return mapRequestRow(row);
   } catch (err) {
     // Postgres foreign_key_violation — categoryId didn't match a real row.

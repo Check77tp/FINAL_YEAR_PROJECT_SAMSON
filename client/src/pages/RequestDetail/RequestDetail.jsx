@@ -123,7 +123,7 @@ function RequestDetail() {
 
       <section className="request-detail-section">
         <h2 className="request-detail-section-title">Status Timeline</h2>
-        <RequestTimeline createdAt={request.createdAt} history={request.history} />
+        <RequestTimeline history={request.history} />
       </section>
     </main>
   );

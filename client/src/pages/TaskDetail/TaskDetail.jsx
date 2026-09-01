@@ -107,7 +107,7 @@ function TaskDetail() {
 
       <section className="task-detail-section">
         <h2 className="task-detail-section-title">Progress Timeline</h2>
-        <RequestTimeline createdAt={request.createdAt} history={request.history} />
+        <RequestTimeline history={request.history} />
       </section>
 
       <section className="task-detail-section task-detail-actions">

@@ -2,12 +2,14 @@
 // Ticket Lifecycle"). Repositories are mocked so this tests the service
 // layer in isolation, per the layered-architecture testing expectations.
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { isValidTransition, assignTechnician, updateRequestStatus } from './requests.service.js';
+import { isValidTransition, assignTechnician, updateRequestStatus, createRequest } from './requests.service.js';
 import * as requestsRepository from '../repositories/requests.repository.js';
 import * as usersRepository from '../repositories/users.repository.js';
+import * as storageRepository from '../repositories/storage.repository.js';
 
 vi.mock('../repositories/requests.repository.js');
 vi.mock('../repositories/users.repository.js');
+vi.mock('../repositories/storage.repository.js');
 
 describe('isValidTransition', () => {
   it('allows each forward step in the lifecycle', () => {
@@ -183,5 +185,56 @@ describe('updateRequestStatus', () => {
 
     expect(requestsRepository.findCurrentAssignment).not.toHaveBeenCalled();
     expect(result).toEqual({ requestId: 1, status: 'resolved' });
+  });
+});
+
+describe('createRequest', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('logs a real status_history row for the initial "open" status, not just a display-time synthesis', async () => {
+    requestsRepository.insertRequest.mockResolvedValue({ request_id: 1, status: 'open' });
+
+    await createRequest({ studentId: 'student-1', categoryId: 1, description: 'Leaking tap' });
+
+    expect(requestsRepository.insertStatusHistory).toHaveBeenCalledWith({
+      requestId: 1,
+      previousStatus: null,
+      newStatus: 'open',
+    });
+  });
+
+  it('rejects an invalid categoryId via the foreign-key-violation error code', async () => {
+    const fkError = new Error('violates foreign key constraint');
+    fkError.code = '23503';
+    requestsRepository.insertRequest.mockRejectedValue(fkError);
+
+    await expect(
+      createRequest({ studentId: 'student-1', categoryId: 999, description: 'Leaking tap' })
+    ).rejects.toMatchObject({ statusCode: 400 });
+    expect(requestsRepository.insertStatusHistory).not.toHaveBeenCalled();
+  });
+
+  it('uploads the photo before inserting when one is provided', async () => {
+    storageRepository.uploadRequestPhoto.mockResolvedValue('https://example.com/photo.png');
+    requestsRepository.insertRequest.mockResolvedValue({ request_id: 1, status: 'open' });
+
+    const tinyPngBase64 =
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+
+    await createRequest({
+      studentId: 'student-1',
+      categoryId: 1,
+      description: 'Leaking tap',
+      photoDataUrl: `data:image/png;base64,${tinyPngBase64}`,
+    });
+
+    expect(storageRepository.uploadRequestPhoto).toHaveBeenCalledWith(
+      expect.objectContaining({ studentId: 'student-1', contentType: 'image/png', extension: 'png' })
+    );
+    expect(requestsRepository.insertRequest).toHaveBeenCalledWith(
+      expect.objectContaining({ photoUrl: 'https://example.com/photo.png' })
+    );
   });
 });

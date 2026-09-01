@@ -2,17 +2,15 @@ import { STATUS_LABELS, formatDateTime } from '../utils/requestFormat';
 import './RequestTimeline.css';
 
 // Shared by the technician Task Detail and student Request Detail pages, so
-// both draw the same real status_history data the same way. Synthesizes the
-// initial "Submitted" step from created_at, since status_history only logs
-// the transitions that happen after that point.
-function RequestTimeline({ createdAt, history }) {
-  const steps = [
-    { label: 'Submitted', at: createdAt },
-    ...history.map((entry) => ({
-      label: STATUS_LABELS[entry.newStatus] || entry.newStatus,
-      at: entry.changedAt,
-    })),
-  ];
+// both draw the same real status_history data the same way — including the
+// initial submission, which is a real row (previous_status: null,
+// new_status: 'open') written at request-creation time, not synthesized
+// here for display. One source of truth for the whole timeline.
+function RequestTimeline({ history }) {
+  const steps = history.map((entry) => ({
+    label: entry.previousStatus === null ? 'Submitted' : STATUS_LABELS[entry.newStatus] || entry.newStatus,
+    at: entry.changedAt,
+  }));
 
   return (
     <ol className="request-timeline">
