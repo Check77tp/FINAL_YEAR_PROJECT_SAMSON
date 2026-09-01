@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getRequestDetail, updateRequestStatus } from '../../services/requestsService';
-import { STATUS_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
+import { STATUS_LABELS, categoryIcon } from '../../utils/requestFormat';
+import RequestTimeline from '../../components/RequestTimeline';
 import './TaskDetail.css';
 
 // The lifecycle only ever moves one step forward (see CLAUDE.md's Core
@@ -67,16 +68,6 @@ function TaskDetail() {
   const Icon = categoryIcon(request.category?.name);
   const action = NEXT_ACTION[request.status];
 
-  // Synthesized from created_at, since status_history only logs the
-  // transitions after it — not the original submission itself.
-  const timeline = [
-    { label: 'Submitted', at: request.createdAt },
-    ...request.history.map((entry) => ({
-      label: STATUS_LABELS[entry.newStatus] || entry.newStatus,
-      at: entry.changedAt,
-    })),
-  ];
-
   return (
     <main className="task-detail">
       <Link to="/tasks" className="task-detail-back">
@@ -116,21 +107,7 @@ function TaskDetail() {
 
       <section className="task-detail-section">
         <h2 className="task-detail-section-title">Progress Timeline</h2>
-        <ol className="task-detail-timeline">
-          {timeline.map((step, index) => (
-            <li key={`${step.label}-${step.at}`} className="task-detail-timeline-step">
-              <span
-                className={`task-detail-timeline-dot ${
-                  index === timeline.length - 1 ? 'task-detail-timeline-dot-current' : ''
-                }`}
-              />
-              <div>
-                <p className="task-detail-timeline-label">{step.label}</p>
-                <p className="task-detail-timeline-date">{formatDate(step.at)}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
+        <RequestTimeline createdAt={request.createdAt} history={request.history} />
       </section>
 
       <section className="task-detail-section task-detail-actions">

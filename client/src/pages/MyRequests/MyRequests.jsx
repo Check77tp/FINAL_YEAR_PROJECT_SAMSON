@@ -92,6 +92,7 @@ function MyRequests() {
             <span>Date Reported</span>
             <span>Assigned Tech</span>
             <span>Status</span>
+            <span>Action</span>
           </div>
 
           <ul className="my-requests-list">
@@ -112,6 +113,9 @@ function MyRequests() {
                   <span className="my-requests-row-tech">
                     {request.technician ? request.technician.name : 'Awaiting assignment'}
                   </span>
+                  <Link to={`/requests/${request.requestId}`} className="my-requests-row-link">
+                    View Details
+                  </Link>
                 </li>
               );
             })}

@@ -129,52 +129,6 @@
   color: var(--color-on-surface-variant);
 }
 
-.task-detail-timeline {
-  list-style: none;
-}
-
-.task-detail-timeline-step {
-  display: flex;
-  gap: var(--spacing-xs);
-  padding-bottom: var(--spacing-sm);
-  position: relative;
-}
-
-.task-detail-timeline-step:not(:last-child)::before {
-  content: '';
-  position: absolute;
-  left: 5px;
-  top: 14px;
-  bottom: 0;
-  width: 2px;
-  background: var(--color-divider);
-}
-
-.task-detail-timeline-dot {
-  flex-shrink: 0;
-  width: 12px;
-  height: 12px;
-  margin-top: 4px;
-  border-radius: 50%;
-  background: var(--color-primary-brand);
-}
-
-.task-detail-timeline-dot-current {
-  background: var(--color-status-in-progress-text);
-  box-shadow: 0 0 0 3px var(--color-status-in-progress-bg);
-}
-
-.task-detail-timeline-label {
-  font-size: var(--font-size-body-sm);
-  font-weight: var(--font-weight-label-md);
-  color: var(--color-on-surface);
-}
-
-.task-detail-timeline-date {
-  font-size: var(--font-size-label-sm);
-  color: var(--color-on-surface-variant);
-}
-
 .task-detail-actions {
   text-align: center;
 }

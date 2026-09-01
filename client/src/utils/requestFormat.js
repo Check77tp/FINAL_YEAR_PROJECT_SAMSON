@@ -25,3 +25,18 @@ export function formatDate(iso) {
     year: 'numeric',
   });
 }
+
+// Postgres sends timestamptz values as ISO strings with a UTC offset; `Date`
+// parses that into an absolute instant, and toLocaleString() below renders
+// it in whatever timezone the browser itself is set to — no manual
+// conversion needed. Used where the exact time of a transition matters, not
+// just the day (e.g. the status timeline), unlike formatDate() above.
+export function formatDateTime(iso) {
+  return new Date(iso).toLocaleString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+}
