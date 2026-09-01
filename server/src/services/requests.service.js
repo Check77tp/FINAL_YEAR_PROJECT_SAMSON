@@ -98,27 +98,75 @@ export async function updateRequestStatus({ requestId, newStatus, actingUser }) 
   return { requestId, status: newStatus };
 }
 
+function mapRequestRow(row) {
+  // A request is assigned once today, but technician_assignments is
+  // modeled as one-to-many, so take the most recent row defensively.
+  const assignments = row.technician_assignments || [];
+  const latestAssignment = assignments
+    .slice()
+    .sort((a, b) => new Date(b.assigned_at) - new Date(a.assigned_at))[0];
+
+  return {
+    requestId: row.request_id,
+    description: row.description,
+    photoUrl: row.photo_url,
+    status: row.status,
+    createdAt: row.created_at,
+    category: row.category ? { id: row.category.category_id, name: row.category.name } : null,
+    student: row.student
+      ? { id: row.student.user_id, name: row.student.name, idNumber: row.student.id_number }
+      : undefined,
+    technician: latestAssignment?.technician
+      ? { id: latestAssignment.technician.user_id, name: latestAssignment.technician.name }
+      : null,
+  };
+}
+
 export async function listStudentRequests(studentId) {
   const rows = await requestsRepository.findRequestsByStudentId(studentId);
+  return rows.map(mapRequestRow);
+}
 
-  return rows.map((row) => {
-    // A request is assigned once today, but technician_assignments is
-    // modeled as one-to-many, so take the most recent row defensively.
-    const assignments = row.technician_assignments || [];
-    const latestAssignment = assignments
-      .slice()
-      .sort((a, b) => new Date(b.assigned_at) - new Date(a.assigned_at))[0];
+// Administrator action: every request, any status, with student details —
+// see CLAUDE.md role rules ("administrator... views all requests").
+export async function listAllRequests() {
+  const rows = await requestsRepository.findAllRequests();
+  return rows.map(mapRequestRow);
+}
 
-    return {
-      requestId: row.request_id,
-      description: row.description,
-      photoUrl: row.photo_url,
-      status: row.status,
-      createdAt: row.created_at,
-      category: row.category ? { id: row.category.category_id, name: row.category.name } : null,
-      technician: latestAssignment?.technician
-        ? { id: latestAssignment.technician.user_id, name: latestAssignment.technician.name }
-        : null,
-    };
-  });
+// Technician action: only requests currently assigned to them.
+export async function listAssignedRequests(technicianId) {
+  const rows = await requestsRepository.findRequestsAssignedToTechnician(technicianId);
+  return rows.map(mapRequestRow);
+}
+
+// Single-request detail with its status_history timeline. Access: a student
+// may view only their own request; a technician only one assigned to them;
+// an administrator any request.
+export async function getRequestDetail({ requestId, actingUser }) {
+  const row = await requestsRepository.findRequestDetailById(requestId);
+  if (!row) {
+    throw httpError('Request not found', 404);
+  }
+
+  const assignments = row.technician_assignments || [];
+  const isAssignedToActingUser = assignments.some((a) => a.technician_id === actingUser.user_id);
+
+  if (actingUser.role === 'student' && row.student_id !== actingUser.user_id) {
+    throw httpError('You do not have access to this request', 403);
+  }
+  if (actingUser.role === 'technician' && !isAssignedToActingUser) {
+    throw httpError('You are not assigned to this request', 403);
+  }
+
+  const history = (row.status_history || [])
+    .slice()
+    .sort((a, b) => new Date(a.changed_at) - new Date(b.changed_at))
+    .map((h) => ({
+      previousStatus: h.previous_status,
+      newStatus: h.new_status,
+      changedAt: h.changed_at,
+    }));
+
+  return { ...mapRequestRow(row), history };
 }

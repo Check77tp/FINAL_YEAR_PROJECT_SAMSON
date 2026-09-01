@@ -26,6 +26,17 @@ export async function findUserProfileById(userId) {
   return data;
 }
 
+export async function findUsersByRole(role) {
+  const { data, error } = await supabase
+    .from('users')
+    .select(PROFILE_COLUMNS)
+    .eq('role', role)
+    .order('name', { ascending: true });
+
+  if (error) throw error;
+  return data;
+}
+
 // Resolves a student/staff ID number to its account email, for the
 // server-side ID-based login flow (see CLAUDE.md "Authentication: ID-Based Login").
 export async function findEmailByIdNumber(idNumber) {

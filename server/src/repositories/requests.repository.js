@@ -13,6 +13,7 @@ const SELECT_WITH_RELATIONS = `
   category:categories ( category_id, name ),
   technician_assignments (
     assigned_at,
+    technician_id,
     technician:users ( user_id, name )
   )
 `;
@@ -28,10 +29,66 @@ export async function findRequestsByStudentId(studentId) {
   return data;
 }
 
+const SELECT_WITH_RELATIONS_AND_STUDENT = `
+  ${SELECT_WITH_RELATIONS},
+  student:users ( user_id, name, id_number )
+`;
+
+export async function findAllRequests() {
+  const { data, error } = await supabase
+    .from('maintenance_requests')
+    .select(SELECT_WITH_RELATIONS_AND_STUDENT)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data;
+}
+
 export async function findRequestById(requestId) {
   const { data, error } = await supabase
     .from('maintenance_requests')
     .select('request_id, student_id, category_id, status, created_at')
+    .eq('request_id', requestId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+}
+
+// technician_assignments!inner filters the parent rows down to only those
+// with a matching child row, rather than embedding-and-filtering client-side.
+const SELECT_ASSIGNED_TO_TECHNICIAN = `
+  request_id,
+  description,
+  photo_url,
+  status,
+  created_at,
+  category:categories ( category_id, name ),
+  student:users ( user_id, name, id_number ),
+  technician_assignments!inner ( assigned_at, technician_id, technician:users ( user_id, name ) )
+`;
+
+export async function findRequestsAssignedToTechnician(technicianId) {
+  const { data, error } = await supabase
+    .from('maintenance_requests')
+    .select(SELECT_ASSIGNED_TO_TECHNICIAN)
+    .eq('technician_assignments.technician_id', technicianId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data;
+}
+
+const SELECT_DETAIL = `
+  ${SELECT_WITH_RELATIONS_AND_STUDENT},
+  student_id,
+  status_history ( history_id, previous_status, new_status, changed_at )
+`;
+
+export async function findRequestDetailById(requestId) {
+  const { data, error } = await supabase
+    .from('maintenance_requests')
+    .select(SELECT_DETAIL)
     .eq('request_id', requestId)
     .maybeSingle();
 

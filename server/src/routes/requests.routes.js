@@ -18,13 +18,48 @@ function parseRequestId(rawId, res) {
   return requestId;
 }
 
-// A student's own requests only — see CLAUDE.md's role rules. Technician
-// and administrator views need different queries (assigned-to-me / all) and
-// aren't built yet.
+// A student's own requests only — see CLAUDE.md's role rules.
 router.get('/mine', authenticate, requireRole('student'), async (req, res, next) => {
   try {
     const requests = await requestsService.listStudentRequests(req.user.user_id);
     res.status(200).json({ status: 'ok', requests });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Administrator: every request, any status, with student details attached
+// (CLAUDE.md: "administrator... views all requests").
+router.get('/', authenticate, requireRole('administrator'), async (req, res, next) => {
+  try {
+    const requests = await requestsService.listAllRequests();
+    res.status(200).json({ status: 'ok', requests });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// A technician's own assigned requests only.
+router.get('/assigned-to-me', authenticate, requireRole('technician'), async (req, res, next) => {
+  try {
+    const requests = await requestsService.listAssignedRequests(req.user.user_id);
+    res.status(200).json({ status: 'ok', requests });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Single-request detail + status_history timeline. Access is enforced in the
+// service layer (student: own only, technician: assigned only, admin: any) —
+// this literal-path route must stay above it, or Express would try to match
+// "assigned-to-me" as a :requestId.
+router.get('/:requestId', authenticate, async (req, res, next) => {
+  try {
+    const requestId = parseRequestId(req.params.requestId, res);
+    if (requestId === null) return;
+
+    const request = await requestsService.getRequestDetail({ requestId, actingUser: req.user });
+    res.status(200).json({ status: 'ok', request });
   } catch (err) {
     next(err);
   }

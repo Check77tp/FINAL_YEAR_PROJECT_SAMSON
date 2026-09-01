@@ -1,0 +1,308 @@
+/* 1. Default styles = mobile (375px canvas, must not break down to 320px) */
+.manage-requests {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--margin-mobile);
+}
+
+.manage-requests-header {
+  margin-bottom: var(--spacing-md);
+}
+
+.manage-requests-title {
+  font-size: var(--font-size-headline-sm-mobile);
+  line-height: var(--line-height-headline-sm-mobile);
+  font-weight: var(--font-weight-headline-sm-mobile);
+  color: var(--color-on-surface);
+}
+
+.manage-requests-subtitle {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.manage-requests-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: var(--spacing-md);
+  background: var(--color-surface-container-low);
+  border-radius: var(--radius-button);
+}
+
+.manage-requests-tab {
+  padding: 8px var(--spacing-sm);
+  border: none;
+  border-radius: var(--radius-button);
+  background: transparent;
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.manage-requests-tab-selected {
+  background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+  box-shadow: var(--shadow-level-1);
+}
+
+.manage-requests-error {
+  color: var(--color-error);
+  font-size: var(--font-size-body-sm);
+}
+
+.manage-requests-loading {
+  color: var(--color-on-surface-variant);
+  font-size: var(--font-size-body-sm);
+}
+
+.manage-requests-empty {
+  padding: var(--spacing-lg) var(--spacing-md);
+  text-align: center;
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+}
+
+.manage-requests-empty-title {
+  font-size: var(--font-size-body-lg);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-on-surface);
+}
+
+.manage-requests-empty-note {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.manage-requests-list-header {
+  display: none;
+}
+
+.manage-requests-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.manage-requests-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'id status'
+    'student student'
+    'category category'
+    'assign assign';
+  gap: var(--spacing-xs) var(--spacing-sm);
+  align-items: center;
+  padding: var(--spacing-sm);
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-level-1);
+}
+
+.manage-requests-row-id {
+  grid-area: id;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.manage-requests-row-student {
+  grid-area: student;
+  display: flex;
+  flex-direction: column;
+}
+
+.manage-requests-row-student-name {
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-on-surface);
+}
+
+.manage-requests-row-student-idnumber {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.manage-requests-row-category {
+  grid-area: category;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface);
+}
+
+.manage-requests-row-category svg {
+  color: var(--color-primary-brand);
+}
+
+.manage-requests-row-assign {
+  grid-area: assign;
+}
+
+.manage-requests-assign-control {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.manage-requests-assign-control select {
+  flex: 1;
+  min-width: 0;
+  padding: 8px var(--spacing-xs);
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--radius-input);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+}
+
+.manage-requests-assign-button {
+  padding: 8px var(--spacing-sm);
+  border: none;
+  border-radius: var(--radius-button);
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.manage-requests-assign-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.manage-requests-row-error {
+  margin-top: 4px;
+  color: var(--color-error);
+  font-size: var(--font-size-label-sm);
+}
+
+.manage-requests-row-tech {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.manage-requests-status {
+  grid-area: status;
+  justify-self: end;
+  padding: 4px 12px;
+  border-radius: var(--radius-badge);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  white-space: nowrap;
+}
+
+.manage-requests-status-open {
+  background: var(--color-status-open-bg);
+  color: var(--color-status-open-text);
+}
+
+.manage-requests-status-assigned {
+  background: var(--color-status-assigned-bg);
+  color: var(--color-status-assigned-text);
+}
+
+.manage-requests-status-in_progress {
+  background: var(--color-status-in-progress-bg);
+  color: var(--color-status-in-progress-text);
+}
+
+.manage-requests-status-resolved {
+  background: var(--color-status-resolved-bg);
+  color: var(--color-status-resolved-text);
+}
+
+.manage-requests-status-closed {
+  background: var(--color-status-closed-bg);
+  color: var(--color-status-closed-text);
+}
+
+.manage-requests-back {
+  display: inline-block;
+  margin-top: var(--spacing-lg);
+  color: var(--color-primary-brand);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  text-decoration: none;
+}
+
+/* 2. Then scale up for tablet */
+@media (min-width: 768px) {
+  .manage-requests {
+    padding: var(--spacing-lg);
+  }
+}
+
+/* 3. Then scale up for desktop: a real data table — 64px row height,
+   horizontal dividers only, first column semi-bold, per
+   academic_infrastructure_framework.md's "Data Tables" spec. */
+@media (min-width: 1280px) {
+  .manage-requests-title {
+    font-size: var(--font-size-headline-md);
+    line-height: var(--line-height-headline-md);
+    font-weight: var(--font-weight-headline-md);
+  }
+
+  .manage-requests-list-header {
+    display: grid;
+    grid-template-columns: 0.8fr 1.4fr 1fr 0.9fr 1.6fr;
+    gap: var(--spacing-sm);
+    padding: 0 var(--spacing-sm) var(--spacing-xs);
+    font-size: var(--font-size-label-sm);
+    font-weight: var(--font-weight-label-md);
+    color: var(--color-on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .manage-requests-list {
+    gap: 0;
+    background: var(--color-surface-container-lowest);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+
+  .manage-requests-row {
+    grid-template-columns: 0.8fr 1.4fr 1fr 0.9fr 1.6fr;
+    grid-template-areas: 'id student category status assign';
+    min-height: 64px;
+    padding: 0 var(--spacing-sm);
+    background: none;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid var(--color-divider);
+    box-shadow: none;
+  }
+
+  .manage-requests-row:last-child {
+    border-bottom: none;
+  }
+
+  .manage-requests-row-student {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  .manage-requests-row-student-idnumber::before {
+    content: '· ';
+  }
+
+  .manage-requests-status {
+    justify-self: start;
+  }
+}

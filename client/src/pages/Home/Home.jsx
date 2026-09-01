@@ -3,7 +3,7 @@ import { useAuth } from '../../hooks/useAuth';
 import './Home.css';
 
 // Placeholder landing page — confirms authentication works end-to-end.
-// Replace with the real role-specific dashboards (checklist items 4, 5).
+// Role-specific dashboards proper are still just this + a linked page each.
 function Home() {
   const { user, logout } = useAuth();
 
@@ -18,6 +18,16 @@ function Home() {
       {user?.role === 'student' && (
         <Link to="/requests" className="home-page-link">
           View My Requests
+        </Link>
+      )}
+      {user?.role === 'administrator' && (
+        <Link to="/manage-requests" className="home-page-link">
+          Manage Requests
+        </Link>
+      )}
+      {user?.role === 'technician' && (
+        <Link to="/tasks" className="home-page-link">
+          My Tasks
         </Link>
       )}
       <button type="button" className="home-page-logout" onClick={logout}>

@@ -1,39 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getMyRequests } from '../../services/requestsService';
-import { DropletIcon, BoltIcon, ArmchairIcon, WrenchIcon, PlusIcon } from '../../components/icons';
+import { PlusIcon } from '../../components/icons';
+import { STATUS_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
 import './MyRequests.css';
-
-const STATUS_LABELS = {
-  open: 'Open',
-  assigned: 'Assigned',
-  in_progress: 'In Progress',
-  resolved: 'Resolved',
-  closed: 'Closed',
-};
 
 // "Active" groups everything still moving through the lifecycle; "Resolved"
 // groups the two terminal states. Matches the Active/Resolved toggle in the
 // my_requests_unza_maintenance design.
 const ACTIVE_STATUSES = ['open', 'assigned', 'in_progress'];
-
-const CATEGORY_ICONS = {
-  plumbing: DropletIcon,
-  electrical: BoltIcon,
-  furniture: ArmchairIcon,
-};
-
-function categoryIcon(categoryName) {
-  return CATEGORY_ICONS[categoryName?.toLowerCase()] || WrenchIcon;
-}
-
-function formatDate(iso) {
-  return new Date(iso).toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
 
 function MyRequests() {
   const [requests, setRequests] = useState(null);
