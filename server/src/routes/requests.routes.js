@@ -18,6 +18,34 @@ function parseRequestId(rawId, res) {
   return requestId;
 }
 
+// Student: submit a new request (category, description, optional photo).
+router.post('/', authenticate, requireRole('student'), async (req, res, next) => {
+  try {
+    const { categoryId, description, photo } = req.body;
+
+    const parsedCategoryId = Number(categoryId);
+    if (!Number.isInteger(parsedCategoryId) || parsedCategoryId <= 0) {
+      return res.status(400).json({ status: 'error', message: 'A valid categoryId is required' });
+    }
+    if (typeof description !== 'string' || !description.trim()) {
+      return res.status(400).json({ status: 'error', message: 'Description is required' });
+    }
+    if (photo !== undefined && typeof photo !== 'string') {
+      return res.status(400).json({ status: 'error', message: 'Photo must be a data URL string' });
+    }
+
+    const request = await requestsService.createRequest({
+      studentId: req.user.user_id,
+      categoryId: parsedCategoryId,
+      description: description.trim(),
+      photoDataUrl: photo || null,
+    });
+    res.status(201).json({ status: 'ok', request });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // A student's own requests only — see CLAUDE.md's role rules.
 router.get('/mine', authenticate, requireRole('student'), async (req, res, next) => {
   try {

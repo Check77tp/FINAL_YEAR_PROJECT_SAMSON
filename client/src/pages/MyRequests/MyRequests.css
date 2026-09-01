@@ -36,7 +36,8 @@
   color: var(--color-on-primary);
   font-size: var(--font-size-body-sm);
   font-weight: var(--font-weight-label-md);
-  cursor: default;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .my-requests-tabs {

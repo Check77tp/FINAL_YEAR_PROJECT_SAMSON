@@ -113,3 +113,20 @@ export function PlusIcon(props) {
     </svg>
   );
 }
+
+export function CameraIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" />
+      <circle cx="12" cy="14" r="3.5" />
+    </svg>
+  );
+}
+
+export function XIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <path d="M6 6l12 12M18 6 6 18" />
+    </svg>
+  );
+}

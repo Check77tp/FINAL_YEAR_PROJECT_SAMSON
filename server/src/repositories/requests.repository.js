@@ -44,6 +44,23 @@ export async function findAllRequests() {
   return data;
 }
 
+export async function insertRequest({ studentId, categoryId, description, photoUrl }) {
+  const { data, error } = await supabase
+    .from('maintenance_requests')
+    .insert({
+      student_id: studentId,
+      category_id: categoryId,
+      description,
+      photo_url: photoUrl,
+      status: 'open',
+    })
+    .select(SELECT_WITH_RELATIONS_AND_STUDENT)
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
 export async function findRequestById(requestId) {
   const { data, error } = await supabase
     .from('maintenance_requests')

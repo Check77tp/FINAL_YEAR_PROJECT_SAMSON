@@ -9,6 +9,7 @@ import ManageRequests from './pages/ManageRequests/ManageRequests';
 import MyTasks from './pages/MyTasks/MyTasks';
 import TaskDetail from './pages/TaskDetail/TaskDetail';
 import RequestDetail from './pages/RequestDetail/RequestDetail';
+import SubmitRequest from './pages/SubmitRequest/SubmitRequest';
 
 function App() {
   return (
@@ -30,6 +31,14 @@ function App() {
             element={
               <ProtectedRoute roles={['student']}>
                 <MyRequests />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/requests/new"
+            element={
+              <ProtectedRoute roles={['student']}>
+                <SubmitRequest />
               </ProtectedRoute>
             }
           />

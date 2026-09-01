@@ -36,10 +36,10 @@ function MyRequests() {
             Track and manage your hostel maintenance reports in real-time.
           </p>
         </div>
-        <span className="my-requests-new" title="Coming soon">
+        <Link to="/requests/new" className="my-requests-new">
           <PlusIcon width={18} height={18} />
           Report New Issue
-        </span>
+        </Link>
       </header>
 
       <div className="my-requests-tabs" role="tablist">

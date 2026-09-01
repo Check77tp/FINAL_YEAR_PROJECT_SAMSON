@@ -7,21 +7,23 @@ import healthRoutes from './src/routes/health.routes.js';
 import authRoutes from './src/routes/auth.routes.js';
 import requestsRoutes from './src/routes/requests.routes.js';
 import usersRoutes from './src/routes/users.routes.js';
+import categoriesRoutes from './src/routes/categories.routes.js';
 import { errorHandler } from './src/middleware/errorHandler.js';
 import { PORT, NODE_ENV } from './src/config/env.js';
 
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+// Default 100kb limit is too small for a base64-encoded photo (up to ~5MB
+// binary, ~6.7MB once base64-encoded) riding along in the JSON body.
+app.use(express.json({ limit: '8mb' }));
 app.use(morgan(NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/requests', requestsRoutes);
 app.use('/api/users', usersRoutes);
-
-// Placeholder for future routers (categories...)
+app.use('/api/categories', categoriesRoutes);
 
 app.use(errorHandler);
 

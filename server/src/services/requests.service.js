@@ -2,7 +2,11 @@
 // req/res objects here.
 import * as requestsRepository from '../repositories/requests.repository.js';
 import * as usersRepository from '../repositories/users.repository.js';
+import * as storageRepository from '../repositories/storage.repository.js';
 import { httpError } from '../utils/httpError.js';
+
+const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+const PHOTO_DATA_URL_PATTERN = /^data:image\/(jpeg|png|webp);base64,(.+)$/;
 
 // Core Ticket Lifecycle (CLAUDE.md): Open -> Assigned -> In Progress ->
 // Resolved -> Closed. Strictly linear, one step at a time — no skipping
@@ -120,6 +124,45 @@ function mapRequestRow(row) {
       ? { id: latestAssignment.technician.user_id, name: latestAssignment.technician.name }
       : null,
   };
+}
+
+// Student action: submit a new request. Always starts life as "open" (the
+// repository hardcodes this) — the lifecycle only moves forward from there
+// via assignTechnician()/updateRequestStatus() above.
+export async function createRequest({ studentId, categoryId, description, photoDataUrl }) {
+  let photoUrl = null;
+
+  if (photoDataUrl) {
+    const match = PHOTO_DATA_URL_PATTERN.exec(photoDataUrl);
+    if (!match) {
+      throw httpError('Photo must be a JPEG, PNG, or WebP image', 400);
+    }
+
+    const [, subtype, base64Data] = match;
+    const buffer = Buffer.from(base64Data, 'base64');
+
+    if (buffer.length > MAX_PHOTO_BYTES) {
+      throw httpError('Photo must be 5MB or smaller', 400);
+    }
+
+    photoUrl = await storageRepository.uploadRequestPhoto({
+      studentId,
+      buffer,
+      contentType: `image/${subtype}`,
+      extension: subtype === 'jpeg' ? 'jpg' : subtype,
+    });
+  }
+
+  try {
+    const row = await requestsRepository.insertRequest({ studentId, categoryId, description, photoUrl });
+    return mapRequestRow(row);
+  } catch (err) {
+    // Postgres foreign_key_violation — categoryId didn't match a real row.
+    if (err.code === '23503') {
+      throw httpError('Invalid category', 400);
+    }
+    throw err;
+  }
 }
 
 export async function listStudentRequests(studentId) {

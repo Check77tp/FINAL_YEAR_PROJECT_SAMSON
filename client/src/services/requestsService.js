@@ -5,6 +5,15 @@ export async function getMyRequests() {
   return data.requests;
 }
 
+export async function createRequest({ categoryId, description, photoDataUrl }) {
+  const data = await apiPost(
+    '/requests',
+    { categoryId, description, photo: photoDataUrl || undefined },
+    { auth: true }
+  );
+  return data.request;
+}
+
 export async function getAllRequests() {
   const data = await apiGet('/requests', { auth: true });
   return data.requests;

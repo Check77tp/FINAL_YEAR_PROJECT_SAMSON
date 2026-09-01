@@ -1,0 +1,263 @@
+/* 1. Default styles = mobile (375px canvas, must not break down to 320px) —
+   a regular form page, not the split-hero exception used for Login/Register. */
+.submit-request {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: var(--margin-mobile);
+}
+
+.submit-request-header {
+  margin-bottom: var(--spacing-md);
+}
+
+.submit-request-title {
+  font-size: var(--font-size-headline-sm-mobile);
+  line-height: var(--line-height-headline-sm-mobile);
+  font-weight: var(--font-weight-headline-sm-mobile);
+  color: var(--color-on-surface);
+}
+
+.submit-request-subtitle {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.submit-request-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-level-1);
+}
+
+.submit-request-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.submit-request-label {
+  display: block;
+  font-size: var(--font-size-label-md);
+  font-weight: var(--font-weight-label-md);
+  letter-spacing: var(--letter-spacing-label-md);
+  color: var(--color-on-surface);
+  margin-bottom: var(--spacing-xs);
+}
+
+.submit-request-loading {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.submit-request-categories {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xs);
+}
+
+.submit-request-category {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: var(--spacing-sm) var(--spacing-xs);
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--radius-input);
+  background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.submit-request-category svg {
+  color: var(--color-primary-brand);
+}
+
+.submit-request-category-selected {
+  background: var(--color-nav-active-bg);
+  border-color: var(--color-primary-brand);
+}
+
+.submit-request-textarea {
+  width: 100%;
+  padding: var(--spacing-xs);
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--radius-input);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-md);
+  background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+  resize: vertical;
+}
+
+.submit-request-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary-brand);
+  box-shadow: var(--input-focus-glow);
+}
+
+.submit-request-photo-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.submit-request-photo-row .submit-request-label {
+  margin-bottom: 0;
+}
+
+.submit-request-optional {
+  padding: 2px 10px;
+  border-radius: var(--radius-badge);
+  background: var(--color-surface-container-low);
+  color: var(--color-on-surface-variant);
+  font-size: var(--font-size-label-sm);
+}
+
+.submit-request-file-input {
+  display: none;
+}
+
+.submit-request-photo-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--spacing-lg) var(--spacing-sm);
+  border: 1px dashed var(--input-border-color);
+  border-radius: var(--radius-input);
+  background: var(--color-surface-container-low);
+  color: var(--color-on-surface);
+  cursor: pointer;
+}
+
+.submit-request-photo-dropzone-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+}
+
+.submit-request-photo-dropzone-title {
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+}
+
+.submit-request-photo-dropzone-note {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.submit-request-photo-preview {
+  position: relative;
+  width: 100%;
+  max-width: 220px;
+}
+
+.submit-request-photo-preview img {
+  width: 100%;
+  border-radius: var(--radius-input);
+  display: block;
+}
+
+.submit-request-photo-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.submit-request-error {
+  color: var(--color-error);
+  font-size: var(--font-size-body-sm);
+  margin: 0;
+}
+
+.submit-request-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-xs);
+}
+
+.submit-request-submit {
+  padding: 14px var(--spacing-sm);
+  border: none;
+  border-radius: var(--radius-button);
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-md);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.submit-request-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit-request-cancel {
+  text-align: center;
+  color: var(--color-on-surface-variant);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  text-decoration: none;
+}
+
+/* 2. Then scale up for tablet */
+@media (min-width: 768px) {
+  .submit-request {
+    padding: var(--spacing-lg);
+  }
+
+  .submit-request-form {
+    padding: var(--spacing-md);
+  }
+
+  .submit-request-categories {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 3. Then scale up for desktop */
+@media (min-width: 1280px) {
+  .submit-request-title {
+    font-size: var(--font-size-headline-md);
+    line-height: var(--line-height-headline-md);
+    font-weight: var(--font-weight-headline-md);
+  }
+
+  .submit-request-actions {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .submit-request-submit {
+    padding-left: var(--spacing-lg);
+    padding-right: var(--spacing-lg);
+  }
+}
