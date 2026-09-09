@@ -1,0 +1,131 @@
+/* 1. Default styles = mobile (375px canvas, must not break down to 320px) —
+   a dashboard/data screen, standard breakpoints, not the split-hero exception. */
+.reports-analytics {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--margin-mobile);
+}
+
+.reports-analytics-header {
+  margin-bottom: var(--spacing-md);
+}
+
+.reports-analytics-title {
+  font-size: var(--font-size-headline-sm-mobile);
+  line-height: var(--line-height-headline-sm-mobile);
+  font-weight: var(--font-weight-headline-sm-mobile);
+  color: var(--color-on-surface);
+}
+
+.reports-analytics-subtitle {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.reports-analytics-error {
+  color: var(--color-error);
+  font-size: var(--font-size-body-sm);
+}
+
+.reports-analytics-loading {
+  color: var(--color-on-surface-variant);
+  font-size: var(--font-size-body-sm);
+}
+
+.reports-analytics-stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.reports-analytics-stat {
+  padding: var(--spacing-sm);
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-level-1);
+}
+
+.reports-analytics-stat-label {
+  display: block;
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.reports-analytics-stat-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-headline-md);
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.reports-analytics-charts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-sm);
+}
+
+.reports-analytics-section {
+  padding: var(--spacing-sm);
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-level-1);
+}
+
+.reports-analytics-section-title {
+  font-size: var(--font-size-body-md);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-on-surface);
+  margin-bottom: 4px;
+}
+
+.reports-analytics-section-note {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+  margin-bottom: var(--spacing-sm);
+}
+
+.reports-analytics-empty {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.reports-analytics-back {
+  display: inline-block;
+  margin-top: var(--spacing-lg);
+  color: var(--color-primary-brand);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  text-decoration: none;
+}
+
+/* 2. Then scale up for tablet */
+@media (min-width: 768px) {
+  .reports-analytics {
+    padding: var(--spacing-lg);
+  }
+
+  .reports-analytics-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 3. Then scale up for desktop */
+@media (min-width: 1280px) {
+  .reports-analytics-title {
+    font-size: var(--font-size-headline-md);
+    line-height: var(--line-height-headline-md);
+    font-weight: var(--font-weight-headline-md);
+  }
+
+  .reports-analytics-charts {
+    grid-template-columns: 1fr 1fr;
+  }
+}

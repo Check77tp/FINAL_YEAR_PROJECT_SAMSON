@@ -21,9 +21,14 @@ function Home() {
         </Link>
       )}
       {user?.role === 'administrator' && (
-        <Link to="/manage-requests" className="home-page-link">
-          Manage Requests
-        </Link>
+        <>
+          <Link to="/manage-requests" className="home-page-link">
+            Manage Requests
+          </Link>
+          <Link to="/reports" className="home-page-link">
+            Reports &amp; Analytics
+          </Link>
+        </>
       )}
       {user?.role === 'technician' && (
         <Link to="/tasks" className="home-page-link">

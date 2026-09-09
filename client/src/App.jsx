@@ -10,6 +10,7 @@ import MyTasks from './pages/MyTasks/MyTasks';
 import TaskDetail from './pages/TaskDetail/TaskDetail';
 import RequestDetail from './pages/RequestDetail/RequestDetail';
 import SubmitRequest from './pages/SubmitRequest/SubmitRequest';
+import ReportsAnalytics from './pages/ReportsAnalytics/ReportsAnalytics';
 
 function App() {
   return (
@@ -55,6 +56,14 @@ function App() {
             element={
               <ProtectedRoute roles={['administrator']}>
                 <ManageRequests />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/reports"
+            element={
+              <ProtectedRoute roles={['administrator']}>
+                <ReportsAnalytics />
               </ProtectedRoute>
             }
           />
