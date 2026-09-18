@@ -23,12 +23,17 @@ async function request(path, { method = 'GET', body, auth = false } = {}) {
   } catch {
     // fetch() itself throws (not an HTTP error response) when the request
     // never reached a server at all — no connection, DNS failure, etc.
+    // isNetworkError lets callers (e.g. the offline draft queue) tell this
+    // apart from a real validation/server error without parsing the
+    // message text.
     const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
-    throw new Error(
+    const networkError = new Error(
       offline
         ? "You're offline. Check your internet connection and try again."
         : 'Could not reach the server. It may be temporarily unavailable — please try again.'
     );
+    networkError.isNetworkError = true;
+    throw networkError;
   }
 
   const data = await response.json().catch(() => null);

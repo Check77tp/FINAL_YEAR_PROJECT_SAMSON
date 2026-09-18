@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getCategories } from '../../services/categoriesService';
 import { createRequest } from '../../services/requestsService';
+import { saveDraft } from '../../services/draftQueue';
 import { categoryIcon } from '../../utils/requestFormat';
 import { CameraIcon, XIcon } from '../../components/icons';
 import './SubmitRequest.css';
@@ -68,6 +69,17 @@ function SubmitRequest() {
       await createRequest({ categoryId, description: description.trim(), photoDataUrl });
       navigate('/requests');
     } catch (err) {
+      // A real network failure (offline, or the server's briefly
+      // unreachable) doesn't have to mean losing the draft — queue it
+      // locally and it'll submit itself once connectivity returns (see
+      // hooks/useDraftSync.js). A validation/server error, in contrast,
+      // needs the student to see and fix it, not silently queue forever.
+      if (err.isNetworkError) {
+        const categoryName = categories?.find((category) => category.id === categoryId)?.name;
+        await saveDraft({ categoryId, categoryName, description: description.trim(), photoDataUrl });
+        navigate('/requests');
+        return;
+      }
       setSubmitError(err.message);
     } finally {
       setSubmitting(false);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getMyRequests } from '../../services/requestsService';
+import { useDraftSync } from '../../hooks/useDraftSync';
 import { PlusIcon } from '../../components/icons';
 import { STATUS_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
 import './MyRequests.css';
@@ -14,12 +15,19 @@ function MyRequests() {
   const [requests, setRequests] = useState(null);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('active');
+  const { drafts } = useDraftSync();
 
   useEffect(() => {
+    // Re-fetch whenever the draft queue changes — a draft disappearing
+    // usually means useDraftSync just turned it into a real request. Clear
+    // any previous error first: without this, a fetch attempt that failed
+    // while offline leaves its error message on screen forever, even after
+    // a later attempt (e.g. right after coming back online) succeeds.
+    setError('');
     getMyRequests()
       .then(setRequests)
       .catch((err) => setError(err.message));
-  }, []);
+  }, [drafts]);
 
   const filtered = (requests || []).filter((request) =>
     filter === 'active'
@@ -41,6 +49,33 @@ function MyRequests() {
           Report New Issue
         </Link>
       </header>
+
+      {drafts.length > 0 && (
+        <div className="my-requests-drafts">
+          <p className="my-requests-drafts-title">
+            {drafts.length} request{drafts.length > 1 ? 's' : ''} saved offline
+          </p>
+          <p className="my-requests-drafts-note">
+            You were offline when you submitted these — they&rsquo;ll send automatically once
+            you&rsquo;re back online. No need to resubmit.
+          </p>
+          <ul className="my-requests-drafts-list">
+            {drafts.map((draft) => {
+              const Icon = categoryIcon(draft.categoryName);
+              return (
+                <li key={draft.draftId} className="my-requests-draft-row">
+                  <span className="my-requests-draft-category">
+                    <Icon width={16} height={16} />
+                    {draft.categoryName || 'Uncategorized'}
+                  </span>
+                  <p className="my-requests-draft-description">{draft.description}</p>
+                  <span className="my-requests-draft-badge">Pending Sync</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
 
       <div className="my-requests-tabs" role="tablist">
         <button
