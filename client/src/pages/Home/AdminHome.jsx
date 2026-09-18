@@ -19,7 +19,7 @@ function formatResolutionTime(hours) {
 // trend line (no daily time-series tracking), no system activity log (no
 // audit log table), no technician "deployed" status.
 function AdminHome() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [analytics, setAnalytics] = useState(null);
   const [analyticsError, setAnalyticsError] = useState('');
   const [requests, setRequests] = useState(null);
@@ -39,16 +39,11 @@ function AdminHome() {
   return (
     <main className="admin-home">
       <header className="admin-home-header">
-        <div>
-          <h1 className="admin-home-title">Maintenance Overview</h1>
-          <p className="admin-home-subtitle">
-            Welcome back, {user?.name?.split(' ')[0]} — here&rsquo;s the current state of hostel
-            maintenance operations.
-          </p>
-        </div>
-        <button type="button" className="admin-home-logout" onClick={logout}>
-          Log Out
-        </button>
+        <h1 className="admin-home-title">Maintenance Overview</h1>
+        <p className="admin-home-subtitle">
+          Welcome back, {user?.name?.split(' ')[0]} — here&rsquo;s the current state of hostel
+          maintenance operations.
+        </p>
       </header>
 
       {analyticsError && (

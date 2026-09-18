@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { getAllRequests, assignTechnician } from '../../services/requestsService';
 import { getTechnicians } from '../../services/usersService';
 import { STATUS_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
@@ -15,6 +15,8 @@ function ManageRequests() {
   const [selections, setSelections] = useState({});
   const [assigningId, setAssigningId] = useState(null);
   const [rowErrors, setRowErrors] = useState({});
+  const [searchParams, setSearchParams] = useSearchParams();
+  const query = searchParams.get('q') || '';
 
   useEffect(() => {
     Promise.all([getAllRequests(), getTechnicians()])
@@ -25,7 +27,18 @@ function ManageRequests() {
       .catch((err) => setError(err.message));
   }, []);
 
-  const filtered = (requests || []).filter((request) => filter === 'all' || request.status === filter);
+  const filtered = query.trim()
+    ? (requests || []).filter((request) => {
+        const q = query.trim().toLowerCase();
+        return (
+          String(request.requestId).includes(q) ||
+          request.description?.toLowerCase().includes(q) ||
+          request.category?.name?.toLowerCase().includes(q) ||
+          request.student?.name?.toLowerCase().includes(q) ||
+          request.student?.idNumber?.toLowerCase().includes(q)
+        );
+      })
+    : (requests || []).filter((request) => filter === 'all' || request.status === filter);
 
   async function handleAssign(requestId) {
     const technicianId = selections[requestId];
@@ -58,6 +71,19 @@ function ManageRequests() {
         </p>
       </header>
 
+      {query.trim() && (
+        <p className="manage-requests-search-notice">
+          Search results for &ldquo;{query}&rdquo; ({filtered.length}){' '}
+          <button
+            type="button"
+            onClick={() => setSearchParams({})}
+            className="manage-requests-search-clear"
+          >
+            Clear
+          </button>
+        </p>
+      )}
+
       <div className="manage-requests-tabs" role="tablist">
         {FILTERS.map((status) => (
           <button
@@ -85,9 +111,15 @@ function ManageRequests() {
 
       {!error && requests !== null && filtered.length === 0 && (
         <div className="manage-requests-empty">
-          <p className="manage-requests-empty-title">No requests here</p>
+          <p className="manage-requests-empty-title">
+            {query.trim() ? 'No requests match your search' : 'No requests here'}
+          </p>
           <p className="manage-requests-empty-note">
-            {filter === 'all' ? 'No maintenance requests have been submitted yet.' : `No requests with status "${STATUS_LABELS[filter]}".`}
+            {query.trim()
+              ? 'Try a different keyword, or clear the search.'
+              : filter === 'all'
+              ? 'No maintenance requests have been submitted yet.'
+              : `No requests with status "${STATUS_LABELS[filter]}".`}
           </p>
         </div>
       )}
@@ -170,10 +202,6 @@ function ManageRequests() {
           </ul>
         </>
       )}
-
-      <Link to="/" className="manage-requests-back">
-        &larr; Back to Home
-      </Link>
     </main>
   );
 }

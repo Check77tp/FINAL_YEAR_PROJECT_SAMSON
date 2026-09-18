@@ -9,6 +9,7 @@ import requestsRoutes from './src/routes/requests.routes.js';
 import usersRoutes from './src/routes/users.routes.js';
 import categoriesRoutes from './src/routes/categories.routes.js';
 import reportsRoutes from './src/routes/reports.routes.js';
+import activityRoutes from './src/routes/activity.routes.js';
 import { errorHandler } from './src/middleware/errorHandler.js';
 import { PORT, NODE_ENV } from './src/config/env.js';
 
@@ -26,6 +27,7 @@ app.use('/api/requests', requestsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/categories', categoriesRoutes);
 app.use('/api/reports', reportsRoutes);
+app.use('/api/activity', activityRoutes);
 
 app.use(errorHandler);
 

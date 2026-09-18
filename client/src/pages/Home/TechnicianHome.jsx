@@ -12,7 +12,7 @@ const ACTIVE_STATUSES = ['assigned', 'in_progress'];
 const COMPLETED_STATUSES = ['resolved', 'closed'];
 
 function TechnicianHome() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [requests, setRequests] = useState(null);
   const [error, setError] = useState('');
 
@@ -29,13 +29,8 @@ function TechnicianHome() {
   return (
     <main className="technician-home">
       <header className="technician-home-header">
-        <div>
-          <h1 className="technician-home-title">Welcome back, {user?.name?.split(' ')[0]}!</h1>
-          <p className="technician-home-subtitle">Here&rsquo;s what&rsquo;s on your plate today.</p>
-        </div>
-        <button type="button" className="technician-home-logout" onClick={logout}>
-          Log Out
-        </button>
+        <h1 className="technician-home-title">Welcome back, {user?.name?.split(' ')[0]}!</h1>
+        <p className="technician-home-subtitle">Here&rsquo;s what&rsquo;s on your plate today.</p>
       </header>
 
       <div className="technician-home-stats">

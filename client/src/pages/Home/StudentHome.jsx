@@ -13,7 +13,7 @@ const ACTIVE_STATUSES = ['open', 'assigned', 'in_progress'];
 const COMPLETED_STATUSES = ['resolved', 'closed'];
 
 function StudentHome() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [requests, setRequests] = useState(null);
   const [error, setError] = useState('');
 
@@ -30,15 +30,10 @@ function StudentHome() {
   return (
     <main className="student-home">
       <header className="student-home-header">
-        <div>
-          <h1 className="student-home-title">Hello, {user?.name?.split(' ')[0]}!</h1>
-          <p className="student-home-subtitle">
-            Track your existing hostel issues or report new ones quickly.
-          </p>
-        </div>
-        <button type="button" className="student-home-logout" onClick={logout}>
-          Log Out
-        </button>
+        <h1 className="student-home-title">Hello, {user?.name?.split(' ')[0]}!</h1>
+        <p className="student-home-subtitle">
+          Track your existing hostel issues or report new ones quickly.
+        </p>
       </header>
 
       <div className="student-home-stats">

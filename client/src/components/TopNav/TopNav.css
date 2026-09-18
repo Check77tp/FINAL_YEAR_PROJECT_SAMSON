@@ -1,0 +1,279 @@
+/* 1. Default styles = mobile (375px canvas) */
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 10px var(--margin-mobile);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-card-border);
+}
+
+.top-nav-menu-button {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: none;
+  color: var(--color-on-surface);
+  cursor: pointer;
+}
+
+.top-nav-search {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--color-surface-container-low);
+  border-radius: var(--radius-full);
+}
+
+.top-nav-search-icon {
+  flex-shrink: 0;
+  color: var(--color-on-surface-variant);
+}
+
+.top-nav-search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface);
+  outline: none;
+}
+
+.top-nav-search input::placeholder {
+  color: var(--color-on-surface-variant);
+}
+
+.top-nav-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+}
+
+.top-nav-popover-anchor {
+  position: relative;
+}
+
+.top-nav-icon-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: none;
+  border-radius: var(--radius-full);
+  color: var(--color-on-surface-variant);
+  cursor: pointer;
+}
+
+.top-nav-icon-button:hover {
+  background: var(--color-surface-container-low);
+}
+
+.top-nav-badge {
+  position: absolute;
+  top: 6px;
+  right: 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-error);
+}
+
+.top-nav-divider {
+  display: none;
+}
+
+.top-nav-account-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.top-nav-avatar {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--font-size-label-sm);
+}
+
+.top-nav-account-text {
+  display: none;
+}
+
+.top-nav-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: -8px;
+  width: min(300px, 85vw);
+  max-height: 360px;
+  overflow-y: auto;
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-level-2);
+  padding: var(--spacing-sm);
+  z-index: 50;
+}
+
+.top-nav-popover-wide {
+  width: min(340px, 90vw);
+}
+
+.top-nav-popover-title {
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-on-surface);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--spacing-xs);
+}
+
+.top-nav-popover-empty {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.top-nav-activity-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.top-nav-activity-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  border: none;
+  background: none;
+  padding: 8px;
+  border-radius: var(--radius-input);
+  cursor: pointer;
+}
+
+.top-nav-activity-item:hover {
+  background: var(--color-surface-container-low);
+}
+
+.top-nav-activity-text {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface);
+}
+
+.top-nav-activity-date {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.top-nav-help-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.top-nav-help-list strong {
+  color: var(--color-on-surface);
+}
+
+.top-nav-logout {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  background: none;
+  padding: 8px;
+  border-radius: var(--radius-input);
+  color: var(--color-error);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.top-nav-logout:hover {
+  background: var(--color-error-container);
+}
+
+/* 2. Then scale up for tablet */
+@media (min-width: 768px) {
+  .top-nav {
+    padding: 12px var(--spacing-lg);
+    gap: var(--spacing-sm);
+  }
+
+  .top-nav-menu-button {
+    display: none;
+  }
+
+  .top-nav-search {
+    max-width: 420px;
+    flex: initial;
+  }
+
+  .top-nav-divider {
+    display: block;
+    width: 1px;
+    height: 24px;
+    background: var(--color-card-border);
+    margin: 0 4px;
+  }
+
+  .top-nav-account-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    text-align: left;
+  }
+
+  .top-nav-account-name {
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label-md);
+    color: var(--color-on-surface);
+  }
+
+  .top-nav-account-role {
+    font-size: var(--font-size-label-sm);
+    color: var(--color-on-surface-variant);
+    text-transform: capitalize;
+  }
+}
+
+/* 3. Then scale up for desktop */
+@media (min-width: 1280px) {
+  .top-nav-search {
+    max-width: 520px;
+  }
+}

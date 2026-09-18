@@ -1,0 +1,190 @@
+/* 1. Default styles = mobile (375px canvas): hidden drawer, slides in from
+   the left, shown above an overlay backdrop. */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(24, 29, 23, 0.45);
+  z-index: 90;
+}
+
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 260px;
+  max-width: 80vw;
+  background: var(--color-surface-container-lowest);
+  border-right: 1px solid var(--color-card-border);
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-sm);
+  transform: translateX(-100%);
+  transition: transform 0.22s ease;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.sidebar-open {
+  transform: translateX(0);
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: var(--spacing-xs) var(--spacing-xs) var(--spacing-md);
+}
+
+.sidebar-brand-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.sidebar-brand-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--font-size-body-md);
+  color: var(--color-primary);
+}
+
+.sidebar-brand-subtitle {
+  font-size: 11px;
+  color: var(--color-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px var(--spacing-xs);
+  border-radius: var(--radius-button);
+  color: var(--color-on-surface-variant);
+  text-decoration: none;
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+}
+
+.sidebar-link:hover {
+  background: var(--color-surface-container-low);
+}
+
+.sidebar-link-active {
+  background: var(--color-nav-active-bg);
+  color: var(--color-primary);
+}
+
+.sidebar-cta {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px var(--spacing-sm);
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+  border-radius: var(--radius-button);
+  text-decoration: none;
+  font-weight: var(--font-weight-label-md);
+  font-size: var(--font-size-body-sm);
+}
+
+/* 2. Tablet: collapsed icon rail, sits in normal flow (not an overlay). */
+@media (min-width: 768px) {
+  .sidebar-backdrop {
+    display: none;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: var(--sidebar-width-collapsed);
+    max-width: none;
+    transform: none;
+    align-items: center;
+    /* No longer an overlay drawer at this breakpoint — drop below the
+       TopNav's popovers (z-index 50), which otherwise render partly behind
+       this since it's sticky-positioned and still in the DOM before them. */
+    z-index: 1;
+  }
+
+  .sidebar-brand {
+    padding: var(--spacing-xs) 0 var(--spacing-md);
+  }
+
+  .sidebar-brand-text,
+  .sidebar-label,
+  .sidebar-cta-label {
+    display: none;
+  }
+
+  .sidebar-nav {
+    width: 100%;
+    align-items: center;
+  }
+
+  .sidebar-link {
+    justify-content: center;
+    width: 44px;
+    padding: 10px;
+  }
+
+  .sidebar-cta {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+  }
+}
+
+/* 3. Desktop: full width, icons + labels. */
+@media (min-width: 1280px) {
+  .sidebar {
+    width: var(--sidebar-width);
+    align-items: stretch;
+  }
+
+  .sidebar-brand {
+    padding: var(--spacing-xs) var(--spacing-xs) var(--spacing-md);
+  }
+
+  .sidebar-brand-text,
+  .sidebar-label,
+  .sidebar-cta-label {
+    display: inline;
+  }
+
+  .sidebar-nav {
+    align-items: stretch;
+  }
+
+  .sidebar-link {
+    justify-content: flex-start;
+    width: auto;
+  }
+
+  .sidebar-cta {
+    width: auto;
+    height: auto;
+    padding: 12px var(--spacing-sm);
+  }
+}

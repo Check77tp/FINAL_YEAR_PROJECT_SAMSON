@@ -6,10 +6,6 @@
 }
 
 .technician-home-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
 }
 
@@ -24,18 +20,6 @@
   margin-top: var(--spacing-xs);
   font-size: var(--font-size-body-sm);
   color: var(--color-on-surface-variant);
-}
-
-.technician-home-logout {
-  flex-shrink: 0;
-  padding: 8px var(--spacing-sm);
-  border: 1px solid var(--input-border-color);
-  border-radius: var(--radius-button);
-  background: var(--color-surface-container-lowest);
-  color: var(--color-on-surface-variant);
-  font-family: var(--font-body);
-  font-size: var(--font-size-label-sm);
-  cursor: pointer;
 }
 
 .technician-home-stats {

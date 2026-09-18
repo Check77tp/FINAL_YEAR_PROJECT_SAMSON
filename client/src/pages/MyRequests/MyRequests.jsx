@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { getMyRequests } from '../../services/requestsService';
 import { useDraftSync } from '../../hooks/useDraftSync';
 import { PlusIcon } from '../../components/icons';
@@ -16,6 +16,8 @@ function MyRequests() {
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('active');
   const { drafts } = useDraftSync();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const query = searchParams.get('q') || '';
 
   useEffect(() => {
     // Re-fetch whenever the draft queue changes — a draft disappearing
@@ -29,11 +31,23 @@ function MyRequests() {
       .catch((err) => setError(err.message));
   }, [drafts]);
 
-  const filtered = (requests || []).filter((request) =>
-    filter === 'active'
-      ? ACTIVE_STATUSES.includes(request.status)
-      : !ACTIVE_STATUSES.includes(request.status)
-  );
+  // A search query searches across every request regardless of the
+  // Active/Resolved tab — narrowing to one tab while searching would hide
+  // results the tab excludes, which isn't what "search" implies.
+  const filtered = query.trim()
+    ? (requests || []).filter((request) => {
+        const q = query.trim().toLowerCase();
+        return (
+          String(request.requestId).includes(q) ||
+          request.description?.toLowerCase().includes(q) ||
+          request.category?.name?.toLowerCase().includes(q)
+        );
+      })
+    : (requests || []).filter((request) =>
+        filter === 'active'
+          ? ACTIVE_STATUSES.includes(request.status)
+          : !ACTIVE_STATUSES.includes(request.status)
+      );
 
   return (
     <main className="my-requests">
@@ -77,6 +91,15 @@ function MyRequests() {
         </div>
       )}
 
+      {query.trim() && (
+        <p className="my-requests-search-notice">
+          Search results for &ldquo;{query}&rdquo; ({filtered.length}){' '}
+          <button type="button" onClick={() => setSearchParams({})} className="my-requests-search-clear">
+            Clear
+          </button>
+        </p>
+      )}
+
       <div className="my-requests-tabs" role="tablist">
         <button
           type="button"
@@ -109,10 +132,14 @@ function MyRequests() {
       {!error && requests !== null && filtered.length === 0 && (
         <div className="my-requests-empty">
           <p className="my-requests-empty-title">
-            No {filter === 'active' ? 'active' : 'resolved'} requests yet
+            {query.trim()
+              ? 'No requests match your search'
+              : `No ${filter === 'active' ? 'active' : 'resolved'} requests yet`}
           </p>
           <p className="my-requests-empty-note">
-            {filter === 'active'
+            {query.trim()
+              ? 'Try a different keyword, or clear the search.'
+              : filter === 'active'
               ? "Once you report an issue, it'll show up here so you can track its progress."
               : 'Resolved and closed requests will appear here.'}
           </p>
@@ -157,10 +184,6 @@ function MyRequests() {
           </ul>
         </>
       )}
-
-      <Link to="/" className="my-requests-back">
-        &larr; Back to Home
-      </Link>
     </main>
   );
 }

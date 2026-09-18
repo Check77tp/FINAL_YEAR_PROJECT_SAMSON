@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { getAssignedRequests } from '../../services/requestsService';
 import { STATUS_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
 import './MyTasks.css';
@@ -10,6 +10,8 @@ function MyTasks() {
   const [requests, setRequests] = useState(null);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('active');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const query = searchParams.get('q') || '';
 
   useEffect(() => {
     getAssignedRequests()
@@ -20,9 +22,20 @@ function MyTasks() {
   const assignedCount = (requests || []).filter((r) => ACTIVE_STATUSES.includes(r.status)).length;
   const completedCount = (requests || []).filter((r) => !ACTIVE_STATUSES.includes(r.status)).length;
 
-  const filtered = (requests || []).filter((request) =>
-    filter === 'active' ? ACTIVE_STATUSES.includes(request.status) : !ACTIVE_STATUSES.includes(request.status)
-  );
+  const filtered = query.trim()
+    ? (requests || []).filter((request) => {
+        const q = query.trim().toLowerCase();
+        return (
+          String(request.requestId).includes(q) ||
+          request.description?.toLowerCase().includes(q) ||
+          request.category?.name?.toLowerCase().includes(q)
+        );
+      })
+    : (requests || []).filter((request) =>
+        filter === 'active'
+          ? ACTIVE_STATUSES.includes(request.status)
+          : !ACTIVE_STATUSES.includes(request.status)
+      );
 
   return (
     <main className="my-tasks">
@@ -41,6 +54,15 @@ function MyTasks() {
           <span className="my-tasks-stat-label">Completed</span>
         </div>
       </div>
+
+      {query.trim() && (
+        <p className="my-tasks-search-notice">
+          Search results for &ldquo;{query}&rdquo; ({filtered.length}){' '}
+          <button type="button" onClick={() => setSearchParams({})} className="my-tasks-search-clear">
+            Clear
+          </button>
+        </p>
+      )}
 
       <div className="my-tasks-tabs" role="tablist">
         <button
@@ -74,10 +96,14 @@ function MyTasks() {
       {!error && requests !== null && filtered.length === 0 && (
         <div className="my-tasks-empty">
           <p className="my-tasks-empty-title">
-            No {filter === 'active' ? 'active' : 'completed'} tasks
+            {query.trim()
+              ? 'No tasks match your search'
+              : `No ${filter === 'active' ? 'active' : 'completed'} tasks`}
           </p>
           <p className="my-tasks-empty-note">
-            {filter === 'active'
+            {query.trim()
+              ? 'Try a different keyword, or clear the search.'
+              : filter === 'active'
               ? "You'll see requests here once an administrator assigns one to you."
               : 'Tasks you resolve or close will appear here.'}
           </p>
@@ -111,10 +137,6 @@ function MyTasks() {
           })}
         </ul>
       )}
-
-      <Link to="/" className="my-tasks-back">
-        &larr; Back to Home
-      </Link>
     </main>
   );
 }

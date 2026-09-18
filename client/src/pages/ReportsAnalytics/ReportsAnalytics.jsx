@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { getAnalytics } from '../../services/reportsService';
 import BarChart from '../../components/BarChart';
 import './ReportsAnalytics.css';
@@ -84,10 +83,6 @@ function ReportsAnalytics() {
           </div>
         </>
       )}
-
-      <Link to="/" className="reports-analytics-back">
-        &larr; Back to Home
-      </Link>
     </main>
   );
 }

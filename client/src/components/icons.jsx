@@ -130,3 +130,102 @@ export function XIcon(props) {
     </svg>
   );
 }
+
+export function GridIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <rect x="3" y="3" width="8" height="8" rx="1.5" />
+      <rect x="13" y="3" width="8" height="8" rx="1.5" />
+      <rect x="3" y="13" width="8" height="8" rx="1.5" />
+      <rect x="13" y="13" width="8" height="8" rx="1.5" />
+    </svg>
+  );
+}
+
+export function ClipboardListIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <rect x="5" y="4" width="14" height="17" rx="2" />
+      <path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" />
+      <path d="M8 11h8M8 15h8M8 19h5" />
+    </svg>
+  );
+}
+
+export function ChartBarIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <path d="M4 20V10M12 20V4M20 20v-7" />
+      <path d="M2 20h20" />
+    </svg>
+  );
+}
+
+export function BellIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z" />
+      <path d="M10 20a2 2 0 0 0 4 0" />
+    </svg>
+  );
+}
+
+export function InfoIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v6M12 8v.01" />
+    </svg>
+  );
+}
+
+export function SearchIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  );
+}
+
+export function MenuIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <path d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  );
+}
+
+export function LogoutIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <path d="M9 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3" />
+      <path d="M16 17l5-5-5-5M21 12H9" />
+    </svg>
+  );
+}
+
+export function ChevronDownIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
+export function StarIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <path d="m12 3 2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 17l-5.6 3.1 1.4-6.3-4.8-4.3 6.4-.6Z" />
+    </svg>
+  );
+}
+
+export function MapPinIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  );
+}

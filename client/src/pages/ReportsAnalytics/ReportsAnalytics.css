@@ -97,14 +97,6 @@
   color: var(--color-on-surface-variant);
 }
 
-.reports-analytics-back {
-  display: inline-block;
-  margin-top: var(--spacing-lg);
-  color: var(--color-primary-brand);
-  font-size: var(--font-size-body-sm);
-  font-weight: var(--font-weight-label-md);
-  text-decoration: none;
-}
 
 /* 2. Then scale up for tablet */
 @media (min-width: 768px) {
