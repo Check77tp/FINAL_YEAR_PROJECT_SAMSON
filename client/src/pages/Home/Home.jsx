@@ -1,45 +1,16 @@
-import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import './Home.css';
+import StudentHome from './StudentHome';
+import TechnicianHome from './TechnicianHome';
+import AdminHome from './AdminHome';
 
-// Placeholder landing page — confirms authentication works end-to-end.
-// Role-specific dashboards proper are still just this + a linked page each.
+// One route (/), three role-specific dashboards — see StudentHome,
+// TechnicianHome, and AdminHome for the actual content per role.
 function Home() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
-  return (
-    <main className="home-page">
-      <h1 className="home-page-title">Welcome, {user?.name}</h1>
-      <p className="home-page-role">Signed in as {user?.role}</p>
-      <p className="home-page-note">
-        The {user?.role} dashboard hasn&rsquo;t been built yet — this page just confirms
-        registration, login, and role assignment are working end-to-end.
-      </p>
-      {user?.role === 'student' && (
-        <Link to="/requests" className="home-page-link">
-          View My Requests
-        </Link>
-      )}
-      {user?.role === 'administrator' && (
-        <>
-          <Link to="/manage-requests" className="home-page-link">
-            Manage Requests
-          </Link>
-          <Link to="/reports" className="home-page-link">
-            Reports &amp; Analytics
-          </Link>
-        </>
-      )}
-      {user?.role === 'technician' && (
-        <Link to="/tasks" className="home-page-link">
-          My Tasks
-        </Link>
-      )}
-      <button type="button" className="home-page-logout" onClick={logout}>
-        Log Out
-      </button>
-    </main>
-  );
+  if (user?.role === 'technician') return <TechnicianHome />;
+  if (user?.role === 'administrator') return <AdminHome />;
+  return <StudentHome />;
 }
 
 export default Home;

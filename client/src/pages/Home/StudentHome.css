@@ -1,0 +1,233 @@
+/* 1. Default styles = mobile (375px canvas, must not break down to 320px) —
+   a dashboard/data screen, standard breakpoints. */
+.student-home {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--margin-mobile);
+}
+
+.student-home-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.student-home-title {
+  font-size: var(--font-size-headline-sm-mobile);
+  line-height: var(--line-height-headline-sm-mobile);
+  font-weight: var(--font-weight-headline-sm-mobile);
+  color: var(--color-on-surface);
+}
+
+.student-home-subtitle {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+  max-width: 40ch;
+}
+
+.student-home-logout {
+  flex-shrink: 0;
+  padding: 8px var(--spacing-sm);
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--radius-button);
+  background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-body);
+  font-size: var(--font-size-label-sm);
+  cursor: pointer;
+}
+
+.student-home-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.student-home-stat {
+  padding: var(--spacing-sm);
+  background: var(--color-surface-container-low);
+  border-radius: var(--radius-card);
+}
+
+.student-home-stat-primary {
+  background: var(--color-primary-brand);
+}
+
+.student-home-stat-primary .student-home-stat-value,
+.student-home-stat-primary .student-home-stat-label {
+  color: var(--color-on-primary);
+}
+
+.student-home-stat-value {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-headline-md);
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.student-home-stat-label {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.student-home-new {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+  border-radius: var(--radius-button);
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+  font-size: var(--font-size-body-md);
+  font-weight: var(--font-weight-label-md);
+  text-decoration: none;
+}
+
+.student-home-recent-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+}
+
+.student-home-recent-title {
+  font-size: var(--font-size-body-lg);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-on-surface);
+}
+
+.student-home-view-all {
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-primary-brand);
+  text-decoration: none;
+}
+
+.student-home-error {
+  color: var(--color-error);
+  font-size: var(--font-size-body-sm);
+}
+
+.student-home-loading,
+.student-home-empty {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.student-home-recent-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.student-home-recent-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-level-1);
+  text-decoration: none;
+  color: inherit;
+}
+
+.student-home-recent-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-surface-container-low);
+  color: var(--color-primary-brand);
+}
+
+.student-home-recent-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.student-home-recent-description {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.student-home-recent-date {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.student-home-status {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: var(--radius-badge);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  white-space: nowrap;
+}
+
+.student-home-status-open {
+  background: var(--color-status-open-bg);
+  color: var(--color-status-open-text);
+}
+
+.student-home-status-assigned {
+  background: var(--color-status-assigned-bg);
+  color: var(--color-status-assigned-text);
+}
+
+.student-home-status-in_progress {
+  background: var(--color-status-in-progress-bg);
+  color: var(--color-status-in-progress-text);
+}
+
+.student-home-status-resolved {
+  background: var(--color-status-resolved-bg);
+  color: var(--color-status-resolved-text);
+}
+
+.student-home-status-closed {
+  background: var(--color-status-closed-bg);
+  color: var(--color-status-closed-text);
+}
+
+/* 2. Then scale up for tablet */
+@media (min-width: 768px) {
+  .student-home {
+    padding: var(--spacing-lg);
+  }
+
+  .student-home-stats {
+    grid-template-columns: repeat(2, 200px);
+  }
+}
+
+/* 3. Then scale up for desktop */
+@media (min-width: 1280px) {
+  .student-home-title {
+    font-size: var(--font-size-headline-md);
+    line-height: var(--line-height-headline-md);
+    font-weight: var(--font-weight-headline-md);
+  }
+
+  .student-home-new {
+    width: auto;
+    padding-left: var(--spacing-lg);
+    padding-right: var(--spacing-lg);
+  }
+}
