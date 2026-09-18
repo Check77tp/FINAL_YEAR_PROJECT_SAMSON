@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getCategories } from '../../services/categoriesService';
 import { createRequest } from '../../services/requestsService';
 import { saveDraft } from '../../services/draftQueue';
-import { categoryIcon } from '../../utils/requestFormat';
+import { categoryIcon, HOSTELS, PRIORITY_LABELS, PRIORITY_VALUES } from '../../utils/requestFormat';
 import { CameraIcon, XIcon } from '../../components/icons';
 import './SubmitRequest.css';
 
@@ -18,6 +18,9 @@ function SubmitRequest() {
   const [categoriesError, setCategoriesError] = useState('');
   const [categoryId, setCategoryId] = useState(null);
   const [description, setDescription] = useState('');
+  const [hostel, setHostel] = useState('');
+  const [room, setRoom] = useState('');
+  const [priority, setPriority] = useState('medium');
   const [photoDataUrl, setPhotoDataUrl] = useState(null);
   const [photoError, setPhotoError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -63,10 +66,21 @@ function SubmitRequest() {
       setSubmitError('Please describe the issue.');
       return;
     }
+    if (!hostel) {
+      setSubmitError('Please select your hostel.');
+      return;
+    }
 
     setSubmitting(true);
     try {
-      await createRequest({ categoryId, description: description.trim(), photoDataUrl });
+      await createRequest({
+        categoryId,
+        description: description.trim(),
+        photoDataUrl,
+        hostel,
+        room: room.trim() || undefined,
+        priority,
+      });
       navigate('/requests');
     } catch (err) {
       // A real network failure (offline, or the server's briefly
@@ -76,7 +90,15 @@ function SubmitRequest() {
       // needs the student to see and fix it, not silently queue forever.
       if (err.isNetworkError) {
         const categoryName = categories?.find((category) => category.id === categoryId)?.name;
-        await saveDraft({ categoryId, categoryName, description: description.trim(), photoDataUrl });
+        await saveDraft({
+          categoryId,
+          categoryName,
+          description: description.trim(),
+          photoDataUrl,
+          hostel,
+          room: room.trim() || undefined,
+          priority,
+        });
         navigate('/requests');
         return;
       }
@@ -130,6 +152,62 @@ function SubmitRequest() {
               })}
             </div>
           )}
+        </fieldset>
+
+        <div className="submit-request-location-row">
+          <div className="submit-request-field">
+            <label className="submit-request-label" htmlFor="submit-request-hostel">
+              Hostel
+            </label>
+            <select
+              id="submit-request-hostel"
+              className="submit-request-select"
+              value={hostel}
+              onChange={(event) => setHostel(event.target.value)}
+            >
+              <option value="" disabled>
+                Select your hostel
+              </option>
+              {HOSTELS.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="submit-request-field">
+            <label className="submit-request-label" htmlFor="submit-request-room">
+              Room <span className="submit-request-optional">Optional</span>
+            </label>
+            <input
+              id="submit-request-room"
+              type="text"
+              className="submit-request-text-input"
+              placeholder="e.g. Block C, Room 24"
+              value={room}
+              onChange={(event) => setRoom(event.target.value)}
+            />
+          </div>
+        </div>
+
+        <fieldset className="submit-request-fieldset">
+          <legend className="submit-request-label">How urgent is this?</legend>
+          <div className="submit-request-priority-options">
+            {PRIORITY_VALUES.map((value) => (
+              <button
+                key={value}
+                type="button"
+                className={`submit-request-priority submit-request-priority-${value} ${
+                  priority === value ? 'submit-request-priority-selected' : ''
+                }`}
+                onClick={() => setPriority(value)}
+                aria-pressed={priority === value}
+              >
+                {PRIORITY_LABELS[value]}
+              </button>
+            ))}
+          </div>
         </fieldset>
 
         <label className="submit-request-label" htmlFor="submit-request-description">

@@ -22,6 +22,58 @@
   color: var(--color-on-surface-variant);
 }
 
+.technician-home-availability {
+  margin-bottom: var(--spacing-md);
+}
+
+.technician-home-availability-label {
+  display: block;
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-on-surface-variant);
+  margin-bottom: 6px;
+}
+
+.technician-home-availability-options {
+  display: flex;
+  gap: 6px;
+}
+
+.technician-home-availability-option {
+  padding: 8px var(--spacing-sm);
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--radius-button);
+  background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-body);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.technician-home-availability-option:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.technician-home-availability-selected.technician-home-availability-available {
+  background: var(--color-status-resolved-bg);
+  color: var(--color-status-resolved-text);
+  border-color: transparent;
+}
+
+.technician-home-availability-selected.technician-home-availability-on_job {
+  background: var(--color-status-in-progress-bg);
+  color: var(--color-status-in-progress-text);
+  border-color: transparent;
+}
+
+.technician-home-availability-selected.technician-home-availability-off_duty {
+  background: var(--color-status-closed-bg);
+  color: var(--color-status-closed-text);
+  border-color: transparent;
+}
+
 .technician-home-stats {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -119,6 +171,40 @@
   color: var(--color-on-surface);
 }
 
+.technician-home-task-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.technician-home-priority {
+  padding: 3px 10px;
+  border-radius: var(--radius-badge);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  white-space: nowrap;
+}
+
+.technician-home-priority-low {
+  background: var(--color-priority-low-bg);
+  color: var(--color-priority-low-text);
+}
+
+.technician-home-priority-medium {
+  background: var(--color-priority-medium-bg);
+  color: var(--color-priority-medium-text);
+}
+
+.technician-home-priority-high {
+  background: var(--color-priority-high-bg);
+  color: var(--color-priority-high-text);
+}
+
+.technician-home-priority-critical {
+  background: var(--color-priority-critical-bg);
+  color: var(--color-priority-critical-text);
+}
+
 .technician-home-task-description {
   font-size: var(--font-size-body-sm);
   color: var(--color-on-surface);
@@ -126,6 +212,12 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  margin-bottom: var(--spacing-xs);
+}
+
+.technician-home-task-location {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
   margin-bottom: var(--spacing-xs);
 }
 

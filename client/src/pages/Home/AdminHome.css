@@ -185,6 +185,34 @@
   color: var(--color-status-open-text);
 }
 
+.admin-home-priority {
+  padding: 3px 10px;
+  border-radius: var(--radius-badge);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  white-space: nowrap;
+}
+
+.admin-home-priority-low {
+  background: var(--color-priority-low-bg);
+  color: var(--color-priority-low-text);
+}
+
+.admin-home-priority-medium {
+  background: var(--color-priority-medium-bg);
+  color: var(--color-priority-medium-text);
+}
+
+.admin-home-priority-high {
+  background: var(--color-priority-high-bg);
+  color: var(--color-priority-high-text);
+}
+
+.admin-home-priority-critical {
+  background: var(--color-priority-critical-bg);
+  color: var(--color-priority-critical-text);
+}
+
 /* 2. Then scale up for tablet */
 @media (min-width: 768px) {
   .admin-home {
@@ -192,7 +220,7 @@
   }
 
   .admin-home-stats {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .admin-home-links {
@@ -214,5 +242,9 @@
 
   .admin-home-links {
     max-width: 500px;
+  }
+
+  .admin-home-stats {
+    grid-template-columns: repeat(4, 1fr);
   }
 }

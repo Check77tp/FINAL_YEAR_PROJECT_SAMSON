@@ -6,6 +6,9 @@ import {
   computeAverageResolutionHours,
   computeWorkloadByTechnician,
   computeRequestsByCategory,
+  computeRequestsByHostel,
+  computeResolutionTrend,
+  computeAverageRating,
   computeThisMonth,
 } from './reports.service.js';
 
@@ -102,6 +105,56 @@ describe('computeRequestsByCategory', () => {
 
   it('falls back to "Uncategorized" for a null category', () => {
     expect(computeRequestsByCategory([{ category: null }])).toEqual([{ name: 'Uncategorized', count: 1 }]);
+  });
+});
+
+describe('computeRequestsByHostel', () => {
+  it('groups and counts requests by hostel', () => {
+    const requestRows = [{ hostel: 'Goma Hall' }, { hostel: 'Goma Hall' }, { hostel: 'Ridgeway' }];
+
+    expect(computeRequestsByHostel(requestRows)).toEqual([
+      { name: 'Goma Hall', count: 2 },
+      { name: 'Ridgeway', count: 1 },
+    ]);
+  });
+
+  it('groups requests with no hostel under "Unspecified"', () => {
+    expect(computeRequestsByHostel([{ hostel: null }])).toEqual([{ name: 'Unspecified', count: 1 }]);
+  });
+});
+
+describe('computeResolutionTrend', () => {
+  const now = new Date('2026-03-15T12:00:00Z');
+
+  it('returns 7 days ending today, counting resolved transitions per day', () => {
+    const historyRows = [
+      { new_status: 'resolved', changed_at: '2026-03-15T09:00:00Z' },
+      { new_status: 'resolved', changed_at: '2026-03-15T10:00:00Z' },
+      { new_status: 'resolved', changed_at: '2026-03-13T09:00:00Z' },
+      { new_status: 'open', changed_at: '2026-03-15T08:00:00Z' }, // wrong status
+    ];
+
+    const trend = computeResolutionTrend(historyRows, now);
+
+    expect(trend).toHaveLength(7);
+    expect(trend[6]).toEqual({ date: '2026-03-15', resolvedCount: 2 });
+    expect(trend[4]).toEqual({ date: '2026-03-13', resolvedCount: 1 });
+    expect(trend[0]).toEqual({ date: '2026-03-09', resolvedCount: 0 });
+  });
+
+  it('returns all-zero days for an empty dataset', () => {
+    const trend = computeResolutionTrend([], now);
+    expect(trend.every((d) => d.resolvedCount === 0)).toBe(true);
+  });
+});
+
+describe('computeAverageRating', () => {
+  it('averages submitted ratings', () => {
+    expect(computeAverageRating([{ rating: 5 }, { rating: 3 }, { rating: 4 }])).toBe(4);
+  });
+
+  it('returns null when nothing has been rated yet', () => {
+    expect(computeAverageRating([])).toBeNull();
   });
 });
 

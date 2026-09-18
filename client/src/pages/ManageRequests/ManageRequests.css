@@ -98,6 +98,7 @@
     'id status'
     'student student'
     'category category'
+    'location priority'
     'assign assign';
   gap: var(--spacing-xs) var(--spacing-sm);
   align-items: center;
@@ -106,6 +107,67 @@
   border: 1px solid var(--color-card-border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-level-1);
+}
+
+.manage-requests-row-location {
+  grid-area: location;
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.manage-requests-priority-select {
+  grid-area: priority;
+  justify-self: end;
+  padding: 3px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-badge);
+  font-family: var(--font-body);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.manage-requests-priority-low {
+  background: var(--color-priority-low-bg);
+  color: var(--color-priority-low-text);
+}
+
+.manage-requests-priority-medium {
+  background: var(--color-priority-medium-bg);
+  color: var(--color-priority-medium-text);
+}
+
+.manage-requests-priority-high {
+  background: var(--color-priority-high-bg);
+  color: var(--color-priority-high-text);
+}
+
+.manage-requests-priority-critical {
+  background: var(--color-priority-critical-bg);
+  color: var(--color-priority-critical-text);
+}
+
+.manage-requests-availability {
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: var(--radius-badge);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+}
+
+.manage-requests-availability-available {
+  background: var(--color-status-resolved-bg);
+  color: var(--color-status-resolved-text);
+}
+
+.manage-requests-availability-on_job {
+  background: var(--color-status-in-progress-bg);
+  color: var(--color-status-in-progress-text);
+}
+
+.manage-requests-availability-off_duty {
+  background: var(--color-status-closed-bg);
+  color: var(--color-status-closed-text);
 }
 
 .manage-requests-row-id {
@@ -185,6 +247,7 @@
 }
 
 .manage-requests-row-error {
+  grid-column: 1 / -1;
   margin-top: 4px;
   color: var(--color-error);
   font-size: var(--font-size-label-sm);
@@ -265,7 +328,7 @@
 
   .manage-requests-list-header {
     display: grid;
-    grid-template-columns: 0.8fr 1.4fr 1fr 0.9fr 1.6fr;
+    grid-template-columns: 0.7fr 1.2fr 0.9fr 1fr 0.8fr 0.8fr 1.6fr;
     gap: var(--spacing-sm);
     padding: 0 var(--spacing-sm) var(--spacing-xs);
     font-size: var(--font-size-label-sm);
@@ -284,8 +347,8 @@
   }
 
   .manage-requests-row {
-    grid-template-columns: 0.8fr 1.4fr 1fr 0.9fr 1.6fr;
-    grid-template-areas: 'id student category status assign';
+    grid-template-columns: 0.7fr 1.2fr 0.9fr 1fr 0.8fr 0.8fr 1.6fr;
+    grid-template-areas: 'id student category location priority status assign';
     min-height: 64px;
     padding: 0 var(--spacing-sm);
     background: none;
@@ -309,7 +372,8 @@
     content: '· ';
   }
 
-  .manage-requests-status {
+  .manage-requests-status,
+  .manage-requests-priority-select {
     justify-self: start;
   }
 }

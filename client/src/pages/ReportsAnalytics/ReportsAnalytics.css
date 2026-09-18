@@ -73,6 +73,7 @@
 
 .reports-analytics-section {
   padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
   background: var(--color-surface-container-lowest);
   border: 1px solid var(--color-card-border);
   border-radius: var(--radius-card);
@@ -105,7 +106,7 @@
   }
 
   .reports-analytics-stats {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -115,6 +116,10 @@
     font-size: var(--font-size-headline-md);
     line-height: var(--line-height-headline-md);
     font-weight: var(--font-weight-headline-md);
+  }
+
+  .reports-analytics-stats {
+    grid-template-columns: repeat(4, 1fr);
   }
 
   .reports-analytics-charts {

@@ -18,7 +18,7 @@ export async function findOpenAndResolvedHistory() {
 export async function findRequestsForCategoryAndMonthMetrics() {
   const { data, error } = await supabase
     .from('maintenance_requests')
-    .select('request_id, created_at, category:categories ( name )');
+    .select('request_id, created_at, hostel, category:categories ( name )');
 
   if (error) throw error;
   return data;
@@ -28,6 +28,13 @@ export async function findAllAssignmentsWithRequestStatus() {
   const { data, error } = await supabase
     .from('technician_assignments')
     .select('request_id, technician_id, assigned_at, maintenance_requests ( status )');
+
+  if (error) throw error;
+  return data;
+}
+
+export async function findAllRatings() {
+  const { data, error } = await supabase.from('ratings').select('rating');
 
   if (error) throw error;
   return data;

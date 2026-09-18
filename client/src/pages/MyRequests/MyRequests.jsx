@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { getMyRequests } from '../../services/requestsService';
 import { useDraftSync } from '../../hooks/useDraftSync';
 import { PlusIcon } from '../../components/icons';
-import { STATUS_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
+import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
 import './MyRequests.css';
 
 // "Active" groups everything still moving through the lifecycle; "Resolved"
@@ -151,6 +151,8 @@ function MyRequests() {
           <div className="my-requests-list-header" aria-hidden="true">
             <span>Ticket ID</span>
             <span>Category</span>
+            <span>Location</span>
+            <span>Priority</span>
             <span>Date Reported</span>
             <span>Assigned Tech</span>
             <span>Status</span>
@@ -171,6 +173,16 @@ function MyRequests() {
                     <Icon width={18} height={18} />
                     {request.category?.name || 'Uncategorized'}
                   </span>
+                  {(request.hostel || request.room) && (
+                    <span className="my-requests-row-location">
+                      {[request.hostel, request.room].filter(Boolean).join(', ')}
+                    </span>
+                  )}
+                  {request.priority && (
+                    <span className={`my-requests-priority my-requests-priority-${request.priority}`}>
+                      {PRIORITY_LABELS[request.priority]}
+                    </span>
+                  )}
                   <span className="my-requests-row-date">{formatDate(request.createdAt)}</span>
                   <span className="my-requests-row-tech">
                     {request.technician ? request.technician.name : 'Awaiting assignment'}

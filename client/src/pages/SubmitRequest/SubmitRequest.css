@@ -86,6 +86,77 @@
   border-color: var(--color-primary-brand);
 }
 
+.submit-request-location-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.submit-request-field {
+  flex: 1;
+}
+
+.submit-request-select,
+.submit-request-text-input {
+  width: 100%;
+  padding: var(--spacing-xs);
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--radius-input);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-md);
+  background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+}
+
+.submit-request-select:focus,
+.submit-request-text-input:focus {
+  outline: none;
+  border-color: var(--color-primary-brand);
+  box-shadow: var(--input-focus-glow);
+}
+
+.submit-request-priority-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xs);
+}
+
+.submit-request-priority {
+  padding: 10px var(--spacing-xs);
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--radius-input);
+  background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.submit-request-priority-selected.submit-request-priority-low {
+  background: var(--color-priority-low-bg);
+  color: var(--color-priority-low-text);
+  border-color: var(--color-priority-low-text);
+}
+
+.submit-request-priority-selected.submit-request-priority-medium {
+  background: var(--color-priority-medium-bg);
+  color: var(--color-priority-medium-text);
+  border-color: var(--color-priority-medium-text);
+}
+
+.submit-request-priority-selected.submit-request-priority-high {
+  background: var(--color-priority-high-bg);
+  color: var(--color-priority-high-text);
+  border-color: var(--color-priority-high-text);
+}
+
+.submit-request-priority-selected.submit-request-priority-critical {
+  background: var(--color-priority-critical-bg);
+  color: var(--color-priority-critical-text);
+  border-color: var(--color-priority-critical-text);
+}
+
 .submit-request-textarea {
   width: 100%;
   padding: var(--spacing-xs);
@@ -239,6 +310,14 @@
 
   .submit-request-categories {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .submit-request-location-row {
+    flex-direction: row;
+  }
+
+  .submit-request-priority-options {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 

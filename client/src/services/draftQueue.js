@@ -37,13 +37,24 @@ async function withStore(mode, callback) {
   });
 }
 
-export async function saveDraft({ categoryId, categoryName, description, photoDataUrl }) {
+export async function saveDraft({
+  categoryId,
+  categoryName,
+  description,
+  photoDataUrl,
+  hostel,
+  room,
+  priority,
+}) {
   const draft = {
     draftId: crypto.randomUUID(),
     categoryId,
     categoryName,
     description,
     photoDataUrl: photoDataUrl || null,
+    hostel,
+    room: room || null,
+    priority,
     savedAt: new Date().toISOString(),
   };
 

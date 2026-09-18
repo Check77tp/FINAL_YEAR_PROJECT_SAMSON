@@ -37,6 +37,9 @@ export function syncDraftRequests() {
           categoryId: draft.categoryId,
           description: draft.description,
           photoDataUrl: draft.photoDataUrl,
+          hostel: draft.hostel,
+          room: draft.room,
+          priority: draft.priority,
         });
         await deleteDraft(draft.draftId);
         notifyListeners();

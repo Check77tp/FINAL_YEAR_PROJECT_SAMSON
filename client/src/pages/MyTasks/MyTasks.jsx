@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getAssignedRequests } from '../../services/requestsService';
-import { STATUS_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
+import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
 import './MyTasks.css';
 
 const ACTIVE_STATUSES = ['assigned', 'in_progress'];
@@ -119,11 +119,23 @@ function MyTasks() {
                 <Link to={`/tasks/${request.requestId}`} className="my-tasks-card">
                   <div className="my-tasks-card-top">
                     <span className="my-tasks-card-id">#REQ-{request.requestId}</span>
-                    <span className={`my-tasks-status my-tasks-status-${request.status}`}>
-                      {STATUS_LABELS[request.status] || request.status}
-                    </span>
+                    <div className="my-tasks-card-badges">
+                      {request.priority && (
+                        <span className={`my-tasks-priority my-tasks-priority-${request.priority}`}>
+                          {PRIORITY_LABELS[request.priority]}
+                        </span>
+                      )}
+                      <span className={`my-tasks-status my-tasks-status-${request.status}`}>
+                        {STATUS_LABELS[request.status] || request.status}
+                      </span>
+                    </div>
                   </div>
                   <p className="my-tasks-card-description">{request.description}</p>
+                  {(request.hostel || request.room) && (
+                    <p className="my-tasks-card-location">
+                      {[request.hostel, request.room].filter(Boolean).join(', ')}
+                    </p>
+                  )}
                   <div className="my-tasks-card-bottom">
                     <span className="my-tasks-card-category">
                       <Icon width={16} height={16} />

@@ -189,6 +189,7 @@
     'id status'
     'desc desc'
     'category date'
+    'location priority'
     'tech tech'
     'link link';
   gap: var(--spacing-xs) var(--spacing-sm);
@@ -198,6 +199,42 @@
   border: 1px solid var(--color-card-border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-level-1);
+}
+
+.my-requests-row-location {
+  grid-area: location;
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.my-requests-priority {
+  grid-area: priority;
+  justify-self: end;
+  padding: 3px 10px;
+  border-radius: var(--radius-badge);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  white-space: nowrap;
+}
+
+.my-requests-priority-low {
+  background: var(--color-priority-low-bg);
+  color: var(--color-priority-low-text);
+}
+
+.my-requests-priority-medium {
+  background: var(--color-priority-medium-bg);
+  color: var(--color-priority-medium-text);
+}
+
+.my-requests-priority-high {
+  background: var(--color-priority-high-bg);
+  color: var(--color-priority-high-text);
+}
+
+.my-requests-priority-critical {
+  background: var(--color-priority-critical-bg);
+  color: var(--color-priority-critical-text);
 }
 
 .my-requests-row-id {
@@ -330,7 +367,7 @@
 
   .my-requests-list-header {
     display: grid;
-    grid-template-columns: 0.8fr 1.2fr 0.9fr 1.1fr 0.8fr 0.9fr;
+    grid-template-columns: 0.7fr 1fr 1fr 0.8fr 0.9fr 1fr 0.8fr 0.9fr;
     gap: var(--spacing-sm);
     padding: 0 var(--spacing-sm) var(--spacing-xs);
     font-size: var(--font-size-label-sm);
@@ -341,8 +378,8 @@
   }
 
   .my-requests-row {
-    grid-template-columns: 0.8fr 1.2fr 0.9fr 1.1fr 0.8fr 0.9fr;
-    grid-template-areas: 'id category date tech status link';
+    grid-template-columns: 0.7fr 1fr 1fr 0.8fr 0.9fr 1fr 0.8fr 0.9fr;
+    grid-template-areas: 'id category location priority date tech status link';
   }
 
   .my-requests-row-description {
@@ -350,7 +387,8 @@
   }
 
   .my-requests-row-date,
-  .my-requests-status {
+  .my-requests-status,
+  .my-requests-priority {
     justify-self: start;
   }
 

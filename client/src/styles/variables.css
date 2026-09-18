@@ -88,6 +88,18 @@
   --color-status-completed: #10b981;
   --color-nav-active-bg: #e8f5e9;
 
+  /* ---- Colors: priority tints (badges) ---- one pair per
+     maintenance_requests.priority enum value, same low-saturation
+     background + high-saturation text pattern as the status tints above. */
+  --color-priority-low-bg: #e5eadf;
+  --color-priority-low-text: #40493d;
+  --color-priority-medium-bg: #dbeafe;
+  --color-priority-medium-text: #1d4ed8;
+  --color-priority-high-bg: #ffe4d5;
+  --color-priority-high-text: #c2410c;
+  --color-priority-critical-bg: #ffdad6;
+  --color-priority-critical-text: #ba1a1a;
+
   /* ---- Typography: font families ---- */
   --font-heading: 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;

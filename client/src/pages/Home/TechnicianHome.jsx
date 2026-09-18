@@ -2,8 +2,17 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { getAssignedRequests } from '../../services/requestsService';
-import { STATUS_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
+import { setOwnAvailability } from '../../services/usersService';
+import {
+  STATUS_LABELS,
+  PRIORITY_LABELS,
+  AVAILABILITY_LABELS,
+  categoryIcon,
+  formatDate,
+} from '../../utils/requestFormat';
 import './TechnicianHome.css';
+
+const AVAILABILITY_VALUES = ['available', 'on_job', 'off_duty'];
 
 // technician_dashboard_unza_maintenance / technician_home_unza_mobile
 // reference. Trimmed: no "pending approval" (no approval concept), no
@@ -15,12 +24,28 @@ function TechnicianHome() {
   const { user } = useAuth();
   const [requests, setRequests] = useState(null);
   const [error, setError] = useState('');
+  const [availability, setAvailability] = useState(user?.availability_status || 'available');
+  const [availabilityError, setAvailabilityError] = useState('');
+  const [updatingAvailability, setUpdatingAvailability] = useState(false);
 
   useEffect(() => {
     getAssignedRequests()
       .then(setRequests)
       .catch((err) => setError(err.message));
   }, []);
+
+  async function handleAvailabilityChange(value) {
+    setUpdatingAvailability(true);
+    setAvailabilityError('');
+    try {
+      await setOwnAvailability(value);
+      setAvailability(value);
+    } catch (err) {
+      setAvailabilityError(err.message);
+    } finally {
+      setUpdatingAvailability(false);
+    }
+  }
 
   const active = (requests || []).filter((r) => ACTIVE_STATUSES.includes(r.status));
   const completedCount = (requests || []).filter((r) => COMPLETED_STATUSES.includes(r.status)).length;
@@ -32,6 +57,30 @@ function TechnicianHome() {
         <h1 className="technician-home-title">Welcome back, {user?.name?.split(' ')[0]}!</h1>
         <p className="technician-home-subtitle">Here&rsquo;s what&rsquo;s on your plate today.</p>
       </header>
+
+      <div className="technician-home-availability">
+        <span className="technician-home-availability-label">Your status:</span>
+        <div className="technician-home-availability-options">
+          {AVAILABILITY_VALUES.map((value) => (
+            <button
+              key={value}
+              type="button"
+              className={`technician-home-availability-option technician-home-availability-${value} ${
+                availability === value ? 'technician-home-availability-selected' : ''
+              }`}
+              disabled={updatingAvailability}
+              onClick={() => handleAvailabilityChange(value)}
+            >
+              {AVAILABILITY_LABELS[value]}
+            </button>
+          ))}
+        </div>
+        {availabilityError && (
+          <p className="technician-home-error" role="alert">
+            {availabilityError}
+          </p>
+        )}
+      </div>
 
       <div className="technician-home-stats">
         <div className="technician-home-stat technician-home-stat-primary">
@@ -74,11 +123,25 @@ function TechnicianHome() {
                   <Link to={`/tasks/${request.requestId}`} className="technician-home-task-card">
                     <div className="technician-home-task-top">
                       <span className="technician-home-task-id">#REQ-{request.requestId}</span>
-                      <span className={`technician-home-status technician-home-status-${request.status}`}>
-                        {STATUS_LABELS[request.status] || request.status}
-                      </span>
+                      <div className="technician-home-task-badges">
+                        {request.priority && (
+                          <span
+                            className={`technician-home-priority technician-home-priority-${request.priority}`}
+                          >
+                            {PRIORITY_LABELS[request.priority]}
+                          </span>
+                        )}
+                        <span className={`technician-home-status technician-home-status-${request.status}`}>
+                          {STATUS_LABELS[request.status] || request.status}
+                        </span>
+                      </div>
                     </div>
                     <p className="technician-home-task-description">{request.description}</p>
+                    {(request.hostel || request.room) && (
+                      <p className="technician-home-task-location">
+                        {[request.hostel, request.room].filter(Boolean).join(', ')}
+                      </p>
+                    )}
                     <div className="technician-home-task-bottom">
                       <span className="technician-home-task-category">
                         <Icon width={16} height={16} />

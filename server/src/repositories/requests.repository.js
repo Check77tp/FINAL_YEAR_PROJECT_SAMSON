@@ -9,12 +9,15 @@ const SELECT_WITH_RELATIONS = `
   description,
   photo_url,
   status,
+  hostel,
+  room,
+  priority,
   created_at,
   category:categories ( category_id, name ),
   technician_assignments (
     assigned_at,
     technician_id,
-    technician:users ( user_id, name )
+    technician:users ( user_id, name, availability_status )
   )
 `;
 
@@ -44,7 +47,7 @@ export async function findAllRequests() {
   return data;
 }
 
-export async function insertRequest({ studentId, categoryId, description, photoUrl }) {
+export async function insertRequest({ studentId, categoryId, description, photoUrl, hostel, room, priority }) {
   const { data, error } = await supabase
     .from('maintenance_requests')
     .insert({
@@ -53,6 +56,9 @@ export async function insertRequest({ studentId, categoryId, description, photoU
       description,
       photo_url: photoUrl,
       status: 'open',
+      hostel,
+      room,
+      priority,
     })
     .select(SELECT_WITH_RELATIONS_AND_STUDENT)
     .single();
@@ -79,10 +85,13 @@ const SELECT_ASSIGNED_TO_TECHNICIAN = `
   description,
   photo_url,
   status,
+  hostel,
+  room,
+  priority,
   created_at,
   category:categories ( category_id, name ),
   student:users ( user_id, name, id_number ),
-  technician_assignments!inner ( assigned_at, technician_id, technician:users ( user_id, name ) )
+  technician_assignments!inner ( assigned_at, technician_id, technician:users ( user_id, name, availability_status ) )
 `;
 
 export async function findRequestsAssignedToTechnician(technicianId) {
@@ -117,6 +126,15 @@ export async function updateRequestStatus(requestId, newStatus) {
   const { error } = await supabase
     .from('maintenance_requests')
     .update({ status: newStatus })
+    .eq('request_id', requestId);
+
+  if (error) throw error;
+}
+
+export async function updateRequestPriority(requestId, priority) {
+  const { error } = await supabase
+    .from('maintenance_requests')
+    .update({ priority })
     .eq('request_id', requestId);
 
   if (error) throw error;

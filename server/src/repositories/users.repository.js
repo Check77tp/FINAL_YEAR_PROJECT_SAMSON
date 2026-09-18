@@ -2,7 +2,7 @@
 // only querying and mapping rows.
 import { supabase } from '../config/supabaseClient.js';
 
-const PROFILE_COLUMNS = 'user_id, name, email, id_number, role, created_at';
+const PROFILE_COLUMNS = 'user_id, name, email, id_number, role, availability_status, created_at';
 
 export async function insertUserProfile({ userId, name, email, idNumber, role }) {
   const { data, error } = await supabase
@@ -32,6 +32,18 @@ export async function findUsersByRole(role) {
     .select(PROFILE_COLUMNS)
     .eq('role', role)
     .order('name', { ascending: true });
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateAvailabilityStatus(userId, availabilityStatus) {
+  const { data, error } = await supabase
+    .from('users')
+    .update({ availability_status: availabilityStatus })
+    .eq('user_id', userId)
+    .select(PROFILE_COLUMNS)
+    .single();
 
   if (error) throw error;
   return data;

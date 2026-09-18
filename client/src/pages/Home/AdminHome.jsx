@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { getAllRequests } from '../../services/requestsService';
 import { getAnalytics } from '../../services/reportsService';
-import { STATUS_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
+import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
 import BarChart from '../../components/BarChart';
 import './AdminHome.css';
 
@@ -13,11 +13,15 @@ function formatResolutionTime(hours) {
   return `${hours.toFixed(1)}h`;
 }
 
+function formatRating(rating) {
+  if (rating === null) return '—';
+  return `${rating.toFixed(1)} / 5`;
+}
+
 // admin_dashboard_unza_maintenance reference. This is a welcome/overview
-// glance, not a duplicate of the full Reports & Analytics page — trimmed to
-// what's real: no per-hostel breakdown (no location field), no response-time
-// trend line (no daily time-series tracking), no system activity log (no
-// audit log table), no technician "deployed" status.
+// glance, not a duplicate of the full Reports & Analytics page — the deeper
+// breakdowns (per-hostel chart, resolution trend line, technician workload +
+// availability) live there instead of being duplicated here.
 function AdminHome() {
   const { user } = useAuth();
   const [analytics, setAnalytics] = useState(null);
@@ -34,7 +38,14 @@ function AdminHome() {
       .catch((err) => setRequestsError(err.message));
   }, []);
 
-  const needsAttention = (requests || []).filter((r) => r.status === 'open').slice(0, 3);
+  // Most urgent first — a "needs attention" list that isn't priority-sorted
+  // isn't actually surfacing what needs attention.
+  const PRIORITY_ORDER = { critical: 0, high: 1, medium: 2, low: 3 };
+  const needsAttention = (requests || [])
+    .filter((r) => r.status === 'open')
+    .slice()
+    .sort((a, b) => (PRIORITY_ORDER[a.priority] ?? 4) - (PRIORITY_ORDER[b.priority] ?? 4))
+    .slice(0, 3);
 
   return (
     <main className="admin-home">
@@ -68,6 +79,10 @@ function AdminHome() {
             <div className="admin-home-stat">
               <span className="admin-home-stat-label">Resolved This Month</span>
               <span className="admin-home-stat-value">{analytics.thisMonth.resolved}</span>
+            </div>
+            <div className="admin-home-stat">
+              <span className="admin-home-stat-label">Average Rating</span>
+              <span className="admin-home-stat-value">{formatRating(analytics.averageRating)}</span>
             </div>
           </div>
 
@@ -122,6 +137,11 @@ function AdminHome() {
                     {request.category?.name || 'Uncategorized'}
                   </span>
                   <span className="admin-home-request-student">{request.student?.name}</span>
+                  {request.priority && (
+                    <span className={`admin-home-priority admin-home-priority-${request.priority}`}>
+                      {PRIORITY_LABELS[request.priority]}
+                    </span>
+                  )}
                   <span className={`admin-home-status admin-home-status-${request.status}`}>
                     {STATUS_LABELS[request.status] || request.status}
                   </span>

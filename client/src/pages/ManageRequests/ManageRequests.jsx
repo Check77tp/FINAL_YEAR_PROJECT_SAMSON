@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getAllRequests, assignTechnician } from '../../services/requestsService';
+import { getAllRequests, assignTechnician, updateRequestPriority } from '../../services/requestsService';
 import { getTechnicians } from '../../services/usersService';
-import { STATUS_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
+import {
+  STATUS_LABELS,
+  PRIORITY_LABELS,
+  PRIORITY_VALUES,
+  AVAILABILITY_LABELS,
+  categoryIcon,
+} from '../../utils/requestFormat';
 import './ManageRequests.css';
 
 const FILTERS = ['all', 'open', 'assigned', 'in_progress', 'resolved', 'closed'];
@@ -15,6 +21,7 @@ function ManageRequests() {
   const [selections, setSelections] = useState({});
   const [assigningId, setAssigningId] = useState(null);
   const [rowErrors, setRowErrors] = useState({});
+  const [updatingPriorityId, setUpdatingPriorityId] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
 
@@ -59,6 +66,20 @@ function ManageRequests() {
       setRowErrors((prev) => ({ ...prev, [requestId]: err.message }));
     } finally {
       setAssigningId(null);
+    }
+  }
+
+  async function handlePriorityChange(requestId, priority) {
+    setUpdatingPriorityId(requestId);
+    try {
+      await updateRequestPriority(requestId, priority);
+      setRequests((prev) =>
+        prev.map((request) => (request.requestId === requestId ? { ...request, priority } : request))
+      );
+    } catch (err) {
+      setRowErrors((prev) => ({ ...prev, [requestId]: err.message }));
+    } finally {
+      setUpdatingPriorityId(null);
     }
   }
 
@@ -130,6 +151,8 @@ function ManageRequests() {
             <span>Request ID</span>
             <span>Student</span>
             <span>Category</span>
+            <span>Location</span>
+            <span>Priority</span>
             <span>Status</span>
             <span>Assign</span>
           </div>
@@ -153,6 +176,23 @@ function ManageRequests() {
                     {request.category?.name || 'Uncategorized'}
                   </span>
 
+                  <span className="manage-requests-row-location">
+                    {[request.hostel, request.room].filter(Boolean).join(', ') || '—'}
+                  </span>
+
+                  <select
+                    className={`manage-requests-priority-select manage-requests-priority-${request.priority}`}
+                    value={request.priority || 'medium'}
+                    disabled={updatingPriorityId === request.requestId}
+                    onChange={(event) => handlePriorityChange(request.requestId, event.target.value)}
+                  >
+                    {PRIORITY_VALUES.map((value) => (
+                      <option key={value} value={value}>
+                        {PRIORITY_LABELS[value]}
+                      </option>
+                    ))}
+                  </select>
+
                   <span className={`manage-requests-status manage-requests-status-${request.status}`}>
                     {STATUS_LABELS[request.status] || request.status}
                   </span>
@@ -172,6 +212,9 @@ function ManageRequests() {
                             {technicians.map((technician) => (
                               <option key={technician.id} value={technician.id}>
                                 {technician.name}
+                                {technician.availabilityStatus
+                                  ? ` (${AVAILABILITY_LABELS[technician.availabilityStatus]})`
+                                  : ''}
                               </option>
                             ))}
                           </select>
@@ -184,18 +227,25 @@ function ManageRequests() {
                             {assigningId === request.requestId ? 'Assigning…' : 'Assign'}
                           </button>
                         </div>
-                        {rowErrors[request.requestId] && (
-                          <p className="manage-requests-row-error" role="alert">
-                            {rowErrors[request.requestId]}
-                          </p>
-                        )}
                       </>
                     ) : (
                       <span className="manage-requests-row-tech">
                         {request.technician ? request.technician.name : '—'}
+                        {request.technician?.availabilityStatus && (
+                          <span
+                            className={`manage-requests-availability manage-requests-availability-${request.technician.availabilityStatus}`}
+                          >
+                            {AVAILABILITY_LABELS[request.technician.availabilityStatus]}
+                          </span>
+                        )}
                       </span>
                     )}
                   </div>
+                  {rowErrors[request.requestId] && (
+                    <p className="manage-requests-row-error" role="alert">
+                      {rowErrors[request.requestId]}
+                    </p>
+                  )}
                 </li>
               );
             })}

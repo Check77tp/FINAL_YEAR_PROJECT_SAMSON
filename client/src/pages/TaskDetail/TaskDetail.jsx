@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getRequestDetail, updateRequestStatus } from '../../services/requestsService';
-import { STATUS_LABELS, categoryIcon } from '../../utils/requestFormat';
+import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon } from '../../utils/requestFormat';
+import { StarIcon, MapPinIcon } from '../../components/icons';
 import RequestTimeline from '../../components/RequestTimeline';
 import './TaskDetail.css';
 
@@ -80,9 +81,22 @@ function TaskDetail() {
           {request.category?.name || 'Uncategorized'}
         </span>
         <h1 className="task-detail-title">#REQ-{request.requestId}</h1>
-        <span className={`task-detail-status task-detail-status-${request.status}`}>
-          {STATUS_LABELS[request.status] || request.status}
-        </span>
+        <div className="task-detail-badges">
+          <span className={`task-detail-status task-detail-status-${request.status}`}>
+            {STATUS_LABELS[request.status] || request.status}
+          </span>
+          {request.priority && (
+            <span className={`task-detail-priority task-detail-priority-${request.priority}`}>
+              {PRIORITY_LABELS[request.priority] || request.priority} Priority
+            </span>
+          )}
+        </div>
+        {(request.hostel || request.room) && (
+          <span className="task-detail-location">
+            <MapPinIcon width={16} height={16} />
+            {[request.hostel, request.room].filter(Boolean).join(', ')}
+          </span>
+        )}
       </header>
 
       <section className="task-detail-section">
@@ -109,6 +123,25 @@ function TaskDetail() {
         <h2 className="task-detail-section-title">Progress Timeline</h2>
         <RequestTimeline history={request.history} />
       </section>
+
+      {request.rating && (
+        <section className="task-detail-section">
+          <h2 className="task-detail-section-title">Student Rating</h2>
+          <div className="task-detail-stars" aria-label={`Rated ${request.rating.rating} out of 5`}>
+            {[1, 2, 3, 4, 5].map((n) => (
+              <StarIcon
+                key={n}
+                width={20}
+                height={20}
+                className={n <= request.rating.rating ? 'task-detail-star-filled' : ''}
+              />
+            ))}
+          </div>
+          {request.rating.comment && (
+            <p className="task-detail-rating-comment">&ldquo;{request.rating.comment}&rdquo;</p>
+          )}
+        </section>
+      )}
 
       <section className="task-detail-section task-detail-actions">
         <h2 className="task-detail-section-title">Action Panel</h2>

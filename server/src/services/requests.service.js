@@ -3,6 +3,7 @@
 import * as requestsRepository from '../repositories/requests.repository.js';
 import * as usersRepository from '../repositories/users.repository.js';
 import * as storageRepository from '../repositories/storage.repository.js';
+import * as ratingsRepository from '../repositories/ratings.repository.js';
 import { httpError } from '../utils/httpError.js';
 
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
@@ -115,13 +116,20 @@ function mapRequestRow(row) {
     description: row.description,
     photoUrl: row.photo_url,
     status: row.status,
+    hostel: row.hostel,
+    room: row.room,
+    priority: row.priority,
     createdAt: row.created_at,
     category: row.category ? { id: row.category.category_id, name: row.category.name } : null,
     student: row.student
       ? { id: row.student.user_id, name: row.student.name, idNumber: row.student.id_number }
       : undefined,
     technician: latestAssignment?.technician
-      ? { id: latestAssignment.technician.user_id, name: latestAssignment.technician.name }
+      ? {
+          id: latestAssignment.technician.user_id,
+          name: latestAssignment.technician.name,
+          availabilityStatus: latestAssignment.technician.availability_status,
+        }
       : null,
   };
 }
@@ -129,7 +137,15 @@ function mapRequestRow(row) {
 // Student action: submit a new request. Always starts life as "open" (the
 // repository hardcodes this) — the lifecycle only moves forward from there
 // via assignTechnician()/updateRequestStatus() above.
-export async function createRequest({ studentId, categoryId, description, photoDataUrl }) {
+export async function createRequest({
+  studentId,
+  categoryId,
+  description,
+  photoDataUrl,
+  hostel,
+  room,
+  priority,
+}) {
   let photoUrl = null;
 
   if (photoDataUrl) {
@@ -154,7 +170,15 @@ export async function createRequest({ studentId, categoryId, description, photoD
   }
 
   try {
-    const row = await requestsRepository.insertRequest({ studentId, categoryId, description, photoUrl });
+    const row = await requestsRepository.insertRequest({
+      studentId,
+      categoryId,
+      description,
+      photoUrl,
+      hostel,
+      room,
+      priority,
+    });
     // Every request needs a real status_history row from the moment it
     // exists, not just a "Submitted" entry synthesized for display from
     // created_at — item 8's analytics (e.g. resolution time) need an actual
@@ -220,5 +244,23 @@ export async function getRequestDetail({ requestId, actingUser }) {
       changedAt: h.changed_at,
     }));
 
-  return { ...mapRequestRow(row), history };
+  const ratingRow = await ratingsRepository.findRatingByRequestId(requestId);
+  const rating = ratingRow
+    ? { rating: ratingRow.rating, comment: ratingRow.comment, createdAt: ratingRow.created_at }
+    : null;
+
+  return { ...mapRequestRow(row), history, rating };
+}
+
+// Administrator action: re-triage a request's urgency. Allowed at any point
+// in the lifecycle (not just at submission) — new information can surface
+// after a technician has already started work.
+export async function updatePriority({ requestId, priority }) {
+  const request = await requestsRepository.findRequestById(requestId);
+  if (!request) {
+    throw httpError('Request not found', 404);
+  }
+
+  await requestsRepository.updateRequestPriority(requestId, priority);
+  return { requestId, priority };
 }

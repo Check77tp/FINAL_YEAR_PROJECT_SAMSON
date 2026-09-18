@@ -59,6 +59,7 @@ export function computeWorkloadByTechnician(assignmentRows, technicians) {
     id: t.user_id,
     name: t.name,
     activeRequests: counts.get(t.user_id) || 0,
+    availabilityStatus: t.availability_status,
   }));
 }
 
@@ -69,6 +70,50 @@ export function computeRequestsByCategory(requestRows) {
     counts.set(name, (counts.get(name) || 0) + 1);
   }
   return Array.from(counts, ([name, count]) => ({ name, count }));
+}
+
+// Mirrors computeRequestsByCategory but grouped by the hostel captured at
+// submission time. Requests submitted before hostel/room existed have no
+// value here — grouped under "Unspecified" rather than dropped, so the
+// total still reconciles with "Requests This Month" etc.
+export function computeRequestsByHostel(requestRows) {
+  const counts = new Map();
+  for (const row of requestRows) {
+    const name = row.hostel || 'Unspecified';
+    counts.set(name, (counts.get(name) || 0) + 1);
+  }
+  return Array.from(counts, ([name, count]) => ({ name, count }));
+}
+
+// Last 7 calendar days (oldest first), counting 'resolved' transitions per
+// day — a coarse-but-real resolution-throughput trend, built from the same
+// status_history rows already fetched for computeAverageResolutionHours.
+export function computeResolutionTrend(historyRows, now = new Date()) {
+  // Stays in UTC end-to-end — mixing a local-time Date (year, month, day)
+  // constructor with UTC-based toISOString() would shift the day boundary
+  // by however far the server's local timezone sits from UTC.
+  const todayUtcMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const days = [];
+  for (let i = 6; i >= 0; i -= 1) {
+    const key = new Date(todayUtcMs - i * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    days.push({ key, resolvedCount: 0 });
+  }
+  const byKey = new Map(days.map((d) => [d.key, d]));
+
+  for (const row of historyRows) {
+    if (row.new_status !== 'resolved') continue;
+    const key = new Date(row.changed_at).toISOString().slice(0, 10);
+    const bucket = byKey.get(key);
+    if (bucket) bucket.resolvedCount += 1;
+  }
+
+  return days.map((d) => ({ date: d.key, resolvedCount: d.resolvedCount }));
+}
+
+export function computeAverageRating(ratingRows) {
+  if (ratingRows.length === 0) return null;
+  const sum = ratingRows.reduce((total, r) => total + r.rating, 0);
+  return sum / ratingRows.length;
 }
 
 // "This month" = the current calendar month so far, in server local time.
@@ -84,17 +129,21 @@ export function computeThisMonth(historyRows, requestRows, now = new Date()) {
 }
 
 export async function getAnalytics() {
-  const [historyRows, requestRows, assignmentRows, technicians] = await Promise.all([
+  const [historyRows, requestRows, assignmentRows, technicians, ratingRows] = await Promise.all([
     reportsRepository.findOpenAndResolvedHistory(),
     reportsRepository.findRequestsForCategoryAndMonthMetrics(),
     reportsRepository.findAllAssignmentsWithRequestStatus(),
     usersRepository.findUsersByRole('technician'),
+    reportsRepository.findAllRatings(),
   ]);
 
   return {
     averageResolutionHours: computeAverageResolutionHours(historyRows),
     workloadByTechnician: computeWorkloadByTechnician(assignmentRows, technicians),
     requestsByCategory: computeRequestsByCategory(requestRows),
+    requestsByHostel: computeRequestsByHostel(requestRows),
+    resolutionTrend: computeResolutionTrend(historyRows),
+    averageRating: computeAverageRating(ratingRows),
     thisMonth: computeThisMonth(historyRows, requestRows),
   };
 }

@@ -1,6 +1,7 @@
 // Presentation layer: thin routes, no business logic or direct DB access.
 import { Router } from 'express';
 import * as requestsService from '../services/requests.service.js';
+import * as ratingsService from '../services/ratings.service.js';
 import { authenticate } from '../middleware/authenticate.js';
 import { requireRole } from '../middleware/requireRole.js';
 
@@ -8,6 +9,7 @@ const router = Router();
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const STATUS_VALUES = ['in_progress', 'resolved', 'closed'];
+const PRIORITY_VALUES = ['low', 'medium', 'high', 'critical'];
 
 function parseRequestId(rawId, res) {
   const requestId = Number(rawId);
@@ -21,7 +23,7 @@ function parseRequestId(rawId, res) {
 // Student: submit a new request (category, description, optional photo).
 router.post('/', authenticate, requireRole('student'), async (req, res, next) => {
   try {
-    const { categoryId, description, photo } = req.body;
+    const { categoryId, description, photo, hostel, room, priority } = req.body;
 
     const parsedCategoryId = Number(categoryId);
     if (!Number.isInteger(parsedCategoryId) || parsedCategoryId <= 0) {
@@ -33,12 +35,26 @@ router.post('/', authenticate, requireRole('student'), async (req, res, next) =>
     if (photo !== undefined && typeof photo !== 'string') {
       return res.status(400).json({ status: 'error', message: 'Photo must be a data URL string' });
     }
+    if (typeof hostel !== 'string' || !hostel.trim()) {
+      return res.status(400).json({ status: 'error', message: 'Hostel is required' });
+    }
+    if (room !== undefined && typeof room !== 'string') {
+      return res.status(400).json({ status: 'error', message: 'Room must be a string' });
+    }
+    if (priority !== undefined && !PRIORITY_VALUES.includes(priority)) {
+      return res
+        .status(400)
+        .json({ status: 'error', message: `priority must be one of: ${PRIORITY_VALUES.join(', ')}` });
+    }
 
     const request = await requestsService.createRequest({
       studentId: req.user.user_id,
       categoryId: parsedCategoryId,
       description: description.trim(),
       photoDataUrl: photo || null,
+      hostel: hostel.trim(),
+      room: room?.trim() || null,
+      priority: priority || undefined,
     });
     res.status(201).json({ status: 'ok', request });
   } catch (err) {
@@ -140,5 +156,59 @@ router.patch(
     }
   }
 );
+
+// Administrator: re-triage a request's priority — allowed at any point in
+// the lifecycle, not just at submission (see requests.service.js).
+router.patch(
+  '/:requestId/priority',
+  authenticate,
+  requireRole('administrator'),
+  async (req, res, next) => {
+    try {
+      const requestId = parseRequestId(req.params.requestId, res);
+      if (requestId === null) return;
+
+      const { priority } = req.body;
+      if (!PRIORITY_VALUES.includes(priority)) {
+        return res
+          .status(400)
+          .json({ status: 'error', message: `priority must be one of: ${PRIORITY_VALUES.join(', ')}` });
+      }
+
+      const result = await requestsService.updatePriority({ requestId, priority });
+      res.status(200).json({ status: 'ok', ...result });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// Student: rate their own request once it's resolved/closed (one rating,
+// enforced in the service layer).
+router.post('/:requestId/rating', authenticate, requireRole('student'), async (req, res, next) => {
+  try {
+    const requestId = parseRequestId(req.params.requestId, res);
+    if (requestId === null) return;
+
+    const { rating, comment } = req.body;
+    const parsedRating = Number(rating);
+    if (!Number.isInteger(parsedRating) || parsedRating < 1 || parsedRating > 5) {
+      return res.status(400).json({ status: 'error', message: 'rating must be an integer from 1 to 5' });
+    }
+    if (comment !== undefined && typeof comment !== 'string') {
+      return res.status(400).json({ status: 'error', message: 'comment must be a string' });
+    }
+
+    const result = await ratingsService.submitRating({
+      requestId,
+      studentId: req.user.user_id,
+      rating: parsedRating,
+      comment: comment?.trim() || null,
+    });
+    res.status(201).json({ status: 'ok', rating: result });
+  } catch (err) {
+    next(err);
+  }
+});
 
 export default router;

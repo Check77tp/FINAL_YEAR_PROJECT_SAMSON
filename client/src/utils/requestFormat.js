@@ -8,6 +8,37 @@ export const STATUS_LABELS = {
   closed: 'Closed',
 };
 
+export const PRIORITY_LABELS = {
+  low: 'Low',
+  medium: 'Medium',
+  high: 'High',
+  critical: 'Critical',
+};
+
+export const PRIORITY_VALUES = ['low', 'medium', 'high', 'critical'];
+
+export const AVAILABILITY_LABELS = {
+  available: 'Available',
+  on_job: 'On Job',
+  off_duty: 'Off Duty',
+};
+
+// Named after the hostels shown in the Stitch mockups (student_dashboard,
+// admin_dashboard "Requests per Hostel", technician map) — the schema has no
+// hostel table, so this is a plain client-side list backing the submission
+// form's dropdown, with "Other" as an escape hatch for anywhere not listed.
+export const HOSTELS = [
+  'Goma Hall',
+  'Kwame Nkrumah',
+  'Ridgeway',
+  'Presidential',
+  'Africa Unity',
+  'October',
+  'Kalingalinga',
+  'Soweto',
+  'Other',
+];
+
 const CATEGORY_ICONS = {
   plumbing: DropletIcon,
   electrical: BoltIcon,

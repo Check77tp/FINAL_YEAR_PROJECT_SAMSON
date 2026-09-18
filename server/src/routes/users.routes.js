@@ -16,4 +16,19 @@ router.get('/technicians', authenticate, requireRole('administrator'), async (re
   }
 });
 
+// Technician: set their own availability status.
+router.patch(
+  '/me/availability',
+  authenticate,
+  requireRole('technician'),
+  async (req, res, next) => {
+    try {
+      const result = await usersService.setOwnAvailability(req.user.user_id, req.body.availabilityStatus);
+      res.status(200).json({ status: 'ok', ...result });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 export default router;

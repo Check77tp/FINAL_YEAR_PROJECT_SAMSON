@@ -5,10 +5,10 @@ export async function getMyRequests() {
   return data.requests;
 }
 
-export async function createRequest({ categoryId, description, photoDataUrl }) {
+export async function createRequest({ categoryId, description, photoDataUrl, hostel, room, priority }) {
   const data = await apiPost(
     '/requests',
-    { categoryId, description, photo: photoDataUrl || undefined },
+    { categoryId, description, photo: photoDataUrl || undefined, hostel, room, priority },
     { auth: true }
   );
   return data.request;
@@ -35,4 +35,13 @@ export async function assignTechnician(requestId, technicianId) {
 
 export async function updateRequestStatus(requestId, status) {
   return apiPatch(`/requests/${requestId}/status`, { status }, { auth: true });
+}
+
+export async function updateRequestPriority(requestId, priority) {
+  return apiPatch(`/requests/${requestId}/priority`, { priority }, { auth: true });
+}
+
+export async function submitRating(requestId, rating, comment) {
+  const data = await apiPost(`/requests/${requestId}/rating`, { rating, comment }, { auth: true });
+  return data.rating;
 }
