@@ -1,9 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { getRecentActivity } from '../../services/activityService';
 import { STATUS_LABELS, formatDate } from '../../utils/requestFormat';
-import { MenuIcon, SearchIcon, BellIcon, InfoIcon, ChevronDownIcon, LogoutIcon } from '../icons';
+import {
+  MenuIcon,
+  SearchIcon,
+  BellIcon,
+  InfoIcon,
+  ChevronDownIcon,
+  LogoutIcon,
+  UserIcon,
+} from '../icons';
 import './TopNav.css';
 
 const SEARCH_TARGET_BY_ROLE = {
@@ -175,7 +183,11 @@ function TopNav({ onMenuClick }) {
             className="top-nav-account-button"
             onClick={() => togglePanel('account')}
           >
-            <span className="top-nav-avatar">{initials(user?.name)}</span>
+            {user?.avatar_url ? (
+              <img src={user.avatar_url} alt="" className="top-nav-avatar top-nav-avatar-photo" />
+            ) : (
+              <span className="top-nav-avatar">{initials(user?.name)}</span>
+            )}
             <span className="top-nav-account-text">
               <span className="top-nav-account-name">{user?.name}</span>
               <span className="top-nav-account-role">{user?.role}</span>
@@ -184,6 +196,10 @@ function TopNav({ onMenuClick }) {
           </button>
           {panelOpen === 'account' && (
             <div className="top-nav-popover top-nav-popover-right">
+              <Link to="/profile" className="top-nav-profile-link" onClick={() => setPanelOpen(null)}>
+                <UserIcon width={18} height={18} />
+                View Profile
+              </Link>
               <button type="button" className="top-nav-logout" onClick={logout}>
                 <LogoutIcon width={18} height={18} />
                 Log Out

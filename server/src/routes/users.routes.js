@@ -31,4 +31,29 @@ router.patch(
   }
 );
 
+// Any authenticated role: view/edit their own profile (name + avatar).
+router.get('/me', authenticate, (req, res) => {
+  res.status(200).json({ status: 'ok', user: req.user });
+});
+
+router.patch('/me', authenticate, async (req, res, next) => {
+  try {
+    const { name, photo } = req.body;
+    if (name !== undefined && typeof name !== 'string') {
+      return res.status(400).json({ status: 'error', message: 'name must be a string' });
+    }
+    if (photo !== undefined && typeof photo !== 'string') {
+      return res.status(400).json({ status: 'error', message: 'Photo must be a data URL string' });
+    }
+
+    const user = await usersService.updateOwnProfile(req.user.user_id, {
+      name,
+      photoDataUrl: photo || undefined,
+    });
+    res.status(200).json({ status: 'ok', user });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;

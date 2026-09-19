@@ -11,6 +11,7 @@ import TaskDetail from './pages/TaskDetail/TaskDetail';
 import RequestDetail from './pages/RequestDetail/RequestDetail';
 import SubmitRequest from './pages/SubmitRequest/SubmitRequest';
 import ReportsAnalytics from './pages/ReportsAnalytics/ReportsAnalytics';
+import Profile from './pages/Profile/Profile';
 
 function App() {
   return (
@@ -80,6 +81,14 @@ function App() {
             element={
               <ProtectedRoute roles={['technician']}>
                 <TaskDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
               </ProtectedRoute>
             }
           />

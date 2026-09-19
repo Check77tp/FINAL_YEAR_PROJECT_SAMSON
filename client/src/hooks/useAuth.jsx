@@ -40,8 +40,15 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
+  // Merges a server-returned profile (e.g. after editing name/avatar in
+  // Account Settings) into the current user so it's reflected everywhere it
+  // renders — the TopNav avatar included — without a full reload.
+  function updateUser(patch) {
+    setUser((prev) => ({ ...prev, ...patch }));
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

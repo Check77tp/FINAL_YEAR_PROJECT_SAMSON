@@ -167,7 +167,10 @@
     padding: var(--spacing-xs) var(--spacing-xs) var(--spacing-md);
   }
 
-  .sidebar-brand-text,
+  .sidebar-brand-text {
+    display: flex;
+  }
+
   .sidebar-label,
   .sidebar-cta-label {
     display: inline;
