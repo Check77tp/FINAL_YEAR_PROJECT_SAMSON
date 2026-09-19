@@ -1,0 +1,325 @@
+/* 1. Default styles = mobile (375px canvas, must not break down to 320px) */
+.user-management {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--margin-mobile);
+}
+
+.user-management-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.user-management-title {
+  font-size: var(--font-size-headline-sm-mobile);
+  line-height: var(--line-height-headline-sm-mobile);
+  font-weight: var(--font-weight-headline-sm-mobile);
+  color: var(--color-on-surface);
+}
+
+.user-management-subtitle {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.user-management-add-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 12px var(--spacing-sm);
+  border: none;
+  border-radius: var(--radius-button);
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.user-management-form {
+  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-level-1);
+}
+
+.user-management-form-title {
+  font-size: var(--font-size-body-lg);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-on-surface);
+}
+
+.user-management-form-note {
+  margin-top: 2px;
+  margin-bottom: var(--spacing-sm);
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.user-management-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-sm);
+}
+
+.user-management-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.user-management-field label {
+  font-size: var(--font-size-label-md);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-on-surface);
+}
+
+.user-management-field input,
+.user-management-field select {
+  padding: var(--spacing-xs);
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--radius-input);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-md);
+  background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+}
+
+.user-management-field input:focus,
+.user-management-field select:focus {
+  outline: none;
+  border-color: var(--color-primary-brand);
+  box-shadow: var(--input-focus-glow);
+}
+
+.user-management-form-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+}
+
+.user-management-submit {
+  padding: 10px var(--spacing-sm);
+  border: none;
+  border-radius: var(--radius-button);
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.user-management-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.user-management-cancel {
+  padding: 10px var(--spacing-sm);
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--radius-button);
+  background: none;
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.user-management-tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: var(--spacing-md);
+  background: var(--color-surface-container-low);
+  border-radius: var(--radius-button);
+}
+
+.user-management-tab {
+  padding: 8px var(--spacing-sm);
+  border: none;
+  border-radius: var(--radius-button);
+  background: transparent;
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.user-management-tab-selected {
+  background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+  box-shadow: var(--shadow-level-1);
+}
+
+.user-management-error {
+  color: var(--color-error);
+  font-size: var(--font-size-body-sm);
+}
+
+.user-management-loading,
+.user-management-empty {
+  color: var(--color-on-surface-variant);
+  font-size: var(--font-size-body-sm);
+}
+
+.user-management-list-header {
+  display: none;
+}
+
+.user-management-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.user-management-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  padding: var(--spacing-sm);
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-level-1);
+}
+
+.user-management-row-name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.user-management-row-id,
+.user-management-row-email,
+.user-management-row-date {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.user-management-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  padding: 3px 10px;
+  border-radius: var(--radius-badge);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  text-transform: capitalize;
+}
+
+.user-management-role-student {
+  background: var(--color-status-open-bg);
+  color: var(--color-status-open-text);
+}
+
+.user-management-role-technician {
+  background: var(--color-status-assigned-bg);
+  color: var(--color-status-assigned-text);
+}
+
+.user-management-role-administrator {
+  background: var(--color-priority-critical-bg);
+  color: var(--color-priority-critical-text);
+}
+
+.user-management-availability {
+  padding: 2px 8px;
+  border-radius: var(--radius-badge);
+  font-size: 10px;
+  font-weight: var(--font-weight-label-md);
+  text-transform: none;
+}
+
+.user-management-availability-available {
+  background: var(--color-status-resolved-bg);
+  color: var(--color-status-resolved-text);
+}
+
+.user-management-availability-on_job {
+  background: var(--color-status-in-progress-bg);
+  color: var(--color-status-in-progress-text);
+}
+
+.user-management-availability-off_duty {
+  background: var(--color-status-closed-bg);
+  color: var(--color-status-closed-text);
+}
+
+/* 2. Then scale up for tablet */
+@media (min-width: 768px) {
+  .user-management {
+    padding: var(--spacing-lg);
+  }
+
+  .user-management-header {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .user-management-form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 3. Then scale up for desktop: table layout, matching Manage Requests. */
+@media (min-width: 1280px) {
+  .user-management-title {
+    font-size: var(--font-size-headline-md);
+    line-height: var(--line-height-headline-md);
+    font-weight: var(--font-weight-headline-md);
+  }
+
+  .user-management-form-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .user-management-list-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.4fr 1fr 0.8fr;
+    gap: var(--spacing-sm);
+    padding: 0 var(--spacing-sm) var(--spacing-xs);
+    font-size: var(--font-size-label-sm);
+    font-weight: var(--font-weight-label-md);
+    color: var(--color-on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .user-management-list {
+    gap: 0;
+    background: var(--color-surface-container-lowest);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+
+  .user-management-row {
+    grid-template-columns: 1fr 1fr 1.4fr 1fr 0.8fr;
+    align-items: center;
+    min-height: 60px;
+    padding: 0 var(--spacing-sm);
+    background: none;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid var(--color-divider);
+    box-shadow: none;
+  }
+
+  .user-management-row:last-child {
+    border-bottom: none;
+  }
+}

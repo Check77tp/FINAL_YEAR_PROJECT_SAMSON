@@ -38,6 +38,17 @@ export async function findUsersByRole(role) {
   return data;
 }
 
+// Administrator action (User Management page): every account, any role.
+export async function findAllUsers() {
+  const { data, error } = await supabase
+    .from('users')
+    .select(PROFILE_COLUMNS)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data;
+}
+
 export async function updateProfile(userId, { name, avatarUrl }) {
   const patch = {};
   if (name !== undefined) patch.name = name;

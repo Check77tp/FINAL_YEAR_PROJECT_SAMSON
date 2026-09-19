@@ -1,20 +1,32 @@
 import { NavLink } from 'react-router-dom';
-import { GraduationCapIcon, GridIcon, ClipboardListIcon, ChartBarIcon, PlusIcon } from '../icons';
+import {
+  GraduationCapIcon,
+  GridIcon,
+  ClipboardListIcon,
+  ChartBarIcon,
+  UsersGroupIcon,
+  GearIcon,
+  PlusIcon,
+} from '../icons';
 import './Sidebar.css';
 
 const NAV_ITEMS_BY_ROLE = {
   student: [
     { to: '/', label: 'Dashboard', icon: GridIcon, end: true },
     { to: '/requests', label: 'My Requests', icon: ClipboardListIcon },
+    { to: '/profile', label: 'Settings', icon: GearIcon },
   ],
   technician: [
     { to: '/', label: 'Dashboard', icon: GridIcon, end: true },
     { to: '/tasks', label: 'My Tasks', icon: ClipboardListIcon },
+    { to: '/profile', label: 'Settings', icon: GearIcon },
   ],
   administrator: [
     { to: '/', label: 'Dashboard', icon: GridIcon, end: true },
     { to: '/manage-requests', label: 'Manage Requests', icon: ClipboardListIcon },
+    { to: '/user-management', label: 'User Management', icon: UsersGroupIcon },
     { to: '/reports', label: 'Reports & Analytics', icon: ChartBarIcon },
+    { to: '/profile', label: 'Settings', icon: GearIcon },
   ],
 };
 

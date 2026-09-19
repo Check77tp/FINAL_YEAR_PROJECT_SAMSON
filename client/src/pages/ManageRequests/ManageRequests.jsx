@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { getAllRequests, assignTechnician, updateRequestPriority } from '../../services/requestsService';
 import { getTechnicians } from '../../services/usersService';
 import {
@@ -162,7 +162,12 @@ function ManageRequests() {
               const Icon = categoryIcon(request.category?.name);
               return (
                 <li key={request.requestId} className="manage-requests-row">
-                  <span className="manage-requests-row-id">#REQ-{request.requestId}</span>
+                  <Link
+                    to={`/manage-requests/${request.requestId}`}
+                    className="manage-requests-row-id"
+                  >
+                    #REQ-{request.requestId}
+                  </Link>
 
                   <div className="manage-requests-row-student">
                     <span className="manage-requests-row-student-name">{request.student?.name}</span>

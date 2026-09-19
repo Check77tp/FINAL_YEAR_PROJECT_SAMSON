@@ -29,7 +29,7 @@ const SEARCH_PLACEHOLDER_BY_ROLE = {
 const DETAIL_ROUTE_BY_ROLE = {
   student: (id) => `/requests/${id}`,
   technician: (id) => `/tasks/${id}`,
-  administrator: () => '/manage-requests',
+  administrator: (id) => `/manage-requests/${id}`,
 };
 
 function initials(name) {

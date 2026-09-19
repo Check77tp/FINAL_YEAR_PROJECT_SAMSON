@@ -175,6 +175,13 @@
   font-family: var(--font-heading);
   font-weight: 700;
   color: var(--color-on-surface);
+  text-decoration: none;
+  width: fit-content;
+}
+
+.manage-requests-row-id:hover {
+  color: var(--color-primary-brand);
+  text-decoration: underline;
 }
 
 .manage-requests-row-student {

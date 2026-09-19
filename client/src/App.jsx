@@ -12,6 +12,8 @@ import RequestDetail from './pages/RequestDetail/RequestDetail';
 import SubmitRequest from './pages/SubmitRequest/SubmitRequest';
 import ReportsAnalytics from './pages/ReportsAnalytics/ReportsAnalytics';
 import Profile from './pages/Profile/Profile';
+import UserManagement from './pages/UserManagement/UserManagement';
+import AdminRequestDetail from './pages/AdminRequestDetail/AdminRequestDetail';
 
 function App() {
   return (
@@ -61,6 +63,14 @@ function App() {
             }
           />
           <Route
+            path="/manage-requests/:requestId"
+            element={
+              <ProtectedRoute roles={['administrator']}>
+                <AdminRequestDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/reports"
             element={
               <ProtectedRoute roles={['administrator']}>
@@ -81,6 +91,14 @@ function App() {
             element={
               <ProtectedRoute roles={['technician']}>
                 <TaskDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user-management"
+            element={
+              <ProtectedRoute roles={['administrator']}>
+                <UserManagement />
               </ProtectedRoute>
             }
           />

@@ -230,6 +230,26 @@ export function UserIcon(props) {
   );
 }
 
+export function GearIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V21a2 2 0 0 1-4 0v-.09a1.7 1.7 0 0 0-1.04-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1.04H3a2 2 0 0 1 0-4h.09A1.7 1.7 0 0 0 4.65 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1.04-1.56V3a2 2 0 0 1 4 0v.09A1.7 1.7 0 0 0 15 4.65a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.56 1.04H21a2 2 0 0 1 0 4h-.09A1.7 1.7 0 0 0 19.4 15Z" />
+    </svg>
+  );
+}
+
+export function UsersGroupIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <circle cx="9" cy="8" r="3.2" />
+      <path d="M3 20c0-3.4 2.7-6 6-6s6 2.6 6 6" />
+      <circle cx="17.5" cy="9" r="2.4" />
+      <path d="M15.8 14.2c2.7.3 4.7 2.5 4.7 5.3" />
+    </svg>
+  );
+}
+
 export function MapPinIcon(props) {
   return (
     <svg {...iconProps(props)}>

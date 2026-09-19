@@ -7,6 +7,19 @@ const AVAILABILITY_VALUES = ['available', 'on_job', 'off_duty'];
 const MAX_AVATAR_BYTES = 3 * 1024 * 1024;
 const PHOTO_DATA_URL_PATTERN = /^data:image\/(jpeg|png|webp);base64,(.+)$/;
 
+function mapUser(u) {
+  return {
+    id: u.user_id,
+    name: u.name,
+    email: u.email,
+    idNumber: u.id_number,
+    role: u.role,
+    availabilityStatus: u.availability_status,
+    avatarUrl: u.avatar_url,
+    createdAt: u.created_at,
+  };
+}
+
 export async function listTechnicians() {
   const technicians = await usersRepository.findUsersByRole('technician');
   return technicians.map((t) => ({
@@ -15,6 +28,12 @@ export async function listTechnicians() {
     idNumber: t.id_number,
     availabilityStatus: t.availability_status,
   }));
+}
+
+// Administrator action (User Management page): every account, any role.
+export async function listAllUsers() {
+  const users = await usersRepository.findAllUsers();
+  return users.map(mapUser);
 }
 
 // Technician action: set their own availability — an administrator reads

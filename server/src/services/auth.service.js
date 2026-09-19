@@ -4,11 +4,10 @@ import { supabase, createAuthClient } from '../config/supabaseClient.js';
 import * as usersRepository from '../repositories/users.repository.js';
 import { httpError } from '../utils/httpError.js';
 
-// Public self-registration is intentionally limited to the student role —
-// see the login_unza_maintenance design ("Sign up as Student"). Technician
-// and administrator accounts are provisioned separately by an administrator,
-// not through this open endpoint.
-export async function registerStudent({ name, email, idNumber, password }) {
+// Shared by registerStudent (public, student-only) and provisionStaffAccount
+// (administrator-only, see below) — the only two ways an account comes into
+// existence in this system.
+async function createUserAccount({ name, email, idNumber, password, role }) {
   const { data: authData, error: authError } = await supabase.auth.admin.createUser({
     email,
     password,
@@ -25,19 +24,39 @@ export async function registerStudent({ name, email, idNumber, password }) {
       name,
       email,
       idNumber,
-      role: 'student',
+      role,
     });
   } catch (profileError) {
     // Compensating action: don't leave an orphaned auth.users row if the
     // profile insert fails (e.g. duplicate email/ID number at the table level).
     await supabase.auth.admin.deleteUser(authData.user.id);
-    console.error('Profile insert failed during registration:', profileError);
+    console.error('Profile insert failed during account creation:', profileError);
     const message =
       profileError.code === '23505'
         ? 'Email or Student/Staff ID is already registered'
         : 'Could not create user profile';
     throw httpError(message, 400);
   }
+}
+
+// Public self-registration is intentionally limited to the student role —
+// see the login_unza_maintenance design ("Sign up as Student"). Technician
+// and administrator accounts are provisioned separately by an administrator,
+// not through this open endpoint — see provisionStaffAccount below.
+export async function registerStudent({ name, email, idNumber, password }) {
+  return createUserAccount({ name, email, idNumber, password, role: 'student' });
+}
+
+const STAFF_ROLES = ['technician', 'administrator'];
+
+// Administrator action (User Management page): the only way a technician or
+// administrator account comes into existence — there is no public sign-up
+// for either role.
+export async function provisionStaffAccount({ name, email, idNumber, password, role }) {
+  if (!STAFF_ROLES.includes(role)) {
+    throw httpError(`role must be one of: ${STAFF_ROLES.join(', ')}`, 400);
+  }
+  return createUserAccount({ name, email, idNumber, password, role });
 }
 
 // Per CLAUDE.md "Authentication: ID-Based Login": the client sends either an
