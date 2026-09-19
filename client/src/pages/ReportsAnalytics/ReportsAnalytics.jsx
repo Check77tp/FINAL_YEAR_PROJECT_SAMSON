@@ -1,9 +1,25 @@
 import { useEffect, useState } from 'react';
 import { getAnalytics } from '../../services/reportsService';
-import { AVAILABILITY_LABELS } from '../../utils/requestFormat';
+import { getAllRequests } from '../../services/requestsService';
+import { AVAILABILITY_LABELS, STATUS_LABELS, PRIORITY_LABELS, formatDate } from '../../utils/requestFormat';
+import { downloadCsv } from '../../utils/csv';
 import BarChart from '../../components/BarChart';
 import LineChart from '../../components/LineChart';
+import { DownloadIcon, PrinterIcon } from '../../components/icons';
 import './ReportsAnalytics.css';
+
+const CSV_COLUMNS = [
+  { key: 'requestId', label: 'Request ID' },
+  { key: 'student', label: 'Student' },
+  { key: 'studentId', label: 'Student ID' },
+  { key: 'category', label: 'Category' },
+  { key: 'hostel', label: 'Hostel' },
+  { key: 'room', label: 'Room' },
+  { key: 'priority', label: 'Priority' },
+  { key: 'status', label: 'Status' },
+  { key: 'createdAt', label: 'Date Reported' },
+  { key: 'technician', label: 'Assigned Technician' },
+];
 
 function formatResolutionTime(hours) {
   if (hours === null) return '—';
@@ -19,21 +35,74 @@ function formatRating(rating) {
 function ReportsAnalytics() {
   const [analytics, setAnalytics] = useState(null);
   const [error, setError] = useState('');
+  const [requests, setRequests] = useState(null);
+  const [exportError, setExportError] = useState('');
 
   useEffect(() => {
     getAnalytics()
       .then(setAnalytics)
       .catch((err) => setError(err.message));
+    getAllRequests()
+      .then(setRequests)
+      .catch(() => {});
   }, []);
+
+  function handleExportCsv() {
+    setExportError('');
+    if (!requests || requests.length === 0) {
+      setExportError('No requests to export yet.');
+      return;
+    }
+    const rows = requests.map((r) => ({
+      requestId: `REQ-${r.requestId}`,
+      student: r.student?.name || '',
+      studentId: r.student?.idNumber || '',
+      category: r.category?.name || 'Uncategorized',
+      hostel: r.hostel || '',
+      room: r.room || '',
+      priority: PRIORITY_LABELS[r.priority] || r.priority || '',
+      status: STATUS_LABELS[r.status] || r.status,
+      createdAt: formatDate(r.createdAt),
+      technician: r.technician?.name || 'Unassigned',
+    }));
+    downloadCsv(`unza-maintenance-requests-${new Date().toISOString().slice(0, 10)}.csv`, CSV_COLUMNS, rows);
+  }
 
   return (
     <main className="reports-analytics">
       <header className="reports-analytics-header">
-        <h1 className="reports-analytics-title">Reports &amp; Analytics</h1>
-        <p className="reports-analytics-subtitle">
-          Performance oversight for hostel maintenance operations.
-        </p>
+        <div>
+          <h1 className="reports-analytics-title">Reports &amp; Analytics</h1>
+          <p className="reports-analytics-subtitle">
+            Performance oversight for hostel maintenance operations.
+          </p>
+        </div>
+        <div className="reports-analytics-export-actions">
+          <button type="button" className="reports-analytics-export-button" onClick={handleExportCsv}>
+            <DownloadIcon width={18} height={18} />
+            Export CSV
+          </button>
+          <button
+            type="button"
+            className="reports-analytics-export-button"
+            onClick={() => window.print()}
+          >
+            <PrinterIcon width={18} height={18} />
+            Print / Save as PDF
+          </button>
+        </div>
       </header>
+
+      {exportError && (
+        <p className="reports-analytics-error" role="alert">
+          {exportError}
+        </p>
+      )}
+
+      <div className="reports-analytics-print-header">
+        <h2>UNZA Hostel Maintenance — Reports &amp; Analytics</h2>
+        <p>Generated {new Date().toLocaleString()}</p>
+      </div>
 
       {error && (
         <p className="reports-analytics-error" role="alert">

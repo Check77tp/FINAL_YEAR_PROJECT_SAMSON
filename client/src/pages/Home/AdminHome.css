@@ -107,6 +107,17 @@
   margin-bottom: 4px;
 }
 
+.admin-home-donut-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.admin-home-donut-section .admin-home-section-title {
+  align-self: flex-start;
+}
+
 .admin-home-section-note {
   font-size: var(--font-size-label-sm);
   color: var(--color-on-surface-variant);
@@ -220,7 +231,7 @@
   }
 
   .admin-home-stats {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .admin-home-links {
@@ -244,7 +255,4 @@
     max-width: 500px;
   }
 
-  .admin-home-stats {
-    grid-template-columns: repeat(4, 1fr);
-  }
 }

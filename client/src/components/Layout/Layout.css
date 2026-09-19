@@ -14,3 +14,19 @@
 .app-shell-content {
   flex: 1;
 }
+
+/* A page's own "Print / Save as PDF" action (see ReportsAnalytics) should
+   produce a clean report, not a printout of the dashboard chrome around it. */
+@media print {
+  .sidebar,
+  .sidebar-backdrop,
+  .top-nav {
+    display: none !important;
+  }
+
+  .app-shell,
+  .app-shell-main,
+  .app-shell-content {
+    display: block;
+  }
+}

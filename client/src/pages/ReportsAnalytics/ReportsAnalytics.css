@@ -7,7 +7,73 @@
 }
 
 .reports-analytics-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
+}
+
+.reports-analytics-export-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.reports-analytics-export-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px var(--spacing-sm);
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--radius-button);
+  background: var(--color-surface-container-lowest);
+  color: var(--color-primary-brand);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.reports-analytics-print-header {
+  display: none;
+}
+
+/* Screen: hidden. Print: the sidebar/top-nav are hidden (see Layout.css),
+   so this stands in as the report's own header — a PDF saved from this
+   page shouldn't just start mid-way through a dashboard with no title. */
+@media print {
+  .reports-analytics-export-actions,
+  .reports-analytics-error,
+  .reports-analytics-title,
+  .reports-analytics-subtitle {
+    display: none;
+  }
+
+  .reports-analytics-print-header {
+    display: block;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .reports-analytics-print-header h2 {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-headline-sm);
+    color: var(--color-on-surface);
+  }
+
+  .reports-analytics-print-header p {
+    margin-top: 4px;
+    font-size: var(--font-size-body-sm);
+    color: var(--color-on-surface-variant);
+  }
+
+  .reports-analytics-charts {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .reports-analytics-section {
+    break-inside: avoid;
+  }
 }
 
 .reports-analytics-title {
@@ -103,6 +169,12 @@
 @media (min-width: 768px) {
   .reports-analytics {
     padding: var(--spacing-lg);
+  }
+
+  .reports-analytics-header {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
   }
 
   .reports-analytics-stats {

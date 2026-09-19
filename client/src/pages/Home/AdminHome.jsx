@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { getAllRequests } from '../../services/requestsService';
 import { getAnalytics } from '../../services/reportsService';
 import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
-import BarChart from '../../components/BarChart';
+import DonutChart from '../../components/DonutChart';
 import './AdminHome.css';
 
 function formatResolutionTime(hours) {
@@ -13,15 +13,13 @@ function formatResolutionTime(hours) {
   return `${hours.toFixed(1)}h`;
 }
 
-function formatRating(rating) {
-  if (rating === null) return '—';
-  return `${rating.toFixed(1)} / 5`;
-}
-
 // admin_dashboard_unza_maintenance reference. This is a welcome/overview
 // glance, not a duplicate of the full Reports & Analytics page — the deeper
 // breakdowns (per-hostel chart, resolution trend line, technician workload +
-// availability) live there instead of being duplicated here.
+// availability, average rating) live there instead of being duplicated
+// here. The category breakdown uses the mockup's original ring chart
+// (DonutChart) rather than Reports' bar chart, so the two pages read as
+// distinct at a glance rather than near-duplicates.
 function AdminHome() {
   const { user } = useAuth();
   const [analytics, setAnalytics] = useState(null);
@@ -80,16 +78,12 @@ function AdminHome() {
               <span className="admin-home-stat-label">Resolved This Month</span>
               <span className="admin-home-stat-value">{analytics.thisMonth.resolved}</span>
             </div>
-            <div className="admin-home-stat">
-              <span className="admin-home-stat-label">Average Rating</span>
-              <span className="admin-home-stat-value">{formatRating(analytics.averageRating)}</span>
-            </div>
           </div>
 
           {analytics.requestsByCategory.length > 0 && (
-            <section className="admin-home-section">
-              <h2 className="admin-home-section-title">Requests by Category</h2>
-              <BarChart
+            <section className="admin-home-section admin-home-donut-section">
+              <h2 className="admin-home-section-title">Issue Categories</h2>
+              <DonutChart
                 items={analytics.requestsByCategory.map((c) => ({ label: c.name, value: c.count }))}
               />
             </section>
