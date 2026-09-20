@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { getAnalytics } from '../../services/reportsService';
+import { getAnalytics, emailWeeklySummary } from '../../services/reportsService';
 import { getAllRequests } from '../../services/requestsService';
 import { AVAILABILITY_LABELS, STATUS_LABELS, PRIORITY_LABELS, formatDate } from '../../utils/requestFormat';
 import { downloadCsv } from '../../utils/csv';
 import BarChart from '../../components/BarChart';
 import LineChart from '../../components/LineChart';
 import HostelHeatmap from '../../components/HostelHeatmap';
-import { DownloadIcon, PrinterIcon } from '../../components/icons';
+import { DownloadIcon, PrinterIcon, MailIcon } from '../../components/icons';
 import './ReportsAnalytics.css';
 import { useLiveVersion } from '../../hooks/useLive';
 
@@ -40,6 +40,7 @@ function ReportsAnalytics() {
   const [error, setError] = useState('');
   const [requests, setRequests] = useState(() => getAllRequests.peek() ?? null);
   const [exportError, setExportError] = useState('');
+  const [emailState, setEmailState] = useState({ busy: false, message: '', isError: false });
 
   useEffect(() => {
     getAnalytics()
@@ -49,6 +50,16 @@ function ReportsAnalytics() {
       .then(setRequests)
       .catch(() => {});
   }, [liveVersion]);
+
+  async function handleEmailSummary() {
+    setEmailState({ busy: true, message: '', isError: false });
+    try {
+      const { sentTo } = await emailWeeklySummary();
+      setEmailState({ busy: false, message: `Weekly summary sent to ${sentTo}.`, isError: false });
+    } catch (err) {
+      setEmailState({ busy: false, message: err.message, isError: true });
+    }
+  }
 
   function handleExportCsv() {
     setExportError('');
@@ -93,8 +104,26 @@ function ReportsAnalytics() {
             <PrinterIcon width={18} height={18} />
             Print / Save as PDF
           </button>
+          <button
+            type="button"
+            className="reports-analytics-export-button"
+            onClick={handleEmailSummary}
+            disabled={emailState.busy}
+          >
+            <MailIcon width={18} height={18} />
+            {emailState.busy ? 'Sending…' : 'Email me the summary'}
+          </button>
         </div>
       </header>
+
+      {emailState.message && (
+        <p
+          className={emailState.isError ? 'reports-analytics-error' : 'reports-analytics-note'}
+          role={emailState.isError ? 'alert' : 'status'}
+        >
+          {emailState.message}
+        </p>
+      )}
 
       {exportError && (
         <p className="reports-analytics-error" role="alert">

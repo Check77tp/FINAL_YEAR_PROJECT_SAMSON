@@ -43,6 +43,7 @@
    so this stands in as the report's own header — a PDF saved from this
    page shouldn't just start mid-way through a dashboard with no title. */
 @media print {
+  .reports-analytics-note,
   .reports-analytics-export-actions,
   .reports-analytics-error,
   .reports-analytics-title,
@@ -87,6 +88,12 @@
   margin-top: var(--spacing-xs);
   font-size: var(--font-size-body-sm);
   color: var(--color-on-surface-variant);
+}
+
+.reports-analytics-note {
+  margin-bottom: var(--spacing-sm);
+  font-size: var(--font-size-body-sm);
+  color: var(--color-status-resolved-text);
 }
 
 .reports-analytics-error {
