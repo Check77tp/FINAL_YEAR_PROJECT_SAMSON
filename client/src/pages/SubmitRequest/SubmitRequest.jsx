@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getCategories } from '../../services/categoriesService';
 import { createRequest } from '../../services/requestsService';
 import SimilarIssues from '../../components/SimilarIssues';
+import TriageSuggestion from '../../components/TriageSuggestion';
 import { saveDraft } from '../../services/draftQueue';
 import { categoryIcon, HOSTELS, PRIORITY_LABELS, PRIORITY_VALUES } from '../../utils/requestFormat';
 import { CameraIcon, XIcon } from '../../components/icons';
@@ -223,6 +224,17 @@ function SubmitRequest() {
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           rows={5}
+        />
+
+        <TriageSuggestion
+          description={description}
+          categories={categories}
+          categoryId={categoryId}
+          priority={priority}
+          onApply={(applied) => {
+            if (applied.categoryId) setCategoryId(applied.categoryId);
+            setPriority(applied.priority);
+          }}
         />
 
         <div className="submit-request-photo-row">

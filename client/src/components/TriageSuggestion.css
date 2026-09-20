@@ -1,0 +1,86 @@
+/* 1. Default = mobile */
+.triage-suggestion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-primary-fixed-dim);
+  border-radius: var(--radius-card);
+  background: var(--color-primary-fixed);
+  animation: triage-suggestion-in 220ms ease;
+}
+
+.triage-suggestion-badge {
+  display: inline-block;
+  margin-bottom: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-badge);
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+}
+
+.triage-suggestion-text {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-primary-fixed);
+}
+
+.triage-suggestion-reason {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-primary-fixed-variant);
+}
+
+.triage-suggestion-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.triage-suggestion-apply,
+.triage-suggestion-dismiss {
+  min-height: 36px;
+  padding: 6px 16px;
+  border-radius: var(--radius-button);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.triage-suggestion-apply {
+  border: none;
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+}
+
+.triage-suggestion-dismiss {
+  border: 1px solid var(--color-primary-fixed-dim);
+  background: transparent;
+  color: var(--color-on-primary-fixed-variant);
+}
+
+.triage-suggestion-thinking {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+}
+
+@keyframes triage-suggestion-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 2. Tablet */
+@media (min-width: 768px) {
+  .triage-suggestion {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

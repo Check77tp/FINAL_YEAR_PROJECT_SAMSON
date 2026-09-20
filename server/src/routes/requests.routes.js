@@ -3,6 +3,7 @@ import { Router } from 'express';
 import * as requestsService from '../services/requests.service.js';
 import * as ratingsService from '../services/ratings.service.js';
 import * as upvotesService from '../services/upvotes.service.js';
+import * as triageService from '../services/triage.service.js';
 import { authenticate } from '../middleware/authenticate.js';
 import { requireRole } from '../middleware/requireRole.js';
 
@@ -58,6 +59,18 @@ router.post('/', authenticate, requireRole('student'), async (req, res, next) =>
       priority: priority || undefined,
     });
     res.status(201).json({ status: 'ok', request });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Student: suggest a category + priority from a description (AI when an API
+// key is configured, keyword rules otherwise). Advisory only - nothing is saved.
+router.post('/triage', authenticate, requireRole('student'), async (req, res, next) => {
+  try {
+    triageService.assertWithinRateLimit(req.user.user_id);
+    const suggestion = await triageService.suggestTriage({ description: req.body.description });
+    res.status(200).json({ status: 'ok', suggestion });
   } catch (err) {
     next(err);
   }

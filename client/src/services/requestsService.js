@@ -60,6 +60,13 @@ function communityPath(hostel) {
   return hostel ? `/requests/community?hostel=${encodeURIComponent(hostel)}` : '/requests/community';
 }
 
+// Suggested { categoryId, priority, reason, source: 'ai'|'rules' } for a
+// description. Advisory only - nothing is saved.
+export async function getTriageSuggestion(description) {
+  const data = await apiPost('/requests/triage', { description }, { auth: true });
+  return data.suggestion;
+}
+
 // Both return { requestId, hasUpvoted, upvoteCount }.
 export async function upvoteRequest(requestId) {
   return apiPost(`/requests/${requestId}/upvote`, {}, { auth: true });
