@@ -13,6 +13,7 @@ import reportsRoutes from './src/routes/reports.routes.js';
 import activityRoutes from './src/routes/activity.routes.js';
 import pushRoutes from './src/routes/push.routes.js';
 import eventsRoutes from './src/routes/events.routes.js';
+import { startScheduler } from './src/jobs/scheduler.js';
 import { errorHandler } from './src/middleware/errorHandler.js';
 import { PORT, NODE_ENV } from './src/config/env.js';
 
@@ -42,4 +43,5 @@ app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server running in ${NODE_ENV} mode on http://localhost:${PORT}`);
+  startScheduler();
 });

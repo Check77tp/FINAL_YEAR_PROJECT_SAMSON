@@ -201,3 +201,27 @@ export async function findActiveAssignmentTechnicianIds() {
   if (error) throw error;
   return data.map((row) => row.technician_id);
 }
+
+// Every request still being worked on, with just what the overdue monitor
+// needs (priority + created_at for the SLA, and who is assigned).
+export async function findActiveRequestsForSla() {
+  const { data, error } = await supabase
+    .from('maintenance_requests')
+    .select(
+      `request_id, priority, status, created_at, hostel, overdue_notified_at,
+       technician_assignments ( technician_id, assigned_at )`
+    )
+    .in('status', ['open', 'assigned', 'in_progress']);
+
+  if (error) throw error;
+  return data;
+}
+
+export async function markOverdueNotified(requestIds) {
+  const { error } = await supabase
+    .from('maintenance_requests')
+    .update({ overdue_notified_at: new Date().toISOString() })
+    .in('request_id', requestIds);
+
+  if (error) throw error;
+}
