@@ -1,0 +1,123 @@
+/*
+  Dark theme. The light palette lives in variables.css; this file only
+  overrides the colour tokens, so every component that already uses tokens
+  (which is all of them) switches automatically. Applied when the <html>
+  element has data-theme="dark" (set by services/theme.js — either because the
+  user chose Dark, or because they chose System and their device is in dark
+  mode).
+
+  Dark surfaces step UP in lightness with elevation (page darkest, cards a
+  little lighter) and saturated brand colours are lightened so text on dark
+  backgrounds stays readable.
+*/
+html[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --color-surface: #0f140e;
+  --color-surface-dim: #0f140e;
+  --color-surface-bright: #353b34;
+  --color-surface-container-lowest: #171c16;
+  --color-surface-container-low: #1b211a;
+  --color-surface-container: #20261f;
+  --color-surface-container-high: #2a302a;
+  --color-surface-container-highest: #353b34;
+  --color-surface-variant: #353b34;
+  --color-on-surface: #e0e4da;
+  --color-on-surface-variant: #bfcaba;
+  --color-inverse-surface: #e0e4da;
+  --color-inverse-on-surface: #2d322b;
+  --color-outline: #8a9486;
+  --color-outline-variant: #40493d;
+  --color-background: #0f140e;
+  --color-on-background: #e0e4da;
+  --color-card-border: #2c332b;
+  --color-divider: #262b25;
+
+  /* Primary */
+  --color-primary: #88d982;
+  --color-primary-brand: #388e3c;
+  --color-primary-container: #2e7d32;
+  --color-on-primary-container: #cbffc2;
+  --color-inverse-primary: #0d631b;
+  --color-primary-fixed: #1d4a22;
+  --color-primary-fixed-dim: #2b6431;
+  --color-on-primary-fixed: #d8ffd2;
+  --color-on-primary-fixed-variant: #a3f69c;
+  --color-surface-tint: #88d982;
+
+  /* Secondary */
+  --color-secondary: #93ccff;
+  --color-secondary-container: #00476e;
+  --color-on-secondary-container: #cfe5ff;
+  --color-secondary-fixed: #0f3b5c;
+  --color-secondary-fixed-dim: #1d5580;
+  --color-on-secondary-fixed: #d3e9ff;
+  --color-on-secondary-fixed-variant: #93ccff;
+
+  /* Tertiary */
+  --color-tertiary: #ffb1c7;
+  --color-tertiary-container: #7f2448;
+  --color-on-tertiary-container: #ffd9e2;
+  --color-tertiary-fixed: #5a1a35;
+  --color-tertiary-fixed-dim: #7f2448;
+  --color-on-tertiary-fixed: #ffd9e2;
+  --color-on-tertiary-fixed-variant: #ffb1c7;
+
+  /* Error */
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
+
+  /* Status tints */
+  --color-status-open-bg: #262b25;
+  --color-status-open-text: #bfcaba;
+  --color-status-assigned-bg: #172554;
+  --color-status-assigned-text: #93c5fd;
+  --color-status-in-progress-bg: #422006;
+  --color-status-in-progress-text: #fcd34d;
+  --color-status-resolved-bg: #052e22;
+  --color-status-resolved-text: #6ee7b7;
+  --color-status-closed-bg: #27272a;
+  --color-status-closed-text: #d4d4d8;
+  --color-nav-active-bg: #1d3a20;
+
+  /* Priority tints */
+  --color-priority-low-bg: #262b25;
+  --color-priority-low-text: #bfcaba;
+  --color-priority-medium-bg: #172554;
+  --color-priority-medium-text: #93c5fd;
+  --color-priority-high-bg: #431407;
+  --color-priority-high-text: #fdba74;
+  --color-priority-critical-bg: #450a0a;
+  --color-priority-critical-text: #fca5a5;
+
+  --shadow-level-1: 0px 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-level-2: 0px 12px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* Charts (Recharts renders its own SVG text and tooltip with inline light
+   defaults, so they need explicit theming). */
+.recharts-text,
+.recharts-cartesian-axis-tick-value {
+  fill: var(--color-on-surface-variant);
+}
+
+.recharts-default-tooltip {
+  background-color: var(--color-surface-container-high) !important;
+  border-color: var(--color-outline-variant) !important;
+  color: var(--color-on-surface);
+}
+
+.recharts-tooltip-item,
+.recharts-tooltip-label {
+  color: var(--color-on-surface) !important;
+}
+
+/* The login page's photo panel is dark-toned already; keep form fields from
+   glowing white on autofill in dark mode. */
+html[data-theme='dark'] input:-webkit-autofill {
+  -webkit-text-fill-color: var(--color-on-surface);
+  box-shadow: 0 0 0 1000px var(--color-surface-container) inset;
+}

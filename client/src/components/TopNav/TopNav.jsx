@@ -13,6 +13,7 @@ import {
   UserIcon,
 } from '../icons';
 import './TopNav.css';
+import { ThemeQuickToggle } from '../ThemeToggle';
 import { useLiveVersion } from '../../hooks/useLive';
 
 const SEARCH_TARGET_BY_ROLE = {
@@ -108,6 +109,8 @@ function TopNav({ onMenuClick }) {
       </form>
 
       <div className="top-nav-actions" ref={panelRef}>
+        <ThemeQuickToggle />
+
         <div className="top-nav-popover-anchor">
           <button
             type="button"

@@ -23,9 +23,9 @@ function LineChart({ points }) {
           <Line
             type="monotone"
             dataKey="resolved"
-            stroke="#006398"
+            stroke="var(--color-secondary)"
             strokeWidth={3}
-            dot={{ r: 3, fill: '#006398', strokeWidth: 0 }}
+            dot={{ r: 3, fill: 'var(--color-secondary)', strokeWidth: 0 }}
             activeDot={{ r: 5 }}
             animationDuration={1100}
           />

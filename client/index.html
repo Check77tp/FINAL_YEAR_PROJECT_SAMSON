@@ -45,17 +45,21 @@
         0%, 100% { transform: scale(1); }
         50% { transform: scale(1.06); }
       }
-      @media (prefers-color-scheme: dark) {
-        html[data-theme='system'] .app-splash { background: #10160f; color: #a3f69c; }
-      }
-      html[data-theme='dark'] .app-splash { background: #10160f; color: #a3f69c; }
+      html[data-theme='dark'] .app-splash { background: #0f140e; color: #a3f69c; }
     </style>
     <script>
       // Apply the saved theme before first paint so dark mode never flashes
       // light (see ThemeToggle / styles/theme.css).
       try {
         var t = localStorage.getItem('theme') || 'system';
+        if (t === 'system') {
+          t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
         document.documentElement.setAttribute('data-theme', t);
+        if (t === 'dark') {
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.setAttribute('content', '#0f140e');
+        }
       } catch (e) {}
     </script>
   </head>

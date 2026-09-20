@@ -4,6 +4,7 @@ import { updateOwnProfile } from '../../services/usersService';
 import { AVAILABILITY_LABELS } from '../../utils/requestFormat';
 import { CameraIcon } from '../../components/icons';
 import NotificationSettings from '../../components/NotificationSettings';
+import { AppearanceSettings } from '../../components/ThemeToggle';
 import './Profile.css';
 
 const MAX_PHOTO_BYTES = 3 * 1024 * 1024;
@@ -203,6 +204,8 @@ function Profile() {
         )}
         {savedNote && !saveError && <p className="profile-saved-note">Saved.</p>}
       </section>
+
+      <AppearanceSettings />
 
       <NotificationSettings />
 
