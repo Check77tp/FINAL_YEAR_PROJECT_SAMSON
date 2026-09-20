@@ -1,44 +1,42 @@
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import './DonutChart.css';
 
-const RADIUS = 40;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+// Slice colours reuse the project's semantic palette (green / blue / rose /
+// orange / violet) so the chart matches the rest of the UI.
 const COLORS = ['#2e7d32', '#006398', '#923357', '#c2410c', '#6d28d9'];
 
-// admin_dashboard_unza_maintenance's "Issue Categories" ring chart — never
-// built (AdminHome used the same BarChart as Reports & Analytics for this,
-// which is why the two pages read as near-duplicates). Hand-rolled SVG, no
-// charting library, matching BarChart/LineChart's existing pattern.
+// Ring chart for the admin dashboard's "Issue Categories" widget
+// (admin_dashboard_unza_maintenance). Built on Recharts so the slices sweep
+// in on first render and highlight/tooltip on hover. `items` is
+// [{ label, value }].
 function DonutChart({ items }) {
   const total = items.reduce((sum, item) => sum + item.value, 0);
-  let cumulative = 0;
 
   return (
     <div className="donut-chart">
       <div className="donut-chart-ring">
-        <svg viewBox="0 0 100 100" className="donut-chart-svg">
-          <circle cx="50" cy="50" r={RADIUS} className="donut-chart-track" />
-          {total > 0 &&
-            items.map((item, i) => {
-              const fraction = item.value / total;
-              const dash = fraction * CIRCUMFERENCE;
-              const offset = CIRCUMFERENCE * (1 - cumulative);
-              cumulative += fraction;
-              return (
-                <circle
-                  key={item.label}
-                  cx="50"
-                  cy="50"
-                  r={RADIUS}
-                  fill="none"
-                  stroke={COLORS[i % COLORS.length]}
-                  strokeWidth="16"
-                  strokeDasharray={`${dash} ${CIRCUMFERENCE - dash}`}
-                  strokeDashoffset={offset}
-                  transform="rotate(-90 50 50)"
-                />
-              );
-            })}
-        </svg>
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={items}
+              dataKey="value"
+              nameKey="label"
+              innerRadius="62%"
+              outerRadius="92%"
+              paddingAngle={2}
+              cornerRadius={4}
+              stroke="none"
+              startAngle={90}
+              endAngle={-270}
+              animationDuration={900}
+            >
+              {items.map((item, i) => (
+                <Cell key={item.label} fill={COLORS[i % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip formatter={(value, name) => [`${value} request${value === 1 ? '' : 's'}`, name]} />
+          </PieChart>
+        </ResponsiveContainer>
         <div className="donut-chart-center">
           <span className="donut-chart-total">{total}</span>
           <span className="donut-chart-total-label">Total</span>

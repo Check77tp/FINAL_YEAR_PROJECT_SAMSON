@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { getAssignedRequests } from '../../services/requestsService';
+import StatCard from '../../components/StatCard';
+import { ClipboardListIcon, CheckCircleIcon } from '../../components/icons';
 import { setOwnAvailability } from '../../services/usersService';
 import {
   STATUS_LABELS,
@@ -83,14 +85,8 @@ function TechnicianHome() {
       </div>
 
       <div className="technician-home-stats">
-        <div className="technician-home-stat technician-home-stat-primary">
-          <span className="technician-home-stat-value">{active.length}</span>
-          <span className="technician-home-stat-label">Assigned</span>
-        </div>
-        <div className="technician-home-stat">
-          <span className="technician-home-stat-value">{completedCount}</span>
-          <span className="technician-home-stat-label">Completed</span>
-        </div>
+        <StatCard icon={<ClipboardListIcon width={20} height={20} />} label="Assigned" value={active.length} tone="primary" />
+        <StatCard icon={<CheckCircleIcon width={20} height={20} />} label="Completed" value={completedCount} tone="secondary" />
       </div>
 
       <section className="technician-home-tasks">

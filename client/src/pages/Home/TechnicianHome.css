@@ -81,34 +81,6 @@
   margin-bottom: var(--spacing-lg);
 }
 
-.technician-home-stat {
-  padding: var(--spacing-sm);
-  background: var(--color-surface-container-low);
-  border-radius: var(--radius-card);
-}
-
-.technician-home-stat-primary {
-  background: var(--color-primary-brand);
-}
-
-.technician-home-stat-primary .technician-home-stat-value,
-.technician-home-stat-primary .technician-home-stat-label {
-  color: var(--color-on-primary);
-}
-
-.technician-home-stat-value {
-  display: block;
-  font-family: var(--font-heading);
-  font-size: var(--font-size-headline-md);
-  font-weight: 700;
-  color: var(--color-on-surface);
-}
-
-.technician-home-stat-label {
-  font-size: var(--font-size-label-sm);
-  color: var(--color-on-surface-variant);
-}
-
 .technician-home-tasks-header {
   display: flex;
   align-items: baseline;

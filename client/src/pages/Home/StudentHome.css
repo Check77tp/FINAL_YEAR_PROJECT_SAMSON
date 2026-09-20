@@ -31,34 +31,6 @@
   margin-bottom: var(--spacing-sm);
 }
 
-.student-home-stat {
-  padding: var(--spacing-sm);
-  background: var(--color-surface-container-low);
-  border-radius: var(--radius-card);
-}
-
-.student-home-stat-primary {
-  background: var(--color-primary-brand);
-}
-
-.student-home-stat-primary .student-home-stat-value,
-.student-home-stat-primary .student-home-stat-label {
-  color: var(--color-on-primary);
-}
-
-.student-home-stat-value {
-  display: block;
-  font-family: var(--font-heading);
-  font-size: var(--font-size-headline-md);
-  font-weight: 700;
-  color: var(--color-on-surface);
-}
-
-.student-home-stat-label {
-  font-size: var(--font-size-label-sm);
-  color: var(--color-on-surface-variant);
-}
-
 .student-home-new {
   display: flex;
   align-items: center;

@@ -107,6 +107,12 @@
   margin-bottom: 4px;
 }
 
+.admin-home-charts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-sm);
+}
+
 .admin-home-donut-section {
   display: flex;
   flex-direction: column;
@@ -245,6 +251,10 @@
 
 /* 3. Then scale up for desktop */
 @media (min-width: 1280px) {
+  .admin-home-charts {
+    grid-template-columns: 2fr 3fr;
+  }
+
   .admin-home-title {
     font-size: var(--font-size-headline-md);
     line-height: var(--line-height-headline-md);

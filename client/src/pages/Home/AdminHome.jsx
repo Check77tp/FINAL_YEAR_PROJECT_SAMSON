@@ -5,6 +5,7 @@ import { getAllRequests } from '../../services/requestsService';
 import { getAnalytics } from '../../services/reportsService';
 import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
 import DonutChart from '../../components/DonutChart';
+import LineChart from '../../components/LineChart';
 import './AdminHome.css';
 
 function formatResolutionTime(hours) {
@@ -80,14 +81,22 @@ function AdminHome() {
             </div>
           </div>
 
-          {analytics.requestsByCategory.length > 0 && (
-            <section className="admin-home-section admin-home-donut-section">
-              <h2 className="admin-home-section-title">Issue Categories</h2>
-              <DonutChart
-                items={analytics.requestsByCategory.map((c) => ({ label: c.name, value: c.count }))}
-              />
+          <div className="admin-home-charts">
+            {analytics.requestsByCategory.length > 0 && (
+              <section className="admin-home-section admin-home-donut-section">
+                <h2 className="admin-home-section-title">Issue Categories</h2>
+                <DonutChart
+                  items={analytics.requestsByCategory.map((c) => ({ label: c.name, value: c.count }))}
+                />
+              </section>
+            )}
+
+            <section className="admin-home-section">
+              <h2 className="admin-home-section-title">Resolution Trend</h2>
+              <p className="admin-home-section-note">Requests resolved per day, last 7 days.</p>
+              <LineChart points={analytics.resolutionTrend} />
             </section>
-          )}
+          </div>
         </>
       )}
 

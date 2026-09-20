@@ -1,38 +1,36 @@
+import { ResponsiveContainer, LineChart as RLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import './LineChart.css';
 
-const WIDTH = 300;
-const HEIGHT = 80;
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-// Simple hand-rolled line chart — no charting library needed for a 7-point
-// trend. `points` is [{ date: 'YYYY-MM-DD', resolvedCount }].
+// 7-day resolution trend. Built on Recharts for the axes, dashed grid,
+// smooth curve, hover tooltip and the draw-in animation on first render.
+// `points` is [{ date: 'YYYY-MM-DD', resolvedCount }].
 function LineChart({ points }) {
-  const max = Math.max(1, ...points.map((p) => p.resolvedCount));
-  const stepX = points.length > 1 ? WIDTH / (points.length - 1) : 0;
-
-  const coords = points.map((p, i) => {
-    const x = i * stepX;
-    const y = HEIGHT - (p.resolvedCount / max) * HEIGHT;
-    return { x, y, ...p };
-  });
-
-  const linePath = coords.map((c) => `${c.x},${c.y}`).join(' ');
+  const data = points.map((p) => ({
+    day: DAY_LABELS[new Date(`${p.date}T00:00:00Z`).getUTCDay()],
+    resolved: p.resolvedCount,
+  }));
 
   return (
     <div className="line-chart">
-      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="line-chart-svg" preserveAspectRatio="none">
-        <polyline points={linePath} className="line-chart-line" />
-        {coords.map((c) => (
-          <circle key={c.date} cx={c.x} cy={c.y} r="3" className="line-chart-dot" />
-        ))}
-      </svg>
-      <div className="line-chart-labels">
-        {points.map((p) => (
-          <span key={p.date} className="line-chart-label">
-            {DAY_LABELS[new Date(`${p.date}T00:00:00Z`).getUTCDay()]}
-          </span>
-        ))}
-      </div>
+      <ResponsiveContainer width="100%" height={300}>
+        <RLineChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: -16 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-outline-variant)" strokeOpacity={0.5} />
+          <XAxis dataKey="day" tick={{ fontSize: 12 }} tickLine={false} />
+          <YAxis tick={{ fontSize: 12 }} allowDecimals={false} tickLine={false} />
+          <Tooltip formatter={(value) => [`${value} resolved`, '']} separator="" />
+          <Line
+            type="monotone"
+            dataKey="resolved"
+            stroke="#006398"
+            strokeWidth={3}
+            dot={{ r: 3, fill: '#006398', strokeWidth: 0 }}
+            activeDot={{ r: 5 }}
+            animationDuration={1100}
+          />
+        </RLineChart>
+      </ResponsiveContainer>
     </div>
   );
 }

@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { getMyRequests } from '../../services/requestsService';
 import { STATUS_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
-import { PlusIcon } from '../../components/icons';
+import { PlusIcon, ClipboardListIcon, CheckCircleIcon } from '../../components/icons';
+import StatCard from '../../components/StatCard';
 import './StudentHome.css';
 
 // student_dashboard_unza_maintenance / home_unza_mobile reference. Trimmed
@@ -37,14 +38,8 @@ function StudentHome() {
       </header>
 
       <div className="student-home-stats">
-        <div className="student-home-stat student-home-stat-primary">
-          <span className="student-home-stat-value">{activeCount}</span>
-          <span className="student-home-stat-label">Active Requests</span>
-        </div>
-        <div className="student-home-stat">
-          <span className="student-home-stat-value">{completedCount}</span>
-          <span className="student-home-stat-label">Completed</span>
-        </div>
+        <StatCard icon={<ClipboardListIcon width={20} height={20} />} label="Active Requests" value={activeCount} tone="primary" />
+        <StatCard icon={<CheckCircleIcon width={20} height={20} />} label="Completed" value={completedCount} tone="secondary" />
       </div>
 
       <Link to="/requests/new" className="student-home-new">
