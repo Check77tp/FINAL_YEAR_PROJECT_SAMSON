@@ -248,7 +248,7 @@ network round trips from most requests.
 |---|---|
 | Open pages update when a request changes | **Server-Sent Events** (`GET /api/events`). The server pushes only a request id + message; the client refetches through the normal permission-checked API. SSE was chosen over WebSockets/Supabase Realtime because updates only flow server → client and the architecture forbids the client talking to Supabase. |
 | Notifications when the app is closed | **Web Push** (VAPID). Sent on new requests, assignments, status changes and overdue alerts. Logging out removes the device's subscription so a shared phone never receives someone else's alerts. |
-| Overdue alerts | A background monitor runs every 10 minutes, flags requests past their SLA once (`overdue_notified_at`), and alerts administrators + the assigned technician. |
+| Overdue alerts | A background monitor runs every hour, flags requests past their SLA once (`overdue_notified_at`), and alerts administrators + the assigned technician. |
 | Weekly summary | Monday 06:00 UTC (08:00 Lusaka) email to administrators; last-run stored in `job_runs` so a restart cannot cause a duplicate. |
 
 ---

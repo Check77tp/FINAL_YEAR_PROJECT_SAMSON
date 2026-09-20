@@ -6,7 +6,7 @@ import { NODE_ENV } from '../config/env.js';
 import { runOverdueCheck } from '../services/overdue.service.js';
 import { runWeeklyDigestIfDue } from '../services/digest.service.js';
 
-const OVERDUE_CHECK_EVERY_MS = 10 * 60 * 1000; // 10 minutes
+const OVERDUE_CHECK_EVERY_MS = 60 * 60 * 1000; // hourly: overdue alerts go out at most an hour apart
 const FIRST_RUN_DELAY_MS = 30 * 1000; // let the server finish starting first
 
 let overdueWarned = false;
@@ -19,7 +19,7 @@ async function safeOverdueCheck() {
     if (flagged > 0) console.log(`Overdue monitor: alerted about ${flagged} request(s)`);
     overdueWarned = false;
   } catch (err) {
-    // Most likely cause: migration 011 hasn't been run yet. Say so once, not every 10 minutes.
+    // Most likely cause: migration 011 hasn't been run yet. Say so once, not every hour.
     if (!overdueWarned) {
       console.error('Overdue monitor failed (has sql/011 been run?):', err.message);
       overdueWarned = true;
