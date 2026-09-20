@@ -4,6 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { getAssignedRequests } from '../../services/requestsService';
 import StatCard from '../../components/StatCard';
 import { ClipboardListIcon, CheckCircleIcon } from '../../components/icons';
+import SlaBadge from '../../components/SlaBadge';
 import { setOwnAvailability } from '../../services/usersService';
 import {
   STATUS_LABELS,
@@ -130,6 +131,7 @@ function TechnicianHome() {
                         <span className={`technician-home-status technician-home-status-${request.status}`}>
                           {STATUS_LABELS[request.status] || request.status}
                         </span>
+                        <SlaBadge sla={request.sla} />
                       </div>
                     </div>
                     <p className="technician-home-task-description">{request.description}</p>

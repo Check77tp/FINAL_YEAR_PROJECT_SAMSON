@@ -7,6 +7,7 @@ import * as ratingsRepository from '../repositories/ratings.repository.js';
 import * as upvotesRepository from '../repositories/upvotes.repository.js';
 import { countByRequest } from './upvotes.service.js';
 import { notifyUser, notifyAdministrators } from './push.service.js';
+import { computeSla } from '../utils/sla.js';
 import { httpError } from '../utils/httpError.js';
 
 const STATUS_LABELS = { in_progress: 'In Progress', resolved: 'Resolved', closed: 'Closed' };
@@ -146,6 +147,7 @@ function mapRequestRow(row) {
     room: row.room,
     priority: row.priority,
     createdAt: row.created_at,
+    sla: computeSla({ priority: row.priority, status: row.status, createdAt: row.created_at }),
     category: row.category ? { id: row.category.category_id, name: row.category.name } : null,
     student: row.student
       ? { id: row.student.user_id, name: row.student.name, idNumber: row.student.id_number }

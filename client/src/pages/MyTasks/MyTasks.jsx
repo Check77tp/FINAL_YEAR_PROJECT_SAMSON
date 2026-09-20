@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getAssignedRequests } from '../../services/requestsService';
 import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
+import SlaBadge from '../../components/SlaBadge';
 import './MyTasks.css';
 
 const ACTIVE_STATUSES = ['assigned', 'in_progress'];
@@ -128,6 +129,7 @@ function MyTasks() {
                       <span className={`my-tasks-status my-tasks-status-${request.status}`}>
                         {STATUS_LABELS[request.status] || request.status}
                       </span>
+                      <SlaBadge sla={request.sla} />
                     </div>
                   </div>
                   <p className="my-tasks-card-description">{request.description}</p>

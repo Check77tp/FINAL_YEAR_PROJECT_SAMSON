@@ -9,6 +9,7 @@ import {
   AVAILABILITY_LABELS,
   categoryIcon,
 } from '../../utils/requestFormat';
+import SlaBadge from '../../components/SlaBadge';
 import './ManageRequests.css';
 
 const FILTERS = ['all', 'open', 'assigned', 'in_progress', 'resolved', 'closed'];
@@ -76,6 +77,8 @@ function ManageRequests() {
       setRequests((prev) =>
         prev.map((request) => (request.requestId === requestId ? { ...request, priority } : request))
       );
+      // The SLA deadline depends on priority - refetch so the badge is right.
+      getAllRequests().then(setRequests).catch(() => {});
     } catch (err) {
       setRowErrors((prev) => ({ ...prev, [requestId]: err.message }));
     } finally {
@@ -167,6 +170,7 @@ function ManageRequests() {
                     className="manage-requests-row-id"
                   >
                     #REQ-{request.requestId}
+                    <SlaBadge sla={request.sla} />
                     {request.upvoteCount > 0 && (
                       <span
                         className="manage-requests-upvotes"

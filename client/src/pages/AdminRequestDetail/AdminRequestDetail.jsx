@@ -16,6 +16,7 @@ import {
 } from '../../utils/requestFormat';
 import { StarIcon, MapPinIcon } from '../../components/icons';
 import RequestTimeline from '../../components/RequestTimeline';
+import SlaBadge from '../../components/SlaBadge';
 import './AdminRequestDetail.css';
 
 // Admins previously had no per-request detail view — Manage Requests
@@ -95,7 +96,7 @@ function AdminRequestDetail() {
     setActionError('');
     try {
       await updateRequestPriority(requestId, priority);
-      setRequest((prev) => ({ ...prev, priority }));
+      await load(); // the SLA deadline depends on priority, so refresh it too
     } catch (err) {
       setActionError(err.message);
     } finally {
@@ -155,6 +156,7 @@ function AdminRequestDetail() {
               </option>
             ))}
           </select>
+          <SlaBadge sla={request.sla} />
           {request.upvoteCount > 0 && (
             <span className="admin-request-detail-upvotes">
               +{request.upvoteCount} other student{request.upvoteCount === 1 ? '' : 's'} affected

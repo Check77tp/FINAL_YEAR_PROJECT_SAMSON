@@ -4,6 +4,7 @@ import { getRequestDetail, updateRequestStatus } from '../../services/requestsSe
 import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon } from '../../utils/requestFormat';
 import { StarIcon, MapPinIcon } from '../../components/icons';
 import RequestTimeline from '../../components/RequestTimeline';
+import SlaBadge from '../../components/SlaBadge';
 import './TaskDetail.css';
 
 // The lifecycle only ever moves one step forward (see CLAUDE.md's Core
@@ -82,6 +83,7 @@ function TaskDetail() {
         </span>
         <h1 className="task-detail-title">#REQ-{request.requestId}</h1>
         <div className="task-detail-badges">
+          <SlaBadge sla={request.sla} />
           <span className={`task-detail-status task-detail-status-${request.status}`}>
             {STATUS_LABELS[request.status] || request.status}
           </span>

@@ -6,6 +6,7 @@ import { getAnalytics } from '../../services/reportsService';
 import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
 import DonutChart from '../../components/DonutChart';
 import LineChart from '../../components/LineChart';
+import { slaStateAt } from '../../components/SlaBadge';
 import './AdminHome.css';
 
 function formatResolutionTime(hours) {
@@ -36,6 +37,11 @@ function AdminHome() {
       .then(setRequests)
       .catch((err) => setRequestsError(err.message));
   }, []);
+
+  // Requests past their SLA deadline (see server/src/utils/sla.js).
+  const overdueCount = requests
+    ? requests.filter((r) => slaStateAt(r.sla, Date.now()) === 'overdue').length
+    : null;
 
   // Most urgent first — a "needs attention" list that isn't priority-sorted
   // isn't actually surfacing what needs attention.
@@ -79,6 +85,17 @@ function AdminHome() {
               <span className="admin-home-stat-label">Resolved This Month</span>
               <span className="admin-home-stat-value">{analytics.thisMonth.resolved}</span>
             </div>
+            {overdueCount !== null && (
+              <Link
+                to="/manage-requests"
+                className={`admin-home-stat admin-home-stat-link ${
+                  overdueCount > 0 ? 'admin-home-stat-alert' : ''
+                }`}
+              >
+                <span className="admin-home-stat-label">Overdue Requests</span>
+                <span className="admin-home-stat-value">{overdueCount}</span>
+              </Link>
+            )}
           </div>
 
           <div className="admin-home-charts">

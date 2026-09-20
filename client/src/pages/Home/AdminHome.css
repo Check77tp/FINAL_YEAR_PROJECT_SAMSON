@@ -60,6 +60,19 @@
   color: var(--color-on-surface);
 }
 
+.admin-home-stat-link {
+  display: block;
+  text-decoration: none;
+}
+
+.admin-home-stat-alert {
+  border-color: var(--color-error, #ba1a1a);
+}
+
+.admin-home-stat-alert .admin-home-stat-value {
+  color: var(--color-error, #ba1a1a);
+}
+
 .admin-home-links {
   display: flex;
   flex-direction: column;
@@ -237,7 +250,7 @@
   }
 
   .admin-home-stats {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .admin-home-links {
@@ -251,6 +264,10 @@
 
 /* 3. Then scale up for desktop */
 @media (min-width: 1280px) {
+  .admin-home-stats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
   .admin-home-charts {
     grid-template-columns: 2fr 3fr;
   }
