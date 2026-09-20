@@ -25,3 +25,8 @@ Thumbs.db
 
 # Vite
 client/.vite/
+
+# Local scratch files
+.vitepid
+.srvpid
+*.pid
