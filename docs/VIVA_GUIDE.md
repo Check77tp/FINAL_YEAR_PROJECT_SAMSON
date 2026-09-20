@@ -19,8 +19,8 @@ Progressive Web App:
   reports instead of duplicating them, and watch the status update live.
 - **Administrators** see everything, get overdue and workload warnings, assign
   the best-suited technician in one tap, and study analytics.
-- **Technicians** get their tasks, update status, and must attach a photo of the
-  finished work as proof.
+- **Technicians** get their tasks, update status, and can attach a photo and note
+  of the finished work as proof.
 
 Technically: a **React PWA → Express REST API (routes / services / repositories)
 → Supabase (PostgreSQL + Auth + Storage)**. The client never touches the
@@ -86,8 +86,9 @@ exported to CSV/PDF, and a weekly summary is emailed on Monday mornings.
 |---|---|
 | ![Technician dashboard](screenshots/09-technician-dashboard.png) | ![Proof of work form](screenshots/10-technician-proof-of-work.png) |
 
-A technician cannot resolve a task without a photo of the finished work (the
-camera opens directly on a phone). The image is compressed in the browser before upload.
+When resolving, a technician can optionally add a photo of the finished work (the
+camera opens directly on a phone) and a note. The image is compressed in the browser
+before upload. The photo can be made mandatory by setting `REQUIRE_RESOLUTION_PROOF=true`.
 
 ### Everyone
 
@@ -110,9 +111,9 @@ Supabase Auth needs. Settings hold **push notifications** and **light/dark/syste
    (live update) with a toast. Show the *Overdue* tile, the SLA badges and the
    *+N affected* badge. Assign the ★ recommended technician in one tap.
 4. **Student window** updates live: status → *Assigned*.
-5. **Technician.** Open the task → *Start Task* → try to resolve without a photo
-   (blocked) → take a photo → *Mark as Resolved*.
-6. **Student** sees *Work Completed* with the photo; rate it.
+5. **Technician.** Open the task → *Start Task* → add a photo and a short note →
+   *Mark as Resolved*.
+6. **Student** sees *Work Completed* with the photo and note; rate it.
 7. **Administrator → Reports.** Show the heatmap, the trend, export CSV, and the
    *Email me the summary* button.
 8. **Show two "PWA" moments**: toggle dark mode; switch the browser to offline and

@@ -18,11 +18,15 @@ const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 const PHOTO_DATA_URL_PATTERN = /^data:image\/(jpeg|png|webp);base64,(.+)$/;
 const MAX_NOTE_CHARS = 500;
 
-// Business rule: a technician must attach a photo of the finished work before
-// marking a request Resolved (accountability, and the student can see the
-// result). Administrators are exempt so they can still close out a job the
-// technician couldn't photograph. Flip to false to make the photo optional.
-const TECHNICIAN_MUST_ATTACH_PROOF = true;
+// Policy: a photo of the finished work is OPTIONAL when a technician resolves a
+// request (it is shown to the student and admins when present). Setting
+// REQUIRE_RESOLUTION_PROOF=true in the server environment makes it mandatory
+// for technicians (administrators are always exempt, so they can close out a
+// job the technician couldn't photograph). Read at call time, so no code change
+// or rebuild is needed to switch the policy.
+function isProofRequiredFor(actingUser) {
+  return process.env.REQUIRE_RESOLUTION_PROOF === 'true' && actingUser.role === 'technician';
+}
 
 // Validates a base64 image data URL and decodes it for upload.
 function decodePhotoDataUrl(dataUrl) {
@@ -182,7 +186,7 @@ async function saveResolutionProof({ requestId, actingUser, proof }) {
   const hasPhoto = Boolean(proof?.photoDataUrl);
 
   if (!hasPhoto) {
-    if (TECHNICIAN_MUST_ATTACH_PROOF && actingUser.role === 'technician') {
+    if (isProofRequiredFor(actingUser)) {
       throw httpError('Attach a photo of the completed work before marking this resolved', 400);
     }
     return;

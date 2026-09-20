@@ -5,10 +5,11 @@ import './ResolutionProofForm.css';
 
 const MAX_NOTE = 500;
 
-// Shown to the technician instead of a bare "Mark as Resolved" button: they
-// photograph the finished repair (opens the camera on a phone) and can add a
-// short note. The photo is required — it is the proof the student and admin
-// see. `onSubmit({ photoDataUrl, note })` does the actual status change.
+// Shown to the technician instead of a bare "Mark as Resolved" button: they can
+// photograph the finished repair (opens the camera on a phone) and add a short
+// note. Both are optional; when present the student and admins see them.
+// `onSubmit({ photoDataUrl, note })` does the actual status change (the server
+// can be configured to require the photo - REQUIRE_RESOLUTION_PROOF).
 function ResolutionProofForm({ onSubmit, busy, error }) {
   const fileInputRef = useRef(null);
   const [photo, setPhoto] = useState(null); // compressed data URL
@@ -42,11 +43,11 @@ function ResolutionProofForm({ onSubmit, busy, error }) {
       className="resolution-proof-form"
       onSubmit={(event) => {
         event.preventDefault();
-        if (photo) onSubmit({ photoDataUrl: photo, note: note.trim() });
+        onSubmit({ photoDataUrl: photo || undefined, note: note.trim() });
       }}
     >
       <p className="resolution-proof-intro">
-        Take a photo of the finished work. The student and administrators will see it.
+        Optional: add a photo of the finished work. If you do, the student and administrators will see it.
       </p>
 
       {photo ? (
@@ -72,7 +73,7 @@ function ResolutionProofForm({ onSubmit, busy, error }) {
             <CameraIcon width={22} height={22} />
           </span>
           <span className="resolution-proof-capture-label">
-            {processing ? 'Preparing photo…' : 'Take photo of completed work'}
+            {processing ? 'Preparing photo…' : 'Add photo of completed work'}
           </span>
         </button>
       )}
@@ -111,7 +112,7 @@ function ResolutionProofForm({ onSubmit, busy, error }) {
         </p>
       )}
 
-      <button type="submit" className="resolution-proof-submit" disabled={!photo || busy || processing}>
+      <button type="submit" className="resolution-proof-submit" disabled={busy || processing}>
         {busy ? 'Submitting…' : 'Mark as Resolved'}
       </button>
     </form>

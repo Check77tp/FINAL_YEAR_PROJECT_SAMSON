@@ -193,7 +193,7 @@ stateDiagram-v2
   [*] --> Open: student submits
   Open --> Assigned: administrator assigns a technician
   Assigned --> InProgress: technician starts
-  InProgress --> Resolved: technician submits proof photo
+  InProgress --> Resolved: technician resolves (photo optional)
   Resolved --> Closed: closed out
   Closed --> [*]
 ```
@@ -206,9 +206,10 @@ stateDiagram-v2
   cannot drift apart.
 - A technician can only advance requests **assigned to them**; students only see
   their own; administrators see all. Checked on the server on every request.
-- Resolving requires a **photo of the finished work** (technicians). The photo is
-  validated and stored *before* the status changes, so a failed upload never
-  leaves a request "resolved without proof".
+- When resolving, a technician can attach a **photo of the finished work** and a
+  note (optional; `REQUIRE_RESOLUTION_PROOF=true` makes the photo mandatory for
+  technicians). If a photo is sent it is validated and stored *before* the status
+  changes, so a failed upload never leaves a request "resolved" with lost proof.
 
 ---
 
@@ -284,7 +285,7 @@ network round trips from most requests.
 | **AI triage** | `triage.service.js` | Claude (schema-constrained JSON) with a keyword-rules fallback; a **safety floor** forces hazards (fire, sparking, flooding) to *critical* regardless of the model; user text is treated as untrusted; per-user rate limit |
 | **SLA timers** | `utils/sla.js` | critical 4 h · high 24 h · medium 72 h · low 1 week; *at risk* in the last 25 %; stops when resolved |
 | **Smart assignment** | `users.service.js → rankTechnicians` | Available before on-job before off-duty; then fewest active tasks; off-duty is never recommended |
-| **Proof of work** | `requests.service.js` | Technicians must attach a photo to resolve; admins exempt |
+| **Proof of work** | `requests.service.js` | Technicians can attach a photo (and note) when resolving; it is optional by default and can be made mandatory with `REQUIRE_RESOLUTION_PROOF=true` |
 | **Hostel heatmap** | `HostelHeatmap.jsx` | Hostel × category counts; answers "where should maintenance go this week?" |
 | **Dark mode** | `styles/theme.css` | Overrides colour tokens only, so every component switches automatically |
 

@@ -256,11 +256,22 @@ describe('proof of work when resolving', () => {
     storageRepository.uploadResolutionPhoto.mockResolvedValue('https://cdn/proof.jpg');
   });
 
-  it('rejects a technician resolving without a photo, and leaves the status untouched', async () => {
-    await expect(
-      updateRequestStatus({ requestId: 1, newStatus: 'resolved', actingUser: tech, proof: {} })
-    ).rejects.toMatchObject({ statusCode: 400 });
-    expect(requestsRepository.updateRequestStatus).not.toHaveBeenCalled();
+  it('lets a technician resolve WITHOUT a photo by default (proof is optional)', async () => {
+    const result = await updateRequestStatus({ requestId: 1, newStatus: 'resolved', actingUser: tech, proof: {} });
+    expect(result.status).toBe('resolved');
+    expect(proofsRepository.upsertProof).not.toHaveBeenCalled();
+  });
+
+  it('can be switched to mandatory with REQUIRE_RESOLUTION_PROOF=true (status untouched when missing)', async () => {
+    process.env.REQUIRE_RESOLUTION_PROOF = 'true';
+    try {
+      await expect(
+        updateRequestStatus({ requestId: 1, newStatus: 'resolved', actingUser: tech, proof: {} })
+      ).rejects.toMatchObject({ statusCode: 400 });
+      expect(requestsRepository.updateRequestStatus).not.toHaveBeenCalled();
+    } finally {
+      delete process.env.REQUIRE_RESOLUTION_PROOF;
+    }
   });
 
   it('uploads the photo and saves the proof BEFORE changing the status', async () => {
