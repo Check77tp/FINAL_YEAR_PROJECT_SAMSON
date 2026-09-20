@@ -6,6 +6,7 @@ import { StarIcon, MapPinIcon } from '../../components/icons';
 import RequestTimeline from '../../components/RequestTimeline';
 import SlaBadge from '../../components/SlaBadge';
 import './TaskDetail.css';
+import { useLiveVersion } from '../../hooks/useLive';
 
 // The lifecycle only ever moves one step forward (see CLAUDE.md's Core
 // Ticket Lifecycle) — so the action panel is a single button reflecting the
@@ -17,6 +18,7 @@ const NEXT_ACTION = {
 };
 
 function TaskDetail() {
+  const liveVersion = useLiveVersion(); // refetch when the server reports a change
   const { requestId } = useParams();
   const [request, setRequest] = useState(() => getRequestDetail.peek(requestId) ?? null);
   const [error, setError] = useState('');
@@ -27,7 +29,7 @@ function TaskDetail() {
     getRequestDetail(requestId)
       .then(setRequest)
       .catch((err) => setError(err.message));
-  }, [requestId]);
+  }, [requestId, liveVersion]);
 
   async function handleAdvance() {
     const action = NEXT_ACTION[request.status];

@@ -13,6 +13,7 @@ import {
   UserIcon,
 } from '../icons';
 import './TopNav.css';
+import { useLiveVersion } from '../../hooks/useLive';
 
 const SEARCH_TARGET_BY_ROLE = {
   student: '/requests',
@@ -42,6 +43,7 @@ function initials(name) {
 // and help are real, working features backed by data the app already has —
 // no decorative placeholders.
 function TopNav({ onMenuClick }) {
+  const liveVersion = useLiveVersion(); // refetch when the server reports a change
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
@@ -54,7 +56,7 @@ function TopNav({ onMenuClick }) {
     getRecentActivity()
       .then(setActivity)
       .catch((err) => setActivityError(err.message));
-  }, []);
+  }, [liveVersion]);
 
   useEffect(() => {
     function handleClickOutside(event) {

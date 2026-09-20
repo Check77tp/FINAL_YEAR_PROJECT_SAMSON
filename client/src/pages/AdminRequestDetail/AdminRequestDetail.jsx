@@ -18,6 +18,7 @@ import { StarIcon, MapPinIcon } from '../../components/icons';
 import RequestTimeline from '../../components/RequestTimeline';
 import SlaBadge from '../../components/SlaBadge';
 import './AdminRequestDetail.css';
+import { useLiveVersion } from '../../hooks/useLive';
 
 // Admins previously had no per-request detail view — Manage Requests
 // handled everything inline in a table row, and TopNav's notification
@@ -34,6 +35,7 @@ const NEXT_ACTION = {
 };
 
 function AdminRequestDetail() {
+  const liveVersion = useLiveVersion(); // refetch when the server reports a change
   const { requestId } = useParams();
   const [request, setRequest] = useState(() => getRequestDetail.peek(requestId) ?? null);
   const [error, setError] = useState('');
@@ -59,7 +61,7 @@ function AdminRequestDetail() {
     getTechnicians()
       .then(setTechnicians)
       .catch(() => {});
-  }, [load]);
+  }, [load, liveVersion]);
 
   async function handleAssign() {
     if (!selectedTechnician) return;

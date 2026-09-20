@@ -8,6 +8,7 @@ import DonutChart from '../../components/DonutChart';
 import LineChart from '../../components/LineChart';
 import { slaStateAt } from '../../components/SlaBadge';
 import './AdminHome.css';
+import { useLiveVersion } from '../../hooks/useLive';
 
 function formatResolutionTime(hours) {
   if (hours === null) return '—';
@@ -23,6 +24,7 @@ function formatResolutionTime(hours) {
 // (DonutChart) rather than Reports' bar chart, so the two pages read as
 // distinct at a glance rather than near-duplicates.
 function AdminHome() {
+  const liveVersion = useLiveVersion(); // refetch when the server reports a change
   const { user } = useAuth();
   const [analytics, setAnalytics] = useState(() => getAnalytics.peek() ?? null);
   const [analyticsError, setAnalyticsError] = useState('');
@@ -36,7 +38,7 @@ function AdminHome() {
     getAllRequests()
       .then(setRequests)
       .catch((err) => setRequestsError(err.message));
-  }, []);
+  }, [liveVersion]);
 
   // Requests past their SLA deadline (see server/src/utils/sla.js).
   const overdueCount = requests

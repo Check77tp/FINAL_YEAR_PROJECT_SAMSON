@@ -178,6 +178,9 @@ describe('updateRequestStatus', () => {
 
   it('allows an administrator to advance status without an assignment check', async () => {
     requestsRepository.findRequestById.mockResolvedValue({ request_id: 1, status: 'in_progress' });
+    // The assignment is only looked up to know who to notify (live update);
+    // an administrator is never blocked by it, even when nobody is assigned.
+    requestsRepository.findCurrentAssignment.mockResolvedValue(null);
 
     const result = await updateRequestStatus({
       requestId: 1,
@@ -185,7 +188,6 @@ describe('updateRequestStatus', () => {
       actingUser: { role: 'administrator', user_id: 'admin-1' },
     });
 
-    expect(requestsRepository.findCurrentAssignment).not.toHaveBeenCalled();
     expect(result).toEqual({ requestId: 1, status: 'resolved' });
   });
 });

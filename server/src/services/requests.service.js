@@ -8,6 +8,7 @@ import * as upvotesRepository from '../repositories/upvotes.repository.js';
 import { countByRequest } from './upvotes.service.js';
 import { notifyUser, notifyAdministrators } from './push.service.js';
 import { computeSla } from '../utils/sla.js';
+import { announceRequestChange } from './events.service.js';
 import { httpError } from '../utils/httpError.js';
 
 const STATUS_LABELS = { in_progress: 'In Progress', resolved: 'Resolved', closed: 'Closed' };
@@ -70,6 +71,14 @@ export async function assignTechnician({ requestId, technicianId }) {
     newStatus: 'assigned',
   });
 
+  // Live update: open pages for the student, technician and every admin
+  // refresh themselves (see events.service.js).
+  announceRequestChange({
+    requestId,
+    userIds: [technicianId, request.student_id],
+    message: `Request #${requestId} was assigned to ${technician.name}`,
+  });
+
   // Push notifications are fire-and-forget side effects (they never throw).
   void notifyUser(technicianId, {
     title: 'New task assigned',
@@ -118,6 +127,14 @@ export async function updateRequestStatus({ requestId, newStatus, actingUser }) 
     requestId,
     previousStatus: request.status,
     newStatus,
+  });
+
+  const assignedNow = await requestsRepository.findCurrentAssignment(requestId).catch(() => null);
+  announceRequestChange({
+    requestId,
+    userIds: [request.student_id, assignedNow?.technician_id],
+    actorId: actingUser.user_id,
+    message: `Request #${requestId} is now ${STATUS_LABELS[newStatus] || newStatus}`,
   });
 
   void notifyUser(request.student_id, {
@@ -215,6 +232,12 @@ export async function createRequest({
       requestId: row.request_id,
       previousStatus: null,
       newStatus: 'open',
+    });
+    announceRequestChange({
+      requestId: row.request_id,
+      userIds: [studentId],
+      actorId: studentId,
+      message: `New request #${row.request_id}: ${row.category?.name || 'maintenance'} in ${hostel}`,
     });
     void notifyAdministrators({
       title: 'New maintenance request',

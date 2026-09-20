@@ -7,6 +7,7 @@ import BarChart from '../../components/BarChart';
 import LineChart from '../../components/LineChart';
 import { DownloadIcon, PrinterIcon } from '../../components/icons';
 import './ReportsAnalytics.css';
+import { useLiveVersion } from '../../hooks/useLive';
 
 const CSV_COLUMNS = [
   { key: 'requestId', label: 'Request ID' },
@@ -33,6 +34,7 @@ function formatRating(rating) {
 }
 
 function ReportsAnalytics() {
+  const liveVersion = useLiveVersion(); // refetch when the server reports a change
   const [analytics, setAnalytics] = useState(() => getAnalytics.peek() ?? null);
   const [error, setError] = useState('');
   const [requests, setRequests] = useState(() => getAllRequests.peek() ?? null);
@@ -45,7 +47,7 @@ function ReportsAnalytics() {
     getAllRequests()
       .then(setRequests)
       .catch(() => {});
-  }, []);
+  }, [liveVersion]);
 
   function handleExportCsv() {
     setExportError('');

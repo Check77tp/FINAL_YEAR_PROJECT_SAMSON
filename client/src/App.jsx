@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './hooks/useAuth';
+import { LiveProvider } from './hooks/useLive';
 import ProtectedRoute from './components/ProtectedRoute';
 const Login = lazy(() => import('./pages/Login/Login'));
 const Register = lazy(() => import('./pages/Register/Register'));
@@ -44,6 +45,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <LiveProvider>
         <Suspense fallback={null}>
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -138,6 +140,7 @@ function App() {
           />
         </Routes>
         </Suspense>
+        </LiveProvider>
       </BrowserRouter>
     </AuthProvider>
   );

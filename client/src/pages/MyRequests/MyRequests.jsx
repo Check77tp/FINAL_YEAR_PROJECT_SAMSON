@@ -5,6 +5,7 @@ import { useDraftSync } from '../../hooks/useDraftSync';
 import { PlusIcon } from '../../components/icons';
 import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
 import './MyRequests.css';
+import { useLiveVersion } from '../../hooks/useLive';
 
 // "Active" groups everything still moving through the lifecycle; "Resolved"
 // groups the two terminal states. Matches the Active/Resolved toggle in the
@@ -12,6 +13,7 @@ import './MyRequests.css';
 const ACTIVE_STATUSES = ['open', 'assigned', 'in_progress'];
 
 function MyRequests() {
+  const liveVersion = useLiveVersion(); // refetch when the server reports a change
   // Seed from the API cache so the page renders instantly on repeat visits;
   // the fetch below still runs and refreshes it (stale-while-revalidate).
   const [requests, setRequests] = useState(() => getMyRequests.peek() ?? null);
@@ -31,7 +33,7 @@ function MyRequests() {
     getMyRequests()
       .then(setRequests)
       .catch((err) => setError(err.message));
-  }, [drafts]);
+  }, [drafts, liveVersion]);
 
   // A search query searches across every request regardless of the
   // Active/Resolved tab — narrowing to one tab while searching would hide

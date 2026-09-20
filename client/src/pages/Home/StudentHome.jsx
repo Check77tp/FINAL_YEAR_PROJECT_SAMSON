@@ -7,6 +7,7 @@ import { PlusIcon, ClipboardListIcon, CheckCircleIcon } from '../../components/i
 import StatCard from '../../components/StatCard';
 import CommunityIssues from '../../components/CommunityIssues';
 import './StudentHome.css';
+import { useLiveVersion } from '../../hooks/useLive';
 
 // student_dashboard_unza_maintenance / home_unza_mobile reference. Trimmed
 // to what the schema actually has: no hostel/room location, no "priority"
@@ -15,6 +16,7 @@ const ACTIVE_STATUSES = ['open', 'assigned', 'in_progress'];
 const COMPLETED_STATUSES = ['resolved', 'closed'];
 
 function StudentHome() {
+  const liveVersion = useLiveVersion(); // refetch when the server reports a change
   const { user } = useAuth();
   const [requests, setRequests] = useState(() => getMyRequests.peek() ?? null);
   const [error, setError] = useState('');
@@ -23,7 +25,7 @@ function StudentHome() {
     getMyRequests()
       .then(setRequests)
       .catch((err) => setError(err.message));
-  }, []);
+  }, [liveVersion]);
 
   const activeCount = (requests || []).filter((r) => ACTIVE_STATUSES.includes(r.status)).length;
   const completedCount = (requests || []).filter((r) => COMPLETED_STATUSES.includes(r.status)).length;

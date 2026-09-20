@@ -4,10 +4,12 @@ import { getAssignedRequests } from '../../services/requestsService';
 import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
 import SlaBadge from '../../components/SlaBadge';
 import './MyTasks.css';
+import { useLiveVersion } from '../../hooks/useLive';
 
 const ACTIVE_STATUSES = ['assigned', 'in_progress'];
 
 function MyTasks() {
+  const liveVersion = useLiveVersion(); // refetch when the server reports a change
   const [requests, setRequests] = useState(() => getAssignedRequests.peek() ?? null);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('active');
@@ -18,7 +20,7 @@ function MyTasks() {
     getAssignedRequests()
       .then(setRequests)
       .catch((err) => setError(err.message));
-  }, []);
+  }, [liveVersion]);
 
   const assignedCount = (requests || []).filter((r) => ACTIVE_STATUSES.includes(r.status)).length;
   const completedCount = (requests || []).filter((r) => !ACTIVE_STATUSES.includes(r.status)).length;

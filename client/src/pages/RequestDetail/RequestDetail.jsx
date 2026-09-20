@@ -5,6 +5,7 @@ import { STATUS_LABELS, PRIORITY_LABELS, AVAILABILITY_LABELS, categoryIcon } fro
 import { StarIcon, MapPinIcon } from '../../components/icons';
 import RequestTimeline from '../../components/RequestTimeline';
 import './RequestDetail.css';
+import { useLiveVersion } from '../../hooks/useLive';
 
 const RATABLE_STATUSES = ['resolved', 'closed'];
 
@@ -13,6 +14,7 @@ const RATABLE_STATUSES = ['resolved', 'closed'];
 // fresh rather than trusting a stale cached copy: once on load, and again on
 // demand via the Refresh control.
 function RequestDetail() {
+  const liveVersion = useLiveVersion(); // refetch when the server reports a change
   const { requestId } = useParams();
   const [request, setRequest] = useState(() => getRequestDetail.peek(requestId) ?? null);
   const [error, setError] = useState('');
@@ -36,7 +38,7 @@ function RequestDetail() {
 
   useEffect(() => {
     load();
-  }, [load]);
+  }, [load, liveVersion]);
 
   async function handleRefresh() {
     setRefreshing(true);

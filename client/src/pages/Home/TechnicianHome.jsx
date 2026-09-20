@@ -14,6 +14,7 @@ import {
   formatDate,
 } from '../../utils/requestFormat';
 import './TechnicianHome.css';
+import { useLiveVersion } from '../../hooks/useLive';
 
 const AVAILABILITY_VALUES = ['available', 'on_job', 'off_duty'];
 
@@ -24,6 +25,7 @@ const ACTIVE_STATUSES = ['assigned', 'in_progress'];
 const COMPLETED_STATUSES = ['resolved', 'closed'];
 
 function TechnicianHome() {
+  const liveVersion = useLiveVersion(); // refetch when the server reports a change
   const { user } = useAuth();
   const [requests, setRequests] = useState(() => getAssignedRequests.peek() ?? null);
   const [error, setError] = useState('');
@@ -35,7 +37,7 @@ function TechnicianHome() {
     getAssignedRequests()
       .then(setRequests)
       .catch((err) => setError(err.message));
-  }, []);
+  }, [liveVersion]);
 
   async function handleAvailabilityChange(value) {
     setUpdatingAvailability(true);

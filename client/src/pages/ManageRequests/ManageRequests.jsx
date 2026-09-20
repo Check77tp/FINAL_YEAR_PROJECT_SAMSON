@@ -11,10 +11,12 @@ import {
 } from '../../utils/requestFormat';
 import SlaBadge from '../../components/SlaBadge';
 import './ManageRequests.css';
+import { useLiveVersion } from '../../hooks/useLive';
 
 const FILTERS = ['all', 'open', 'assigned', 'in_progress', 'resolved', 'closed'];
 
 function ManageRequests() {
+  const liveVersion = useLiveVersion(); // refetch when the server reports a change
   const [requests, setRequests] = useState(() => getAllRequests.peek() ?? null);
   const [technicians, setTechnicians] = useState(() => getTechnicians.peek() ?? []);
   const [error, setError] = useState('');
@@ -33,7 +35,7 @@ function ManageRequests() {
         setTechnicians(techniciansData);
       })
       .catch((err) => setError(err.message));
-  }, []);
+  }, [liveVersion]);
 
   const filtered = query.trim()
     ? (requests || []).filter((request) => {

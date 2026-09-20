@@ -3,12 +3,14 @@ import { getCommunityRequests } from '../services/requestsService';
 import { STATUS_LABELS, categoryIcon } from '../utils/requestFormat';
 import UpvoteButton from './UpvoteButton';
 import './CommunityIssues.css';
+import { useLiveVersion } from '../hooks/useLive';
 
 // Horizontal, swipeable strip of issues other students have already reported
 // in the student's hostel. The point is deduplication: if your problem is
 // already here, tap "Me too" instead of filing another request — the count
 // tells administrators how many people it affects.
 function CommunityIssues() {
+  const liveVersion = useLiveVersion(); // refetch when the server reports a change
   const [feed, setFeed] = useState(() => getCommunityRequests.peek() ?? null);
   const [error, setError] = useState('');
 
@@ -16,7 +18,7 @@ function CommunityIssues() {
     getCommunityRequests()
       .then(setFeed)
       .catch((err) => setError(err.message));
-  }, []);
+  }, [liveVersion]);
 
   function updateItem(requestId, patch) {
     setFeed((prev) => ({

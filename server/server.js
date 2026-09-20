@@ -12,6 +12,7 @@ import categoriesRoutes from './src/routes/categories.routes.js';
 import reportsRoutes from './src/routes/reports.routes.js';
 import activityRoutes from './src/routes/activity.routes.js';
 import pushRoutes from './src/routes/push.routes.js';
+import eventsRoutes from './src/routes/events.routes.js';
 import { errorHandler } from './src/middleware/errorHandler.js';
 import { PORT, NODE_ENV } from './src/config/env.js';
 
@@ -19,7 +20,9 @@ const app = express();
 
 app.use(cors());
 // gzip JSON responses — request lists shrink ~5-10x, which matters on mobile data.
-app.use(compression());
+// Never compress the live-update stream: compression buffers, which would
+// hold events back instead of delivering them immediately.
+app.use(compression({ filter: (req, res) => (req.path.startsWith('/api/events') ? false : compression.filter(req, res)) }));
 // Default 100kb limit is too small for a base64-encoded photo (up to ~5MB
 // binary, ~6.7MB once base64-encoded) riding along in the JSON body.
 app.use(express.json({ limit: '8mb' }));
@@ -33,6 +36,7 @@ app.use('/api/categories', categoriesRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/activity', activityRoutes);
 app.use('/api/push', pushRoutes);
+app.use('/api/events', eventsRoutes);
 
 app.use(errorHandler);
 
