@@ -88,3 +88,47 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(networkFirst(request, 0));
   }
 });
+
+// ---------------------------------------------------------------------------
+// Push notifications. The server (web-push) sends a JSON payload
+// { title, body, url, tag }; this runs even when the app is closed, which is
+// what makes it a real notification rather than an in-page banner.
+// ---------------------------------------------------------------------------
+self.addEventListener('push', (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch {
+    data = { body: event.data ? event.data.text() : '' };
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'Hostel Maintenance', {
+      body: data.body || '',
+      icon: '/favicon.svg',
+      badge: '/favicon.svg',
+      // Same tag = a newer notification about the same request replaces the
+      // older one instead of stacking up.
+      tag: data.tag,
+      data: { url: data.url || '/' },
+    })
+  );
+});
+
+// Tapping a notification opens (or focuses) the app on the relevant page.
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || '/';
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      for (const client of windowClients) {
+        if ('focus' in client) {
+          client.navigate(url);
+          return client.focus();
+        }
+      }
+      return self.clients.openWindow(url);
+    })
+  );
+});

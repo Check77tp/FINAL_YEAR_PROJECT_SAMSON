@@ -6,7 +6,10 @@ import * as storageRepository from '../repositories/storage.repository.js';
 import * as ratingsRepository from '../repositories/ratings.repository.js';
 import * as upvotesRepository from '../repositories/upvotes.repository.js';
 import { countByRequest } from './upvotes.service.js';
+import { notifyUser, notifyAdministrators } from './push.service.js';
 import { httpError } from '../utils/httpError.js';
+
+const STATUS_LABELS = { in_progress: 'In Progress', resolved: 'Resolved', closed: 'Closed' };
 
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 const PHOTO_DATA_URL_PATTERN = /^data:image\/(jpeg|png|webp);base64,(.+)$/;
@@ -66,6 +69,20 @@ export async function assignTechnician({ requestId, technicianId }) {
     newStatus: 'assigned',
   });
 
+  // Push notifications are fire-and-forget side effects (they never throw).
+  void notifyUser(technicianId, {
+    title: 'New task assigned',
+    body: `Request #${requestId} has been assigned to you.`,
+    url: `/tasks/${requestId}`,
+    tag: `request-${requestId}`,
+  });
+  void notifyUser(request.student_id, {
+    title: 'Your request was assigned',
+    body: `${technician.name} will be handling request #${requestId}.`,
+    url: `/requests/${requestId}`,
+    tag: `request-${requestId}`,
+  });
+
   return { requestId, status: 'assigned', technicianId };
 }
 
@@ -100,6 +117,13 @@ export async function updateRequestStatus({ requestId, newStatus, actingUser }) 
     requestId,
     previousStatus: request.status,
     newStatus,
+  });
+
+  void notifyUser(request.student_id, {
+    title: 'Request update',
+    body: `Request #${requestId} is now ${STATUS_LABELS[newStatus] || newStatus}.`,
+    url: `/requests/${requestId}`,
+    tag: `request-${requestId}`,
   });
 
   return { requestId, status: newStatus };
@@ -189,6 +213,12 @@ export async function createRequest({
       requestId: row.request_id,
       previousStatus: null,
       newStatus: 'open',
+    });
+    void notifyAdministrators({
+      title: 'New maintenance request',
+      body: `${row.category?.name || 'Request'} in ${hostel}: ${description.slice(0, 80)}`,
+      url: `/manage-requests/${row.request_id}`,
+      tag: `request-${row.request_id}`,
     });
     return mapRequestRow(row);
   } catch (err) {

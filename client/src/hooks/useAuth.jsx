@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { getCurrentUser, loginRequest, registerRequest } from '../services/authService';
 import { saveSession, getAccessToken, clearSession } from '../services/tokenStorage';
+import { disablePush, resubscribeIfOptedIn } from '../services/pushService';
 
 const AuthContext = createContext(null);
 
@@ -28,6 +29,7 @@ export function AuthProvider({ children }) {
       remember,
     });
     setUser(profile);
+    resubscribeIfOptedIn(); // silently restore notifications if previously enabled here
     return profile;
   }
 
@@ -35,7 +37,15 @@ export function AuthProvider({ children }) {
     return registerRequest({ name, email, idNumber, password });
   }
 
-  function logout() {
+  // Removes this device's push subscription BEFORE the token is cleared (the
+  // unsubscribe call needs it) so the next person to use a shared phone never
+  // receives the previous user's notifications. Capped at 1.5s so a slow
+  // network can't stall logging out.
+  async function logout() {
+    await Promise.race([
+      disablePush({ forget: false }).catch(() => {}),
+      new Promise((resolve) => setTimeout(resolve, 1500)),
+    ]);
     clearSession();
     setUser(null);
   }

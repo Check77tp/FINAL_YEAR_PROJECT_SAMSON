@@ -10,6 +10,8 @@ import * as storageRepository from '../repositories/storage.repository.js';
 vi.mock('../repositories/requests.repository.js');
 vi.mock('../repositories/users.repository.js');
 vi.mock('../repositories/storage.repository.js');
+// Notifications are side effects covered by push.service.test.js.
+vi.mock('./push.service.js');
 
 describe('isValidTransition', () => {
   it('allows each forward step in the lifecycle', () => {
