@@ -1,0 +1,99 @@
+/* 1. Default = mobile (375px canvas, must not break down to 320px) */
+.community-issues {
+  margin-bottom: var(--spacing-lg);
+}
+
+.community-issues-header {
+  margin-bottom: var(--spacing-sm);
+}
+
+.community-issues-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-body-lg, 1.125rem);
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.community-issues-note {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+}
+
+/* Horizontal scroller: tiles snap into place as the student swipes. */
+.community-issues-strip {
+  list-style: none;
+  display: flex;
+  gap: var(--spacing-sm);
+  margin: 0;
+  padding: 4px 2px 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.community-issues-tile {
+  flex: 0 0 min(260px, 78%);
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: var(--spacing-sm);
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-level-1);
+}
+
+.community-issues-tile-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.community-issues-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-primary-brand);
+}
+
+.community-issues-status {
+  padding: 2px 8px;
+  border-radius: var(--radius-badge);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  white-space: nowrap;
+  background: var(--color-status-open-bg);
+  color: var(--color-status-open-text);
+}
+
+.community-issues-status-assigned {
+  background: var(--color-status-assigned-bg);
+  color: var(--color-status-assigned-text);
+}
+
+.community-issues-status-in_progress {
+  background: var(--color-status-in-progress-bg);
+  color: var(--color-status-in-progress-text);
+}
+
+.community-issues-description {
+  flex: 1;
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 2. Tablet */
+@media (min-width: 768px) {
+  .community-issues-tile {
+    flex-basis: 280px;
+  }
+}

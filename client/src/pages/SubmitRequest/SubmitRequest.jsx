@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getCategories } from '../../services/categoriesService';
 import { createRequest } from '../../services/requestsService';
+import SimilarIssues from '../../components/SimilarIssues';
 import { saveDraft } from '../../services/draftQueue';
 import { categoryIcon, HOSTELS, PRIORITY_LABELS, PRIORITY_VALUES } from '../../utils/requestFormat';
 import { CameraIcon, XIcon } from '../../components/icons';
@@ -190,6 +191,8 @@ function SubmitRequest() {
             />
           </div>
         </div>
+
+        <SimilarIssues hostel={hostel} categoryId={categoryId} />
 
         <fieldset className="submit-request-fieldset">
           <legend className="submit-request-label">How urgent is this?</legend>

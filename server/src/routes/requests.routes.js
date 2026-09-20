@@ -2,6 +2,7 @@
 import { Router } from 'express';
 import * as requestsService from '../services/requests.service.js';
 import * as ratingsService from '../services/ratings.service.js';
+import * as upvotesService from '../services/upvotes.service.js';
 import { authenticate } from '../middleware/authenticate.js';
 import { requireRole } from '../middleware/requireRole.js';
 
@@ -78,6 +79,21 @@ router.get('/', authenticate, requireRole('administrator'), async (req, res, nex
   try {
     const requests = await requestsService.listAllRequests();
     res.status(200).json({ status: 'ok', requests });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Student: other students' active requests (no names), most-upvoted first -
+// the "already reported? upvote instead" feed. Must stay above /:requestId.
+router.get('/community', authenticate, requireRole('student'), async (req, res, next) => {
+  try {
+    const hostel = typeof req.query.hostel === 'string' ? req.query.hostel.trim() : '';
+    const feed = await upvotesService.listCommunityRequests({
+      studentId: req.user.user_id,
+      hostel: hostel || null,
+    });
+    res.status(200).json({ status: 'ok', ...feed });
   } catch (err) {
     next(err);
   }
@@ -206,6 +222,31 @@ router.post('/:requestId/rating', authenticate, requireRole('student'), async (r
       comment: comment?.trim() || null,
     });
     res.status(201).json({ status: 'ok', rating: result });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Student: "me too" on someone else's active request, and undo it.
+router.post('/:requestId/upvote', authenticate, requireRole('student'), async (req, res, next) => {
+  try {
+    const requestId = parseRequestId(req.params.requestId, res);
+    if (requestId === null) return;
+
+    const result = await upvotesService.addUpvote({ requestId, studentId: req.user.user_id });
+    res.status(200).json({ status: 'ok', ...result });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete('/:requestId/upvote', authenticate, requireRole('student'), async (req, res, next) => {
+  try {
+    const requestId = parseRequestId(req.params.requestId, res);
+    if (requestId === null) return;
+
+    const result = await upvotesService.removeUpvote({ requestId, studentId: req.user.user_id });
+    res.status(200).json({ status: 'ok', ...result });
   } catch (err) {
     next(err);
   }

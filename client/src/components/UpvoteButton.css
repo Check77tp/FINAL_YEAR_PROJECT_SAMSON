@@ -1,0 +1,49 @@
+/* 1. Default = mobile */
+.upvote-button-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.upvote-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-badge);
+  background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface-variant);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+.upvote-button:hover {
+  border-color: var(--color-primary-brand);
+  color: var(--color-primary-brand);
+}
+
+.upvote-button:active {
+  transform: scale(0.96);
+}
+
+.upvote-button-active {
+  background: var(--color-primary-fixed);
+  border-color: transparent;
+  color: var(--color-on-primary-fixed-variant);
+}
+
+.upvote-button-count {
+  padding-left: 6px;
+  border-left: 1px solid currentColor;
+  font-variant-numeric: tabular-nums;
+}
+
+.upvote-button-error {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-error);
+}

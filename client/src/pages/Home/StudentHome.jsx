@@ -5,6 +5,7 @@ import { getMyRequests } from '../../services/requestsService';
 import { STATUS_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
 import { PlusIcon, ClipboardListIcon, CheckCircleIcon } from '../../components/icons';
 import StatCard from '../../components/StatCard';
+import CommunityIssues from '../../components/CommunityIssues';
 import './StudentHome.css';
 
 // student_dashboard_unza_maintenance / home_unza_mobile reference. Trimmed
@@ -46,6 +47,8 @@ function StudentHome() {
         <PlusIcon width={18} height={18} />
         Report New Issue
       </Link>
+
+      <CommunityIssues />
 
       <section className="student-home-recent">
         <div className="student-home-recent-header">

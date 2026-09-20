@@ -179,6 +179,16 @@
   width: fit-content;
 }
 
+.manage-requests-upvotes {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-body);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-tertiary);
+  text-decoration: none;
+}
+
 .manage-requests-row-id:hover {
   color: var(--color-primary-brand);
   text-decoration: underline;

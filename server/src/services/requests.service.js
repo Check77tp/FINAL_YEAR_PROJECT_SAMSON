@@ -4,6 +4,8 @@ import * as requestsRepository from '../repositories/requests.repository.js';
 import * as usersRepository from '../repositories/users.repository.js';
 import * as storageRepository from '../repositories/storage.repository.js';
 import * as ratingsRepository from '../repositories/ratings.repository.js';
+import * as upvotesRepository from '../repositories/upvotes.repository.js';
+import { countByRequest } from './upvotes.service.js';
 import { httpError } from '../utils/httpError.js';
 
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
@@ -206,8 +208,14 @@ export async function listStudentRequests(studentId) {
 // Administrator action: every request, any status, with student details —
 // see CLAUDE.md role rules ("administrator... views all requests").
 export async function listAllRequests() {
-  const rows = await requestsRepository.findAllRequests();
-  return rows.map(mapRequestRow);
+  const [rows, upvoteRows] = await Promise.all([
+    requestsRepository.findAllRequests(),
+    upvotesRepository.findAllUpvotes(),
+  ]);
+  // upvoteCount = how many other students said "me too" - an at-a-glance
+  // signal of how widespread an issue is.
+  const counts = countByRequest(upvoteRows);
+  return rows.map((row) => ({ ...mapRequestRow(row), upvoteCount: counts.get(row.request_id) || 0 }));
 }
 
 // Technician action: only requests currently assigned to them.
@@ -249,7 +257,8 @@ export async function getRequestDetail({ requestId, actingUser }) {
     ? { rating: ratingRow.rating, comment: ratingRow.comment, createdAt: ratingRow.created_at }
     : null;
 
-  return { ...mapRequestRow(row), history, rating };
+  const upvoteCount = await upvotesRepository.countUpvotesForRequest(requestId);
+  return { ...mapRequestRow(row), history, rating, upvoteCount };
 }
 
 // Administrator action: re-triage a request's urgency. Allowed at any point

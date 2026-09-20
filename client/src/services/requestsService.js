@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiPatch } from './api';
+import { apiGet, apiPost, apiPatch, apiDelete } from './api';
 import { peekResponse } from './apiCache';
 
 // Each getter has a .peek() returning the last-seen data (or undefined) so a
@@ -50,6 +50,26 @@ export async function submitRating(requestId, rating, comment) {
   return data.rating;
 }
 
+// Other students' active requests (no names) for the "already reported?"
+// feed. Returns { hostel, requests }.
+export async function getCommunityRequests(hostel) {
+  return apiGet(communityPath(hostel), { auth: true });
+}
+
+function communityPath(hostel) {
+  return hostel ? `/requests/community?hostel=${encodeURIComponent(hostel)}` : '/requests/community';
+}
+
+// Both return { requestId, hasUpvoted, upvoteCount }.
+export async function upvoteRequest(requestId) {
+  return apiPost(`/requests/${requestId}/upvote`, {}, { auth: true });
+}
+
+export async function removeUpvote(requestId) {
+  return apiDelete(`/requests/${requestId}/upvote`, { auth: true });
+}
+
+getCommunityRequests.peek = (hostel) => peekResponse(communityPath(hostel));
 getMyRequests.peek = () => peekResponse('/requests/mine')?.requests;
 getAllRequests.peek = () => peekResponse('/requests')?.requests;
 getAssignedRequests.peek = () => peekResponse('/requests/assigned-to-me')?.requests;

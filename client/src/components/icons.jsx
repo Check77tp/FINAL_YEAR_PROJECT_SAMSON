@@ -286,3 +286,12 @@ export function CheckCircleIcon(props) {
     </svg>
   );
 }
+
+export function ThumbsUpIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <path d="M7 11v9H4a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1h3Z" />
+      <path d="M7 11l4-7a2 2 0 0 1 2 2v3h5.2a2 2 0 0 1 2 2.3l-1.1 6.6A2 2 0 0 1 17.1 20H7" />
+    </svg>
+  );
+}

@@ -155,6 +155,11 @@ function AdminRequestDetail() {
               </option>
             ))}
           </select>
+          {request.upvoteCount > 0 && (
+            <span className="admin-request-detail-upvotes">
+              +{request.upvoteCount} other student{request.upvoteCount === 1 ? '' : 's'} affected
+            </span>
+          )}
         </div>
         {(request.hostel || request.room) && (
           <span className="admin-request-detail-location">

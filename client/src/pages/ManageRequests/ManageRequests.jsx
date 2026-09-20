@@ -167,6 +167,14 @@ function ManageRequests() {
                     className="manage-requests-row-id"
                   >
                     #REQ-{request.requestId}
+                    {request.upvoteCount > 0 && (
+                      <span
+                        className="manage-requests-upvotes"
+                        title={`${request.upvoteCount} other student(s) reported the same issue`}
+                      >
+                        +{request.upvoteCount} affected
+                      </span>
+                    )}
                   </Link>
 
                   <div className="manage-requests-row-student">

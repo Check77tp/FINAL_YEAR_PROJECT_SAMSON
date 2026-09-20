@@ -170,3 +170,21 @@ export async function findCurrentAssignment(requestId) {
   if (error) throw error;
   return data;
 }
+
+// Active (not yet resolved) requests from every student, for the community
+// "upvote instead of re-reporting" feed. Deliberately selects no student
+// columns beyond the id — other students' names are never sent to a student.
+export async function findActiveRequestsForCommunity() {
+  const { data, error } = await supabase
+    .from('maintenance_requests')
+    .select(
+      `request_id, student_id, description, status, hostel, priority, created_at,
+       category:categories ( category_id, name )`
+    )
+    .in('status', ['open', 'assigned', 'in_progress'])
+    .order('created_at', { ascending: false })
+    .limit(200);
+
+  if (error) throw error;
+  return data;
+}

@@ -52,6 +52,15 @@
   color: var(--color-on-surface);
 }
 
+.admin-request-detail-upvotes {
+  padding: 4px 10px;
+  border-radius: var(--radius-badge);
+  background: var(--color-tertiary-fixed);
+  color: var(--color-on-tertiary-fixed-variant);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+}
+
 .admin-request-detail-badges {
   display: flex;
   flex-wrap: wrap;
