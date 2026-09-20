@@ -13,7 +13,7 @@ const SELECT = `
   request:maintenance_requests (
     description,
     category:categories ( name ),
-    student:users ( name )
+    student:users!student_id ( name )
   )
 `;
 

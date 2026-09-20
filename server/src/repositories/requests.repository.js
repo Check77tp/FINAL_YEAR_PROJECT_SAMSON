@@ -34,7 +34,7 @@ export async function findRequestsByStudentId(studentId) {
 
 const SELECT_WITH_RELATIONS_AND_STUDENT = `
   ${SELECT_WITH_RELATIONS},
-  student:users ( user_id, name, id_number )
+  student:users!student_id ( user_id, name, id_number )
 `;
 
 export async function findAllRequests() {
@@ -90,7 +90,7 @@ const SELECT_ASSIGNED_TO_TECHNICIAN = `
   priority,
   created_at,
   category:categories ( category_id, name ),
-  student:users ( user_id, name, id_number ),
+  student:users!student_id ( user_id, name, id_number ),
   technician_assignments!inner ( assigned_at, technician_id, technician:users ( user_id, name, availability_status ) )
 `;
 
