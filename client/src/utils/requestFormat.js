@@ -20,7 +20,18 @@ export const PRIORITY_VALUES = ['low', 'medium', 'high', 'critical'];
 // Dropdown label for a technician: recommended one is starred and every entry
 // shows availability + current workload, e.g.
 // "★ James Jadi — On Job, 1 active".
-export function technicianOptionLabel(t) {
+export function technicianOptionLabel(t, { compact = false } = {}) {
+  // Compact (narrow table cells): "★ John Mwembe (1 active)" or, when they're
+  // not free, "Bwalya Kaunda (3 active, On Job)".
+  if (compact) {
+    const parts = [];
+    if (t.activeTasks !== undefined) parts.push(`${t.activeTasks} active`);
+    if (t.availabilityStatus && t.availabilityStatus !== 'available') {
+      parts.push(AVAILABILITY_LABELS[t.availabilityStatus]);
+    }
+    return `${t.recommended ? '★ ' : ''}${t.name}${parts.length ? ` (${parts.join(', ')})` : ''}`;
+  }
+
   const availability = AVAILABILITY_LABELS[t.availabilityStatus];
   const workload = t.activeTasks === undefined ? null : `${t.activeTasks} active`;
   const detail = [availability, workload].filter(Boolean).join(', ');

@@ -235,7 +235,7 @@ function ManageRequests() {
                             <option value="">Select technician</option>
                             {technicians.map((technician) => (
                               <option key={technician.id} value={technician.id}>
-                                {technicianOptionLabel(technician)}
+                                {technicianOptionLabel(technician, { compact: true })}
                               </option>
                             ))}
                           </select>

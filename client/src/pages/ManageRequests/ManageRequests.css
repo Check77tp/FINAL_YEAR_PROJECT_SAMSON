@@ -236,6 +236,7 @@
 .manage-requests-assign-control select {
   flex: 1;
   min-width: 0;
+  text-overflow: ellipsis;
   padding: 8px var(--spacing-xs);
   border: 1px solid var(--input-border-color);
   border-radius: var(--radius-input);
@@ -345,7 +346,11 @@
 
   .manage-requests-list-header {
     display: grid;
-    grid-template-columns: 0.7fr 1.2fr 0.9fr 1fr 0.8fr 0.8fr 1.6fr;
+    /* minmax(0, ...) lets each column shrink below its content's natural
+       width; without it a long technician label pushes Assign off the table. */
+    grid-template-columns:
+      minmax(0, 0.8fr) minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 0.85fr) minmax(0, 0.75fr)
+      minmax(0, 0.75fr) minmax(0, 2.2fr);
     gap: var(--spacing-sm);
     padding: 0 var(--spacing-sm) var(--spacing-xs);
     font-size: var(--font-size-label-sm);
@@ -364,7 +369,10 @@
   }
 
   .manage-requests-row {
-    grid-template-columns: 0.7fr 1.2fr 0.9fr 1fr 0.8fr 0.8fr 1.6fr;
+    /* Same columns as the header above, so labels line up with their cells. */
+    grid-template-columns:
+      minmax(0, 0.8fr) minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 0.85fr) minmax(0, 0.75fr)
+      minmax(0, 0.75fr) minmax(0, 2.2fr);
     grid-template-areas: 'id student category location priority status assign';
     min-height: 64px;
     padding: 0 var(--spacing-sm);
