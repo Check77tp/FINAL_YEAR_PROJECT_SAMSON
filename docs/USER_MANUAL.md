@@ -252,7 +252,7 @@ Open **Reports & Analytics**:
 
 ### 4.6 Automatic alerts and emails
 You do not need to do anything for these:
-- **Overdue alerts** — once an hour the system checks for requests that have passed their deadline and notifies all administrators and the assigned technician (once per request).
+- **Overdue alerts** — the system checks every hour for requests that have passed their deadline and notifies all administrators and the assigned technician. If a request stays overdue you get a **reminder**: every **4 hours** for Critical and High requests, and **once a day** for Medium and Low. Reminders stop as soon as the request is Resolved.
 - **New request and status alerts** — push notifications (if you turned them on).
 - **Weekly summary email** — every Monday at 08:00 (Lusaka time) to all administrators.
 

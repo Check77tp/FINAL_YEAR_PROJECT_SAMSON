@@ -12,6 +12,15 @@ export const SLA_TARGET_HOURS = {
   low: 168, // one week
 };
 
+// How long after an overdue alert we remind again while the request is STILL
+// overdue: urgent work (critical/high) every 4 hours, everything else daily.
+export const OVERDUE_REMINDER_HOURS = {
+  critical: 4,
+  high: 4,
+  medium: 24,
+  low: 24,
+};
+
 // A request is "at risk" once less than this fraction of its allowed time is left.
 const AT_RISK_FRACTION = 0.25;
 

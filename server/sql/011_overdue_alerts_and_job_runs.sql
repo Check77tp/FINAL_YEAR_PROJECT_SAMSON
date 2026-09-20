@@ -1,7 +1,9 @@
 -- Supports two background jobs. Run once in the Supabase SQL Editor.
 --
 -- 1. Overdue alerts: remember that we already told people a request is
---    overdue, so the monitor alerts ONCE per request instead of every check.
+--    overdue and WHEN (the time of the most recent alert), so the monitor can
+--    space reminders out (4h for critical/high, daily otherwise) instead of
+--    repeating on every check.
 alter table public.maintenance_requests
   add column overdue_notified_at timestamptz;
 

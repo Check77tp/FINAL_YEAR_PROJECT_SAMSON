@@ -188,7 +188,7 @@ The client holds **no Supabase key** and no secrets.
 | `status` | request_status | default `open` |
 | `priority` | request_priority | default `medium` |
 | `hostel`, `room` | text | free text; hostel list is a client-side dropdown |
-| `overdue_notified_at` | timestamptz null | set when the overdue alert has been sent |
+| `overdue_notified_at` | timestamptz null | time of the most recent overdue alert (drives reminder spacing) |
 | `created_at` | timestamptz | starts the SLA clock |
 
 **technician_assignments** — `assignment_id` PK, `request_id` FK, `technician_id` FK → users, `assigned_at`
@@ -310,7 +310,14 @@ Errors: `{ "status": "error", "message": "..." }` with an HTTP status:
 State: `on_track`; `at_risk` when < 25 % of the window remains; `overdue` when past due; `done` once resolved/closed. Computed by one pure function (`utils/sla.js`) and attached as `sla` to every request returned by the API.
 
 ### 7.3 Overdue alerts
-Every **hour** the server checks active requests. A newly overdue request (not yet flagged) is marked `overdue_notified_at` **first**, then admins and the assigned technician are notified (push + live refresh). More than 3 at once collapse into one summary notification.
+There are **two intervals**:
+
+| Interval | Value | Meaning |
+|---|---|---|
+| **Check interval** | every **1 hour** | How often the server looks for overdue requests |
+| **Reminder interval** | **4 hours** for `critical` and `high`; **24 hours** (daily) for `medium` and `low` | Minimum gap between alerts about the *same* request while it stays overdue |
+
+A request is alerted when it first becomes overdue, then reminded at the reminder interval until it is resolved or closed. `overdue_notified_at` stores the time of the **most recent** alert; it is written **before** sending, so a slow or failed send cannot cause a repeat. A 5-minute tolerance stops timer drift from delaying a 4-hour reminder to 5 hours. Reminders are worded "still overdue". Admins and the assigned technician are notified (push + live refresh); more than 3 at once collapse into one summary notification. Values live in `OVERDUE_REMINDER_HOURS` (`server/src/utils/sla.js`).
 
 ### 7.4 Technician recommendation
 Order by availability (`available` < `on_job` < `off_duty`), then fewest active tasks (assigned/in-progress), then name. The first entry is `recommended` unless that technician is off duty.
@@ -464,7 +471,7 @@ Jobs run as plain timers inside the Express process (`src/jobs/scheduler.js`); e
 
 | Job | Schedule | Detail |
 |---|---|---|
-| Overdue monitor | first run 30 s after start, then **every hour** | See 7.3 |
+| Overdue monitor | first run 30 s after start, then **every hour** (check interval); reminders every 4 h / 24 h by priority | See 7.3 |
 | Weekly summary email | checked hourly; sends Monday ≥ 06:00 UTC (08:00 Lusaka) | Catches up if a week was missed; run recorded in `job_runs` **before** sending so a failure/restart cannot duplicate |
 
 Integrations degrade gracefully:
@@ -495,7 +502,7 @@ Integrations degrade gracefully:
 ---
 
 ## 13. Testing and CI
-153 automated tests (105 unit + 48 integration). Run `npm test` in `server/`. GitHub Actions
+158 automated tests (110 unit + 48 integration). Run `npm test` in `server/`. GitHub Actions
 (`.github/workflows/ci.yml`) runs the server tests and the client lint + build on every push
 and pull request, with no secrets. Full detail in [TESTING.md](TESTING.md).
 

@@ -249,7 +249,7 @@ network round trips from most requests.
 |---|---|
 | Open pages update when a request changes | **Server-Sent Events** (`GET /api/events`). The server pushes only a request id + message; the client refetches through the normal permission-checked API. SSE was chosen over WebSockets/Supabase Realtime because updates only flow server → client and the architecture forbids the client talking to Supabase. |
 | Notifications when the app is closed | **Web Push** (VAPID). Sent on new requests, assignments, status changes and overdue alerts. Logging out removes the device's subscription so a shared phone never receives someone else's alerts. |
-| Overdue alerts | A background monitor runs every hour, flags requests past their SLA once (`overdue_notified_at`), and alerts administrators + the assigned technician. |
+| Overdue alerts | A background monitor checks every hour; a request past its SLA is alerted once, then reminded while still overdue (every 4 h for critical/high, daily otherwise — `overdue_notified_at` holds the last alert time) — to administrators + the assigned technician. |
 | Weekly summary | Monday 06:00 UTC (08:00 Lusaka) email to administrators; last-run stored in `job_runs` so a restart cannot cause a duplicate. |
 
 ---
@@ -344,7 +344,7 @@ All routes are under `/api`. "Scoped" means the service checks ownership as well
 
 ## 12. Testing
 
-- **153 automated tests** (Vitest): **105 unit tests** covering the business
+- **158 automated tests** (Vitest): **110 unit tests** covering the business
   rules with repositories mocked, and **48 integration tests** that drive the real
   Express app over HTTP (routes + middleware + services, database faked) — see
   [TESTING.md](TESTING.md). The unit tests cover: lifecycle transitions and role restrictions,

@@ -6,7 +6,7 @@ import { NODE_ENV } from '../config/env.js';
 import { runOverdueCheck } from '../services/overdue.service.js';
 import { runWeeklyDigestIfDue } from '../services/digest.service.js';
 
-const OVERDUE_CHECK_EVERY_MS = 60 * 60 * 1000; // hourly: overdue alerts go out at most an hour apart
+const OVERDUE_CHECK_EVERY_MS = 60 * 60 * 1000; // hourly: alerts/reminders go out on the first check after they fall due
 const FIRST_RUN_DELAY_MS = 30 * 1000; // let the server finish starting first
 
 let overdueWarned = false;

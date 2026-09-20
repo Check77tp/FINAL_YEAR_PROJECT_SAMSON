@@ -3,7 +3,7 @@
 How the system is tested, what each kind of test proves, how to run them, and
 how they run automatically on every push.
 
-**Totals: 153 automated tests** — 105 unit + 48 integration — plus a CI pipeline
+**Totals: 158 automated tests** — 110 unit + 48 integration — plus a CI pipeline
 and browser-based verification of the front end.
 
 ---
@@ -73,11 +73,11 @@ this by deliberately breaking two rules and re-running:
 | Remove the administrator-only guard from `GET /api/requests` | 2 access-control tests failed |
 | Allow lifecycle steps to be skipped | the "skipping a step" test failed |
 
-The bugs were reverted and all 153 tests pass again.
+The bugs were reverted and all tests pass again.
 
 ---
 
-## 4. What the unit tests cover (105)
+## 4. What the unit tests cover (110)
 
 Lifecycle transitions and role restrictions · proof-of-work ordering and the
 optional/mandatory switch · SLA states and boundaries · overdue detection and
@@ -105,7 +105,7 @@ push / pull request
 - It uses Node 22 and caches `node_modules` for speed.
 - It needs **no secrets**, because the tests never touch a real database.
 - The pipeline was rehearsed locally from a clean checkout with no `.env`:
-  105 unit + 48 integration tests, lint and build all passed.
+  unit + integration tests, lint and build all passed (105 + 48 at the time; 110 + 48 now).
 
 Optional next step: in Netlify/Render (or GitHub branch protection) require the
 CI check to pass before deploying or merging.
