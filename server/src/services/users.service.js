@@ -2,6 +2,7 @@
 import * as usersRepository from '../repositories/users.repository.js';
 import * as storageRepository from '../repositories/storage.repository.js';
 import { httpError } from '../utils/httpError.js';
+import { clearTokenCache } from './auth.service.js';
 
 const AVAILABILITY_VALUES = ['available', 'on_job', 'off_duty'];
 const MAX_AVATAR_BYTES = 3 * 1024 * 1024;
@@ -43,6 +44,7 @@ export async function setOwnAvailability(userId, availabilityStatus) {
     throw httpError(`availabilityStatus must be one of: ${AVAILABILITY_VALUES.join(', ')}`, 400);
   }
   const profile = await usersRepository.updateAvailabilityStatus(userId, availabilityStatus);
+  clearTokenCache(); // cached profiles hold the old availability
   return { id: profile.user_id, availabilityStatus: profile.availability_status };
 }
 
@@ -78,8 +80,10 @@ export async function updateOwnProfile(userId, { name, photoDataUrl }) {
     });
   }
 
-  return usersRepository.updateProfile(userId, {
+  const updated = await usersRepository.updateProfile(userId, {
     name: name?.trim(),
     avatarUrl,
   });
+  clearTokenCache(); // cached profiles hold the old name/avatar
+  return updated;
 }

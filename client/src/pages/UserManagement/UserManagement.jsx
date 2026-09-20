@@ -22,7 +22,7 @@ const EMPTY_FORM = { name: '', email: '', idNumber: '', password: '', role: 'tec
 // existed, every staff account in this system was provisioned by hand
 // directly against Supabase.
 function UserManagement() {
-  const [users, setUsers] = useState(null);
+  const [users, setUsers] = useState(() => getAllUsers.peek() ?? null);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('all');
   const [formOpen, setFormOpen] = useState(false);

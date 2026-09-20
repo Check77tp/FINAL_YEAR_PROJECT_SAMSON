@@ -8,8 +8,14 @@
 // so the sync logic lives where it reliably works — in the page, via
 // IndexedDB and the browser's `online` event.
 
-const CACHE_NAME = 'hostel-maintenance-shell-v2';
+const CACHE_NAME = 'hostel-maintenance-shell-v3';
 const APP_SHELL = ['/', '/manifest.json', '/favicon.svg'];
+
+// If the network hasn't answered a page load within this long, show the
+// cached app shell instead — on a weak hostel connection an instant shell
+// beats a blank screen. Long enough that a healthy connection still gets the
+// freshest index.html.
+const NAVIGATION_TIMEOUT_MS = 2500;
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
@@ -25,27 +31,60 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Network-first, falling back to cache — same-origin GET requests only.
-// API calls always go to a different origin in this architecture (see
-// CLAUDE.md's "client never talks to Supabase directly" / REST API rule),
-// so they're never intercepted here regardless of dev vs. production.
-// Network-first (rather than cache-first) means the app stays up to date
-// whenever there's a connection, while still falling back to whatever was
-// last cached when there isn't one — including hashed JS/CSS bundle files,
-// which get added to the cache as they're fetched rather than needing to be
-// known in advance.
+async function cacheFirst(request) {
+  const cached = await caches.match(request);
+  if (cached) return cached;
+  const response = await fetch(request);
+  if (response.ok) {
+    const copy = response.clone();
+    caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+  }
+  return response;
+}
+
+async function networkFirst(request, timeoutMs) {
+  const cache = await caches.open(CACHE_NAME);
+  const fromNetwork = fetch(request).then((response) => {
+    if (response.ok) cache.put(request, response.clone());
+    return response;
+  });
+
+  // Race the network against the timeout; on timeout or failure fall back to
+  // whatever was cached last (or the app shell for page navigations).
+  const fallback = () => cache.match(request).then((cached) => cached || cache.match('/'));
+  try {
+    if (!timeoutMs) return await fromNetwork;
+    return await Promise.race([
+      fromNetwork,
+      new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeoutMs)),
+    ]);
+  } catch {
+    const cached = await fallback();
+    if (cached) return cached;
+    return fromNetwork;
+  }
+}
+
+// Strategy per request type (same-origin GET only — API calls go to a
+// different origin, so they're never intercepted here):
+//  - /assets/*  Vite's build output. File names contain a content hash, so a
+//               given URL never changes → cache-first: instant on every
+//               visit after the first, no network at all.
+//  - page loads Network-first with a short timeout, falling back to the
+//               cached shell (fresh when online, instant when slow/offline).
+//  - the rest   Network-first (manifest, icons; also keeps the Vite dev
+//               server from ever serving stale modules).
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
-  if (new URL(request.url).origin !== self.location.origin) return;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
 
-  event.respondWith(
-    fetch(request)
-      .then((response) => {
-        const responseCopy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(request, responseCopy));
-        return response;
-      })
-      .catch(() => caches.match(request).then((cached) => cached || caches.match('/')))
-  );
+  if (url.pathname.startsWith('/assets/')) {
+    event.respondWith(cacheFirst(request).catch(() => caches.match('/')));
+  } else if (request.mode === 'navigate') {
+    event.respondWith(networkFirst(request, NAVIGATION_TIMEOUT_MS));
+  } else {
+    event.respondWith(networkFirst(request, 0));
+  }
 });

@@ -1,6 +1,7 @@
 import './src/config/env.js';
 import express from 'express';
 import cors from 'cors';
+import compression from 'compression';
 import morgan from 'morgan';
 
 import healthRoutes from './src/routes/health.routes.js';
@@ -16,6 +17,8 @@ import { PORT, NODE_ENV } from './src/config/env.js';
 const app = express();
 
 app.use(cors());
+// gzip JSON responses — request lists shrink ~5-10x, which matters on mobile data.
+app.use(compression());
 // Default 100kb limit is too small for a base64-encoded photo (up to ~5MB
 // binary, ~6.7MB once base64-encoded) riding along in the JSON body.
 app.use(express.json({ limit: '8mb' }));

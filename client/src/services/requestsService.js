@@ -1,4 +1,8 @@
 import { apiGet, apiPost, apiPatch } from './api';
+import { peekResponse } from './apiCache';
+
+// Each getter has a .peek() returning the last-seen data (or undefined) so a
+// page can render instantly while the real fetch refreshes it — see apiCache.js.
 
 export async function getMyRequests() {
   const data = await apiGet('/requests/mine', { auth: true });
@@ -45,3 +49,8 @@ export async function submitRating(requestId, rating, comment) {
   const data = await apiPost(`/requests/${requestId}/rating`, { rating, comment }, { auth: true });
   return data.rating;
 }
+
+getMyRequests.peek = () => peekResponse('/requests/mine')?.requests;
+getAllRequests.peek = () => peekResponse('/requests')?.requests;
+getAssignedRequests.peek = () => peekResponse('/requests/assigned-to-me')?.requests;
+getRequestDetail.peek = (requestId) => peekResponse(`/requests/${requestId}`)?.request;

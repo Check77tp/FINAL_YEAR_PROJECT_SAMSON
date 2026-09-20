@@ -24,7 +24,7 @@ const COMPLETED_STATUSES = ['resolved', 'closed'];
 
 function TechnicianHome() {
   const { user } = useAuth();
-  const [requests, setRequests] = useState(null);
+  const [requests, setRequests] = useState(() => getAssignedRequests.peek() ?? null);
   const [error, setError] = useState('');
   const [availability, setAvailability] = useState(user?.availability_status || 'available');
   const [availabilityError, setAvailabilityError] = useState('');

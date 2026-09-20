@@ -2,6 +2,7 @@
 // The client never talks to Supabase directly — every data access goes
 // through this layer to the server's REST API.
 import { getAccessToken } from './tokenStorage';
+import { cacheResponse, clearApiCache } from './apiCache';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
@@ -41,6 +42,11 @@ async function request(path, { method = 'GET', body, auth = false } = {}) {
   if (!response.ok) {
     throw new Error(data?.message || `Request to ${path} failed with status ${response.status}`);
   }
+
+  // Keep the newest authenticated GET result for instant re-display (see
+  // apiCache.js); any write invalidates everything cached.
+  if (auth && method === 'GET') cacheResponse(path, data);
+  else if (method !== 'GET') clearApiCache();
 
   return data;
 }

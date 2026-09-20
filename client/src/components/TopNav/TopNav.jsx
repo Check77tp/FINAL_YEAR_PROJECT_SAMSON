@@ -45,7 +45,7 @@ function TopNav({ onMenuClick }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
-  const [activity, setActivity] = useState(null);
+  const [activity, setActivity] = useState(() => getRecentActivity.peek() ?? null);
   const [activityError, setActivityError] = useState('');
   const [panelOpen, setPanelOpen] = useState(null); // 'notifications' | 'help' | 'account' | null
   const panelRef = useRef(null);

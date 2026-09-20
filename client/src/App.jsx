@@ -1,24 +1,50 @@
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './hooks/useAuth';
 import ProtectedRoute from './components/ProtectedRoute';
-import Login from './pages/Login/Login';
-import Register from './pages/Register/Register';
-import Home from './pages/Home/Home';
-import MyRequests from './pages/MyRequests/MyRequests';
-import ManageRequests from './pages/ManageRequests/ManageRequests';
-import MyTasks from './pages/MyTasks/MyTasks';
-import TaskDetail from './pages/TaskDetail/TaskDetail';
-import RequestDetail from './pages/RequestDetail/RequestDetail';
-import SubmitRequest from './pages/SubmitRequest/SubmitRequest';
-import ReportsAnalytics from './pages/ReportsAnalytics/ReportsAnalytics';
-import Profile from './pages/Profile/Profile';
-import UserManagement from './pages/UserManagement/UserManagement';
-import AdminRequestDetail from './pages/AdminRequestDetail/AdminRequestDetail';
+const Login = lazy(() => import('./pages/Login/Login'));
+const Register = lazy(() => import('./pages/Register/Register'));
+const Home = lazy(() => import('./pages/Home/Home'));
+const MyRequests = lazy(() => import('./pages/MyRequests/MyRequests'));
+const ManageRequests = lazy(() => import('./pages/ManageRequests/ManageRequests'));
+const MyTasks = lazy(() => import('./pages/MyTasks/MyTasks'));
+const TaskDetail = lazy(() => import('./pages/TaskDetail/TaskDetail'));
+const RequestDetail = lazy(() => import('./pages/RequestDetail/RequestDetail'));
+const SubmitRequest = lazy(() => import('./pages/SubmitRequest/SubmitRequest'));
+const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalytics/ReportsAnalytics'));
+const Profile = lazy(() => import('./pages/Profile/Profile'));
+const UserManagement = lazy(() => import('./pages/UserManagement/UserManagement'));
+const AdminRequestDetail = lazy(() => import('./pages/AdminRequestDetail/AdminRequestDetail'));
+
+// Each page is its own JS chunk, downloaded only when first visited — a
+// student never downloads the admin reports (or the chart library). After the
+// first screen is up, the remaining chunks are fetched in idle time so later
+// navigation feels instant (see preloadPages below).
+const preloadPages = [
+  () => import('./pages/MyRequests/MyRequests'),
+  () => import('./pages/SubmitRequest/SubmitRequest'),
+  () => import('./pages/RequestDetail/RequestDetail'),
+  () => import('./pages/MyTasks/MyTasks'),
+  () => import('./pages/TaskDetail/TaskDetail'),
+  () => import('./pages/ManageRequests/ManageRequests'),
+  () => import('./pages/Profile/Profile'),
+];
 
 function App() {
+  useEffect(() => {
+    const run = () => preloadPages.forEach((load) => load().catch(() => {}));
+    if ('requestIdleCallback' in window) {
+      const id = window.requestIdleCallback(run, { timeout: 4000 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const id = setTimeout(run, 2000);
+    return () => clearTimeout(id);
+  }, []);
+
   return (
     <AuthProvider>
       <BrowserRouter>
+        <Suspense fallback={null}>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -111,6 +137,7 @@ function App() {
             }
           />
         </Routes>
+        </Suspense>
       </BrowserRouter>
     </AuthProvider>
   );

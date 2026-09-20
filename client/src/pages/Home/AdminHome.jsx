@@ -23,9 +23,9 @@ function formatResolutionTime(hours) {
 // distinct at a glance rather than near-duplicates.
 function AdminHome() {
   const { user } = useAuth();
-  const [analytics, setAnalytics] = useState(null);
+  const [analytics, setAnalytics] = useState(() => getAnalytics.peek() ?? null);
   const [analyticsError, setAnalyticsError] = useState('');
-  const [requests, setRequests] = useState(null);
+  const [requests, setRequests] = useState(() => getAllRequests.peek() ?? null);
   const [requestsError, setRequestsError] = useState('');
 
   useEffect(() => {

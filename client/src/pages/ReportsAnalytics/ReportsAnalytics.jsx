@@ -33,9 +33,9 @@ function formatRating(rating) {
 }
 
 function ReportsAnalytics() {
-  const [analytics, setAnalytics] = useState(null);
+  const [analytics, setAnalytics] = useState(() => getAnalytics.peek() ?? null);
   const [error, setError] = useState('');
-  const [requests, setRequests] = useState(null);
+  const [requests, setRequests] = useState(() => getAllRequests.peek() ?? null);
   const [exportError, setExportError] = useState('');
 
   useEffect(() => {

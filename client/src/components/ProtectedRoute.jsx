@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import Layout from './Layout/Layout';
@@ -13,7 +14,13 @@ function ProtectedRoute({ roles, children }) {
   if (!user) return <Navigate to="/login" replace />;
   if (roles && !roles.includes(user.role)) return <Navigate to="/" replace />;
 
-  return <Layout>{children}</Layout>;
+  // Suspense sits inside Layout so the sidebar/top bar stay on screen while a
+  // page's code chunk loads.
+  return (
+    <Layout>
+      <Suspense fallback={null}>{children}</Suspense>
+    </Layout>
+  );
 }
 
 export default ProtectedRoute;

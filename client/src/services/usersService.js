@@ -1,4 +1,5 @@
 import { apiGet, apiPatch, apiPost } from './api';
+import { peekResponse } from './apiCache';
 
 export async function getTechnicians() {
   const data = await apiGet('/users/technicians', { auth: true });
@@ -27,3 +28,6 @@ export async function updateOwnProfile({ name, photoDataUrl }) {
   const data = await apiPatch('/users/me', { name, photo: photoDataUrl || undefined }, { auth: true });
   return data.user;
 }
+
+getTechnicians.peek = () => peekResponse('/users/technicians')?.technicians;
+getAllUsers.peek = () => peekResponse('/users')?.users;

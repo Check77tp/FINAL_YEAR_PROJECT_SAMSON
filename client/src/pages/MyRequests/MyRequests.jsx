@@ -12,7 +12,9 @@ import './MyRequests.css';
 const ACTIVE_STATUSES = ['open', 'assigned', 'in_progress'];
 
 function MyRequests() {
-  const [requests, setRequests] = useState(null);
+  // Seed from the API cache so the page renders instantly on repeat visits;
+  // the fetch below still runs and refreshes it (stale-while-revalidate).
+  const [requests, setRequests] = useState(() => getMyRequests.peek() ?? null);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('active');
   const { drafts } = useDraftSync();

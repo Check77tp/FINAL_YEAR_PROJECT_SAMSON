@@ -17,7 +17,7 @@ const NEXT_ACTION = {
 
 function TaskDetail() {
   const { requestId } = useParams();
-  const [request, setRequest] = useState(null);
+  const [request, setRequest] = useState(() => getRequestDetail.peek(requestId) ?? null);
   const [error, setError] = useState('');
   const [updating, setUpdating] = useState(false);
   const [updateError, setUpdateError] = useState('');

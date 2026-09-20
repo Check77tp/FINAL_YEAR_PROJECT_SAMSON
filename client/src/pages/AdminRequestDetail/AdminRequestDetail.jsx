@@ -34,9 +34,9 @@ const NEXT_ACTION = {
 
 function AdminRequestDetail() {
   const { requestId } = useParams();
-  const [request, setRequest] = useState(null);
+  const [request, setRequest] = useState(() => getRequestDetail.peek(requestId) ?? null);
   const [error, setError] = useState('');
-  const [technicians, setTechnicians] = useState([]);
+  const [technicians, setTechnicians] = useState(() => getTechnicians.peek() ?? []);
   const [selectedTechnician, setSelectedTechnician] = useState('');
   const [assigning, setAssigning] = useState(false);
   const [advancing, setAdvancing] = useState(false);

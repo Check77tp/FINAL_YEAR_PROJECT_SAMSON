@@ -14,8 +14,8 @@ import './ManageRequests.css';
 const FILTERS = ['all', 'open', 'assigned', 'in_progress', 'resolved', 'closed'];
 
 function ManageRequests() {
-  const [requests, setRequests] = useState(null);
-  const [technicians, setTechnicians] = useState([]);
+  const [requests, setRequests] = useState(() => getAllRequests.peek() ?? null);
+  const [technicians, setTechnicians] = useState(() => getTechnicians.peek() ?? []);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('all');
   const [selections, setSelections] = useState({});

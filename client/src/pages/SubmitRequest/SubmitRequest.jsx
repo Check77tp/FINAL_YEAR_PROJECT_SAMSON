@@ -14,7 +14,7 @@ function SubmitRequest() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
-  const [categories, setCategories] = useState(null);
+  const [categories, setCategories] = useState(() => getCategories.peek() ?? null);
   const [categoriesError, setCategoriesError] = useState('');
   const [categoryId, setCategoryId] = useState(null);
   const [description, setDescription] = useState('');

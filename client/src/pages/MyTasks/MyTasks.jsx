@@ -7,7 +7,7 @@ import './MyTasks.css';
 const ACTIVE_STATUSES = ['assigned', 'in_progress'];
 
 function MyTasks() {
-  const [requests, setRequests] = useState(null);
+  const [requests, setRequests] = useState(() => getAssignedRequests.peek() ?? null);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('active');
   const [searchParams, setSearchParams] = useSearchParams();

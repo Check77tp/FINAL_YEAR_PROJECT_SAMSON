@@ -97,7 +97,25 @@ export async function login({ idNumber, email, password }) {
   };
 }
 
+// verifyToken costs two network round trips to Supabase (validate the JWT,
+// then load the profile), and it runs on EVERY protected request. A short-
+// lived in-memory cache means a burst of requests from one page load pays
+// that cost once. The trade-off is that a deactivated user or changed role
+// can take up to TOKEN_CACHE_TTL_MS to take effect — acceptable at 30s, and
+// far shorter than the JWT's own lifetime.
+const TOKEN_CACHE_TTL_MS = 30_000;
+const TOKEN_CACHE_MAX_ENTRIES = 500;
+const tokenCache = new Map();
+
+// Called after any change to a user's profile so the next request re-reads it.
+export function clearTokenCache() {
+  tokenCache.clear();
+}
+
 export async function verifyToken(accessToken) {
+  const hit = tokenCache.get(accessToken);
+  if (hit && hit.expiresAt > Date.now()) return hit.profile;
+
   const { data, error } = await createAuthClient().auth.getUser(accessToken);
 
   if (error || !data.user) {
@@ -109,6 +127,9 @@ export async function verifyToken(accessToken) {
   if (!profile) {
     throw httpError('User profile not found', 401);
   }
+
+  if (tokenCache.size >= TOKEN_CACHE_MAX_ENTRIES) tokenCache.clear();
+  tokenCache.set(accessToken, { profile, expiresAt: Date.now() + TOKEN_CACHE_TTL_MS });
 
   return profile;
 }

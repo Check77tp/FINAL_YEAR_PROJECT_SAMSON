@@ -15,7 +15,7 @@ const COMPLETED_STATUSES = ['resolved', 'closed'];
 
 function StudentHome() {
   const { user } = useAuth();
-  const [requests, setRequests] = useState(null);
+  const [requests, setRequests] = useState(() => getMyRequests.peek() ?? null);
   const [error, setError] = useState('');
 
   useEffect(() => {

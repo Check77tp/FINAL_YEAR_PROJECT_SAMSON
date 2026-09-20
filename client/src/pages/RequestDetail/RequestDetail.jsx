@@ -14,7 +14,7 @@ const RATABLE_STATUSES = ['resolved', 'closed'];
 // demand via the Refresh control.
 function RequestDetail() {
   const { requestId } = useParams();
-  const [request, setRequest] = useState(null);
+  const [request, setRequest] = useState(() => getRequestDetail.peek(requestId) ?? null);
   const [error, setError] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [lastCheckedAt, setLastCheckedAt] = useState(null);
