@@ -1,19 +1,36 @@
 {
+  "id": "/",
   "name": "UNZA Hostel Maintenance",
-  "short_name": "Hostel Maintenance",
+  "short_name": "Hostel Fix",
   "description": "Submit and track hostel maintenance requests at the University of Zambia.",
+  "lang": "en",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f8fafc",
+  "background_color": "#f7fbf0",
   "theme_color": "#2e7d32",
+  "categories": ["education", "utilities"],
   "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
     {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "name": "Report an issue",
+      "short_name": "Report",
+      "description": "Submit a new maintenance request",
+      "url": "/requests/new",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "My requests",
+      "short_name": "Requests",
+      "description": "Track your maintenance requests",
+      "url": "/requests",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ]
 }

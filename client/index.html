@@ -3,13 +3,69 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#2e7d32" />
+    <meta name="description" content="Submit and track hostel maintenance requests at the University of Zambia." />
+    <!-- iOS: launch full-screen from the Home Screen with a proper title -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Hostel Fix" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <title>UNZA Hostel Maintenance</title>
+    <!-- Launch splash: inline so it paints instantly, before any JS loads.
+         React replaces the contents of #root as soon as it mounts. -->
+    <style>
+      .app-splash {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        background: #f7fbf0;
+        font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+        color: #2e7d32;
+      }
+      .app-splash-logo {
+        width: 88px;
+        height: 88px;
+        border-radius: 24px;
+        animation: app-splash-pulse 1.4s ease-in-out infinite;
+      }
+      .app-splash-name {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+      @keyframes app-splash-pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.06); }
+      }
+      @media (prefers-color-scheme: dark) {
+        html[data-theme='system'] .app-splash { background: #10160f; color: #a3f69c; }
+      }
+      html[data-theme='dark'] .app-splash { background: #10160f; color: #a3f69c; }
+    </style>
+    <script>
+      // Apply the saved theme before first paint so dark mode never flashes
+      // light (see ThemeToggle / styles/theme.css).
+      try {
+        var t = localStorage.getItem('theme') || 'system';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="app-splash" role="status" aria-label="Loading">
+        <img class="app-splash-logo" src="/icon-192.png" alt="" />
+        <span class="app-splash-name">UNZA Hostel Maintenance</span>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

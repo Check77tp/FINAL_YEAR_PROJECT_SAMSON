@@ -8,8 +8,8 @@
 // so the sync logic lives where it reliably works — in the page, via
 // IndexedDB and the browser's `online` event.
 
-const CACHE_NAME = 'hostel-maintenance-shell-v3';
-const APP_SHELL = ['/', '/manifest.json', '/favicon.svg'];
+const CACHE_NAME = 'hostel-maintenance-shell-v4';
+const APP_SHELL = ['/', '/manifest.json', '/favicon.svg', '/icon-192.png'];
 
 // If the network hasn't answered a page load within this long, show the
 // cached app shell instead — on a weak hostel connection an instant shell
@@ -105,8 +105,8 @@ self.addEventListener('push', (event) => {
   event.waitUntil(
     self.registration.showNotification(data.title || 'Hostel Maintenance', {
       body: data.body || '',
-      icon: '/favicon.svg',
-      badge: '/favicon.svg',
+      icon: '/icon-192.png',
+      badge: '/badge-96.png',
       // Same tag = a newer notification about the same request replaces the
       // older one instead of stacking up.
       tag: data.tag,
