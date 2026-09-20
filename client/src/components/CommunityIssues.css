@@ -19,6 +19,14 @@
   color: var(--color-on-surface-variant);
 }
 
+.community-issues-empty {
+  padding: var(--spacing-sm);
+  border: 1px dashed var(--color-outline-variant);
+  border-radius: var(--radius-card);
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
 /* Horizontal scroller: tiles snap into place as the student swipes. */
 .community-issues-strip {
   list-style: none;

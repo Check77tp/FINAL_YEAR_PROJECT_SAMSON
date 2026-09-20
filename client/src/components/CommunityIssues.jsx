@@ -27,22 +27,37 @@ function CommunityIssues() {
     }));
   }
 
-  if (error) return null; // a broken side widget shouldn't clutter the dashboard
-  if (!feed || feed.requests.length === 0) return null;
+  // Always render the section (even when empty or failing) so the feature is
+  // discoverable and problems are visible rather than silently hidden.
+  const isEmpty = feed && feed.requests.length === 0;
+  const hostelLabel = feed?.hostel ? ` in ${feed.hostel}` : '';
 
   return (
     <section className="community-issues" aria-labelledby="community-issues-title">
       <div className="community-issues-header">
         <h2 className="community-issues-title" id="community-issues-title">
-          Already reported{feed.hostel ? ` in ${feed.hostel}` : ''}
+          Already reported{hostelLabel}
         </h2>
         <p className="community-issues-note">
           Same problem? Tap &ldquo;Me too&rdquo; instead of filing a new request.
         </p>
       </div>
 
+      {error && (
+        <p className="community-issues-empty" role="alert">
+          Could not load reported issues: {error}
+        </p>
+      )}
+      {!error && feed === null && <p className="community-issues-empty">Loading…</p>}
+      {!error && isEmpty && (
+        <p className="community-issues-empty">
+          Nothing reported by other students{hostelLabel || ' yet'} right now. When someone else
+          reports a problem, it will show up here so you can back it with &ldquo;Me too&rdquo;.
+        </p>
+      )}
+
       <ul className="community-issues-strip">
-        {feed.requests.map((item) => {
+        {(feed?.requests || []).map((item) => {
           const Icon = categoryIcon(item.category?.name);
           return (
             <li key={item.requestId} className="community-issues-tile">
