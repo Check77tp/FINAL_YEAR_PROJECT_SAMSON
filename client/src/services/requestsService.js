@@ -37,8 +37,14 @@ export async function assignTechnician(requestId, technicianId) {
   return apiPost(`/requests/${requestId}/assign`, { technicianId }, { auth: true });
 }
 
-export async function updateRequestStatus(requestId, status) {
-  return apiPatch(`/requests/${requestId}/status`, { status }, { auth: true });
+// `proof` = { photoDataUrl, note } — a technician resolving a request must attach
+// a photo of the finished work (the server enforces it).
+export async function updateRequestStatus(requestId, status, proof) {
+  return apiPatch(
+    `/requests/${requestId}/status`,
+    { status, resolutionPhoto: proof?.photoDataUrl, resolutionNote: proof?.note || undefined },
+    { auth: true }
+  );
 }
 
 export async function updateRequestPriority(requestId, priority) {

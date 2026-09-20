@@ -174,10 +174,19 @@ router.patch(
           .json({ status: 'error', message: `status must be one of: ${STATUS_VALUES.join(', ')}` });
       }
 
+      const { resolutionPhoto, resolutionNote } = req.body;
+      if (resolutionPhoto !== undefined && typeof resolutionPhoto !== 'string') {
+        return res.status(400).json({ status: 'error', message: 'resolutionPhoto must be a data URL string' });
+      }
+      if (resolutionNote !== undefined && typeof resolutionNote !== 'string') {
+        return res.status(400).json({ status: 'error', message: 'resolutionNote must be a string' });
+      }
+
       const result = await requestsService.updateRequestStatus({
         requestId,
         newStatus: status,
         actingUser: req.user,
+        proof: { photoDataUrl: resolutionPhoto, note: resolutionNote },
       });
       res.status(200).json({ status: 'ok', ...result });
     } catch (err) {

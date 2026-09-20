@@ -17,6 +17,7 @@ import {
 } from '../../utils/requestFormat';
 import { StarIcon, MapPinIcon } from '../../components/icons';
 import RequestTimeline from '../../components/RequestTimeline';
+import ResolutionProof from '../../components/ResolutionProof';
 import SlaBadge from '../../components/SlaBadge';
 import './AdminRequestDetail.css';
 import { useLiveVersion } from '../../hooks/useLive';
@@ -244,6 +245,13 @@ function AdminRequestDetail() {
           <p className="admin-request-detail-no-photo">No photo attached.</p>
         )}
       </section>
+
+      {request.resolution && (
+        <section className="admin-request-detail-section">
+          <h2 className="admin-request-detail-section-title">Work Completed</h2>
+          <ResolutionProof resolution={request.resolution} />
+        </section>
+      )}
 
       <section className="admin-request-detail-section">
         <h2 className="admin-request-detail-section-title">Status Timeline</h2>

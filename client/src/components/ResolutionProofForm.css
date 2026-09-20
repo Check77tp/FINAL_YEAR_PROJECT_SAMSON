@@ -1,0 +1,118 @@
+/* 1. Default = mobile */
+.resolution-proof-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.resolution-proof-intro {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.resolution-proof-file {
+  display: none;
+}
+
+.resolution-proof-capture {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: var(--spacing-md) var(--spacing-sm);
+  border: 2px dashed var(--color-outline-variant);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-container-low);
+  color: var(--color-on-surface);
+  cursor: pointer;
+}
+
+.resolution-proof-capture:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.resolution-proof-capture-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+}
+
+.resolution-proof-capture-label {
+  font-weight: var(--font-weight-label-md);
+  font-size: var(--font-size-body-sm);
+}
+
+.resolution-proof-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.resolution-proof-image {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: var(--radius-card);
+}
+
+.resolution-proof-retake {
+  padding: 6px 14px;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-button);
+  background: transparent;
+  color: var(--color-on-surface);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.resolution-proof-label {
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-on-surface);
+}
+
+.resolution-proof-optional {
+  margin-left: 6px;
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.resolution-proof-note {
+  padding: 10px 12px;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-input);
+  background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  resize: vertical;
+}
+
+.resolution-proof-submit {
+  min-height: 48px;
+  border: none;
+  border-radius: var(--radius-button);
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+  font-size: var(--font-size-body-md);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.resolution-proof-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.resolution-proof-error {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-error);
+}

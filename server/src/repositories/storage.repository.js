@@ -36,3 +36,15 @@ export async function uploadAvatar({ userId, buffer, contentType, extension }) {
   // query param forces every client to re-fetch the new image.
   return `${data.publicUrl}?v=${Date.now()}`;
 }
+
+// Proof-of-work photo a technician attaches when resolving a request. Lives
+// in the same bucket as issue photos, under resolutions/<requestId>/.
+export async function uploadResolutionPhoto({ requestId, buffer, contentType, extension }) {
+  const path = `resolutions/${requestId}/${randomUUID()}.${extension}`;
+
+  const { error } = await supabase.storage.from(BUCKET).upload(path, buffer, { contentType });
+  if (error) throw error;
+
+  const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+  return data.publicUrl;
+}

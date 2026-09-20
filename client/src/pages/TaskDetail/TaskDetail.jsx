@@ -5,6 +5,8 @@ import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon } from '../../utils/reques
 import { StarIcon, MapPinIcon } from '../../components/icons';
 import RequestTimeline from '../../components/RequestTimeline';
 import SlaBadge from '../../components/SlaBadge';
+import ResolutionProof from '../../components/ResolutionProof';
+import ResolutionProofForm from '../../components/ResolutionProofForm';
 import './TaskDetail.css';
 import { useLiveVersion } from '../../hooks/useLive';
 
@@ -31,14 +33,14 @@ function TaskDetail() {
       .catch((err) => setError(err.message));
   }, [requestId, liveVersion]);
 
-  async function handleAdvance() {
+  async function handleAdvance(proof) {
     const action = NEXT_ACTION[request.status];
     if (!action) return;
 
     setUpdating(true);
     setUpdateError('');
     try {
-      await updateRequestStatus(requestId, action.nextStatus);
+      await updateRequestStatus(requestId, action.nextStatus, proof);
       const refreshed = await getRequestDetail(requestId);
       setRequest(refreshed);
     } catch (err) {
@@ -123,6 +125,13 @@ function TaskDetail() {
         )}
       </section>
 
+      {request.resolution && (
+        <section className="task-detail-section">
+          <h2 className="task-detail-section-title">Work Completed</h2>
+          <ResolutionProof resolution={request.resolution} />
+        </section>
+      )}
+
       <section className="task-detail-section">
         <h2 className="task-detail-section-title">Progress Timeline</h2>
         <RequestTimeline history={request.history} />
@@ -149,7 +158,9 @@ function TaskDetail() {
 
       <section className="task-detail-section task-detail-actions">
         <h2 className="task-detail-section-title">Action Panel</h2>
-        {action ? (
+        {request.status === 'in_progress' ? (
+          <ResolutionProofForm onSubmit={handleAdvance} busy={updating} error={updateError} />
+        ) : action ? (
           <>
             <button
               type="button"

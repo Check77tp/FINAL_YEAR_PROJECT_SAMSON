@@ -6,10 +6,12 @@ import { isValidTransition, assignTechnician, updateRequestStatus, createRequest
 import * as requestsRepository from '../repositories/requests.repository.js';
 import * as usersRepository from '../repositories/users.repository.js';
 import * as storageRepository from '../repositories/storage.repository.js';
+import * as proofsRepository from '../repositories/proofs.repository.js';
 
 vi.mock('../repositories/requests.repository.js');
 vi.mock('../repositories/users.repository.js');
 vi.mock('../repositories/storage.repository.js');
+vi.mock('../repositories/proofs.repository.js');
 // Notifications are side effects covered by push.service.test.js.
 vi.mock('./push.service.js');
 
@@ -240,5 +242,74 @@ describe('createRequest', () => {
     expect(requestsRepository.insertRequest).toHaveBeenCalledWith(
       expect.objectContaining({ photoUrl: 'https://example.com/photo.png' })
     );
+  });
+});
+
+describe('proof of work when resolving', () => {
+  const PHOTO = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==';
+  const tech = { role: 'technician', user_id: 'tech-1' };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    requestsRepository.findRequestById.mockResolvedValue({ request_id: 1, student_id: 's', status: 'in_progress' });
+    requestsRepository.findCurrentAssignment.mockResolvedValue({ technician_id: 'tech-1' });
+    storageRepository.uploadResolutionPhoto.mockResolvedValue('https://cdn/proof.jpg');
+  });
+
+  it('rejects a technician resolving without a photo, and leaves the status untouched', async () => {
+    await expect(
+      updateRequestStatus({ requestId: 1, newStatus: 'resolved', actingUser: tech, proof: {} })
+    ).rejects.toMatchObject({ statusCode: 400 });
+    expect(requestsRepository.updateRequestStatus).not.toHaveBeenCalled();
+  });
+
+  it('uploads the photo and saves the proof BEFORE changing the status', async () => {
+    const order = [];
+    proofsRepository.upsertProof.mockImplementation(async () => order.push('proof'));
+    requestsRepository.updateRequestStatus.mockImplementation(async () => order.push('status'));
+
+    await updateRequestStatus({
+      requestId: 1,
+      newStatus: 'resolved',
+      actingUser: tech,
+      proof: { photoDataUrl: PHOTO, note: '  Replaced the washer  ' },
+    });
+
+    expect(order).toEqual(['proof', 'status']);
+    expect(proofsRepository.upsertProof).toHaveBeenCalledWith({
+      requestId: 1,
+      photoUrl: 'https://cdn/proof.jpg',
+      note: 'Replaced the washer',
+      submittedBy: 'tech-1',
+    });
+  });
+
+  it('does not resolve the request if the photo is not a valid image', async () => {
+    await expect(
+      updateRequestStatus({
+        requestId: 1,
+        newStatus: 'resolved',
+        actingUser: tech,
+        proof: { photoDataUrl: 'data:text/html;base64,PGh0bWw+' },
+      })
+    ).rejects.toMatchObject({ statusCode: 400 });
+    expect(requestsRepository.updateRequestStatus).not.toHaveBeenCalled();
+  });
+
+  it('lets an administrator resolve without a photo', async () => {
+    const result = await updateRequestStatus({
+      requestId: 1,
+      newStatus: 'resolved',
+      actingUser: { role: 'administrator', user_id: 'admin-1' },
+      proof: {},
+    });
+    expect(result.status).toBe('resolved');
+    expect(proofsRepository.upsertProof).not.toHaveBeenCalled();
+  });
+
+  it('does not ask for a photo on earlier steps like starting the task', async () => {
+    requestsRepository.findRequestById.mockResolvedValue({ request_id: 1, student_id: 's', status: 'assigned' });
+    const result = await updateRequestStatus({ requestId: 1, newStatus: 'in_progress', actingUser: tech, proof: {} });
+    expect(result.status).toBe('in_progress');
   });
 });

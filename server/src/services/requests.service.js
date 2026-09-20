@@ -5,6 +5,7 @@ import * as usersRepository from '../repositories/users.repository.js';
 import * as storageRepository from '../repositories/storage.repository.js';
 import * as ratingsRepository from '../repositories/ratings.repository.js';
 import * as upvotesRepository from '../repositories/upvotes.repository.js';
+import * as proofsRepository from '../repositories/proofs.repository.js';
 import { countByRequest } from './upvotes.service.js';
 import { notifyUser, notifyAdministrators } from './push.service.js';
 import { computeSla } from '../utils/sla.js';
@@ -15,6 +16,30 @@ const STATUS_LABELS = { in_progress: 'In Progress', resolved: 'Resolved', closed
 
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 const PHOTO_DATA_URL_PATTERN = /^data:image\/(jpeg|png|webp);base64,(.+)$/;
+const MAX_NOTE_CHARS = 500;
+
+// Business rule: a technician must attach a photo of the finished work before
+// marking a request Resolved (accountability, and the student can see the
+// result). Administrators are exempt so they can still close out a job the
+// technician couldn't photograph. Flip to false to make the photo optional.
+const TECHNICIAN_MUST_ATTACH_PROOF = true;
+
+// Validates a base64 image data URL and decodes it for upload.
+function decodePhotoDataUrl(dataUrl) {
+  const match = PHOTO_DATA_URL_PATTERN.exec(dataUrl);
+  if (!match) {
+    throw httpError('Photo must be a JPEG, PNG, or WebP image', 400);
+  }
+
+  const [, subtype, base64Data] = match;
+  const buffer = Buffer.from(base64Data, 'base64');
+
+  if (buffer.length > MAX_PHOTO_BYTES) {
+    throw httpError('Photo must be 5MB or smaller', 400);
+  }
+
+  return { buffer, contentType: `image/${subtype}`, extension: subtype === 'jpeg' ? 'jpg' : subtype };
+}
 
 // Core Ticket Lifecycle (CLAUDE.md): Open -> Assigned -> In Progress ->
 // Resolved -> Closed. Strictly linear, one step at a time — no skipping
@@ -98,7 +123,7 @@ export async function assignTechnician({ requestId, technicianId }) {
 
 // Technician (only on their own assigned requests) or administrator action:
 // advance a request through in_progress -> resolved -> closed.
-export async function updateRequestStatus({ requestId, newStatus, actingUser }) {
+export async function updateRequestStatus({ requestId, newStatus, actingUser, proof }) {
   if (newStatus === 'open' || newStatus === 'assigned') {
     throw httpError(
       `"${newStatus}" cannot be set directly — assignment is handled by the assign-technician action.`,
@@ -121,6 +146,12 @@ export async function updateRequestStatus({ requestId, newStatus, actingUser }) 
   }
   // Administrators have broader access (CLAUDE.md role rules) — no
   // ownership check for them.
+
+  // Proof of work is handled BEFORE the status changes, so a failed upload
+  // leaves the request untouched instead of resolved-without-proof.
+  if (newStatus === 'resolved') {
+    await saveResolutionProof({ requestId, actingUser, proof });
+  }
 
   await requestsRepository.updateRequestStatus(requestId, newStatus);
   await requestsRepository.insertStatusHistory({
@@ -145,6 +176,32 @@ export async function updateRequestStatus({ requestId, newStatus, actingUser }) 
   });
 
   return { requestId, status: newStatus };
+}
+
+async function saveResolutionProof({ requestId, actingUser, proof }) {
+  const hasPhoto = Boolean(proof?.photoDataUrl);
+
+  if (!hasPhoto) {
+    if (TECHNICIAN_MUST_ATTACH_PROOF && actingUser.role === 'technician') {
+      throw httpError('Attach a photo of the completed work before marking this resolved', 400);
+    }
+    return;
+  }
+
+  const note = typeof proof.note === 'string' ? proof.note.trim().slice(0, MAX_NOTE_CHARS) : null;
+  const { buffer, contentType, extension } = decodePhotoDataUrl(proof.photoDataUrl);
+  const photoUrl = await storageRepository.uploadResolutionPhoto({
+    requestId,
+    buffer,
+    contentType,
+    extension,
+  });
+  await proofsRepository.upsertProof({
+    requestId,
+    photoUrl,
+    note: note || null,
+    submittedBy: actingUser.user_id,
+  });
 }
 
 function mapRequestRow(row) {
@@ -194,24 +251,8 @@ export async function createRequest({
   let photoUrl = null;
 
   if (photoDataUrl) {
-    const match = PHOTO_DATA_URL_PATTERN.exec(photoDataUrl);
-    if (!match) {
-      throw httpError('Photo must be a JPEG, PNG, or WebP image', 400);
-    }
-
-    const [, subtype, base64Data] = match;
-    const buffer = Buffer.from(base64Data, 'base64');
-
-    if (buffer.length > MAX_PHOTO_BYTES) {
-      throw httpError('Photo must be 5MB or smaller', 400);
-    }
-
-    photoUrl = await storageRepository.uploadRequestPhoto({
-      studentId,
-      buffer,
-      contentType: `image/${subtype}`,
-      extension: subtype === 'jpeg' ? 'jpg' : subtype,
-    });
+    const { buffer, contentType, extension } = decodePhotoDataUrl(photoDataUrl);
+    photoUrl = await storageRepository.uploadRequestPhoto({ studentId, buffer, contentType, extension });
   }
 
   try {
@@ -313,7 +354,20 @@ export async function getRequestDetail({ requestId, actingUser }) {
     : null;
 
   const upvoteCount = await upvotesRepository.countUpvotesForRequest(requestId);
-  return { ...mapRequestRow(row), history, rating, upvoteCount };
+
+  // Proof lives in its own table; if it can't be read (e.g. the migration
+  // hasn't been run yet) the rest of the page must still load.
+  let resolution = null;
+  try {
+    const proofRow = await proofsRepository.findProofByRequestId(requestId);
+    if (proofRow) {
+      resolution = { photoUrl: proofRow.photo_url, note: proofRow.note, createdAt: proofRow.created_at };
+    }
+  } catch (err) {
+    console.error('Could not load resolution proof:', err.message);
+  }
+
+  return { ...mapRequestRow(row), history, rating, upvoteCount, resolution };
 }
 
 // Administrator action: re-triage a request's urgency. Allowed at any point

@@ -4,6 +4,7 @@ import { getRequestDetail, submitRating } from '../../services/requestsService';
 import { STATUS_LABELS, PRIORITY_LABELS, AVAILABILITY_LABELS, categoryIcon } from '../../utils/requestFormat';
 import { StarIcon, MapPinIcon } from '../../components/icons';
 import RequestTimeline from '../../components/RequestTimeline';
+import ResolutionProof from '../../components/ResolutionProof';
 import './RequestDetail.css';
 import { useLiveVersion } from '../../hooks/useLive';
 
@@ -162,6 +163,13 @@ function RequestDetail() {
           <p className="request-detail-no-photo">No photo attached.</p>
         )}
       </section>
+
+      {request.resolution && (
+        <section className="request-detail-section">
+          <h2 className="request-detail-section-title">Work Completed</h2>
+          <ResolutionProof resolution={request.resolution} />
+        </section>
+      )}
 
       <section className="request-detail-section">
         <h2 className="request-detail-section-title">Status Timeline</h2>

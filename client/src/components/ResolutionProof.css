@@ -1,0 +1,27 @@
+.resolution-proof {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.resolution-proof-link {
+  display: block;
+}
+
+.resolution-proof-photo {
+  width: 100%;
+  max-height: 360px;
+  object-fit: cover;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-card-border);
+}
+
+.resolution-proof-text {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface);
+}
+
+.resolution-proof-date {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+}
