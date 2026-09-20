@@ -5,6 +5,7 @@ import { AVAILABILITY_LABELS, STATUS_LABELS, PRIORITY_LABELS, formatDate } from 
 import { downloadCsv } from '../../utils/csv';
 import BarChart from '../../components/BarChart';
 import LineChart from '../../components/LineChart';
+import HostelHeatmap from '../../components/HostelHeatmap';
 import { DownloadIcon, PrinterIcon } from '../../components/icons';
 import './ReportsAnalytics.css';
 import { useLiveVersion } from '../../hooks/useLive';
@@ -142,6 +143,8 @@ function ReportsAnalytics() {
             <p className="reports-analytics-section-note">Requests marked resolved, per day.</p>
             <LineChart points={analytics.resolutionTrend} />
           </section>
+
+          {requests && <HostelHeatmap requests={requests} />}
 
           <div className="reports-analytics-charts">
             <section className="reports-analytics-section">
