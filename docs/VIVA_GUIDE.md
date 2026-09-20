@@ -186,8 +186,9 @@ are served from the service-worker cache. On the free host the first request aft
 idle can be slow (cold start), which a scheduled health-check ping avoids.
 
 **What are the weaknesses?**
-(1) No integration tests yet — 104 unit tests cover the business rules but not the full
-route-to-database path. (2) Live updates, the token cache and the rate limiter are in
+(1) The 48 integration tests fake the database, so they prove the routes → services →
+repositories wiring and access control, but not Postgres/RLS itself (that is checked in
+Supabase and by manual UAT); the front-end browser checks are not yet an automated suite. (2) Live updates, the token cache and the rate limiter are in
 memory, so they assume a single server instance. (3) Optional integrations (AI, email,
 push) need configuration. See ARCHITECTURE.md §13 — being upfront about these is deliberate.
 

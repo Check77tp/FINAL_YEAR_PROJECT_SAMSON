@@ -344,8 +344,10 @@ All routes are under `/api`. "Scoped" means the service checks ownership as well
 
 ## 12. Testing
 
-- **104 automated unit tests** (Vitest) across 12 files, covering the business
-  rules with repositories mocked: lifecycle transitions and role restrictions,
+- **153 automated tests** (Vitest): **105 unit tests** covering the business
+  rules with repositories mocked, and **48 integration tests** that drive the real
+  Express app over HTTP (routes + middleware + services, database faked) — see
+  [TESTING.md](TESTING.md). The unit tests cover: lifecycle transitions and role restrictions,
   proof-of-work ordering, SLA states, overdue detection, technician ranking,
   upvote rules and feed ranking, AI-triage safety floor and rate limit, push
   delivery and cleanup, live-event routing, weekly-email statistics/schedule/escaping,
@@ -354,13 +356,19 @@ All routes are under `/api`. "Scoped" means the service checks ownership as well
   at phone and desktop widths, including the offline path, live updates arriving
   on an open page, the technician proof flow and dark mode.
 - **Manual UAT** of the student → administrator → technician flow.
+- **Continuous integration** (GitHub Actions, `.github/workflows/ci.yml`): every
+  push and pull request runs the unit tests, the integration tests, lint and a
+  production build; no secrets are needed.
 
 ---
 
 ## 13. Known limitations (be upfront about these)
 
-- **Integration tests are still missing.** Unit tests cover the service layer; a
-  routes → services → repositories test against a test database is the next step.
+- **Integration tests use a faked database.** They prove the routes → services →
+  repositories wiring, access control and error handling, but not Postgres itself
+  (SQL, RLS policies and migrations are checked in Supabase and by manual UAT). A
+  small suite against a disposable real database is the next step. Front-end browser
+  checks are not yet a committed automated suite.
 - **Single-instance assumptions.** Live-update connections, the token cache and the
   rate limiter are in memory. Running several server instances would need a shared
   store (e.g. Redis). Fine for this deployment scale.
