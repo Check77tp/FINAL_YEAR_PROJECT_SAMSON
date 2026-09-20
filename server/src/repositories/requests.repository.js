@@ -188,3 +188,16 @@ export async function findActiveRequestsForCommunity() {
   if (error) throw error;
   return data;
 }
+
+// technician_id of every assignment whose request is still being worked on
+// (assigned / in_progress) — one row per active task, used to count each
+// technician's current workload.
+export async function findActiveAssignmentTechnicianIds() {
+  const { data, error } = await supabase
+    .from('technician_assignments')
+    .select('technician_id, request:maintenance_requests!inner ( status )')
+    .in('request.status', ['assigned', 'in_progress']);
+
+  if (error) throw error;
+  return data.map((row) => row.technician_id);
+}

@@ -1,6 +1,7 @@
 // Business logic layer for user lookups outside of auth itself.
 import * as usersRepository from '../repositories/users.repository.js';
 import * as storageRepository from '../repositories/storage.repository.js';
+import * as requestsRepository from '../repositories/requests.repository.js';
 import { httpError } from '../utils/httpError.js';
 import { clearTokenCache } from './auth.service.js';
 
@@ -21,14 +22,48 @@ function mapUser(u) {
   };
 }
 
-export async function listTechnicians() {
-  const technicians = await usersRepository.findUsersByRole('technician');
-  return technicians.map((t) => ({
-    id: t.user_id,
-    name: t.name,
-    idNumber: t.id_number,
-    availabilityStatus: t.availability_status,
+// Assignment recommendation rule (business logic): prefer technicians who are
+// available over ones on a job, and never recommend anyone who is off duty;
+// among equals, the one with the fewest active tasks wins, then alphabetical
+// so the order is stable. `activeTasks` = requests currently assigned or in
+// progress. Exported so it can be unit-tested without a database.
+const AVAILABILITY_ORDER = { available: 0, on_job: 1, off_duty: 2 };
+
+export function rankTechnicians(technicians, activeTaskCounts) {
+  const ranked = technicians
+    .map((t) => ({
+      id: t.user_id,
+      name: t.name,
+      idNumber: t.id_number,
+      availabilityStatus: t.availability_status,
+      activeTasks: activeTaskCounts.get(t.user_id) || 0,
+    }))
+    .sort(
+      (a, b) =>
+        (AVAILABILITY_ORDER[a.availabilityStatus] ?? 1) - (AVAILABILITY_ORDER[b.availabilityStatus] ?? 1) ||
+        a.activeTasks - b.activeTasks ||
+        a.name.localeCompare(b.name)
+    );
+
+  const best = ranked[0];
+  return ranked.map((t) => ({
+    ...t,
+    recommended: t === best && t.availabilityStatus !== 'off_duty',
   }));
+}
+
+// Best-first list of technicians with their current workload; the first entry
+// is flagged `recommended` when someone is actually free to take the job.
+export async function listTechnicians() {
+  const [technicians, activeTechnicianIds] = await Promise.all([
+    usersRepository.findUsersByRole('technician'),
+    requestsRepository.findActiveAssignmentTechnicianIds(),
+  ]);
+
+  const counts = new Map();
+  for (const id of activeTechnicianIds) counts.set(id, (counts.get(id) || 0) + 1);
+
+  return rankTechnicians(technicians, counts);
 }
 
 // Administrator action (User Management page): every account, any role.

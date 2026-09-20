@@ -8,6 +8,7 @@ import {
   PRIORITY_VALUES,
   AVAILABILITY_LABELS,
   categoryIcon,
+  technicianOptionLabel,
 } from '../../utils/requestFormat';
 import SlaBadge from '../../components/SlaBadge';
 import './ManageRequests.css';
@@ -50,8 +51,12 @@ function ManageRequests() {
       })
     : (requests || []).filter((request) => filter === 'all' || request.status === filter);
 
+  // The server flags the best-suited technician; it is preselected so
+  // assigning is one tap, but the admin can still pick anyone.
+  const recommendedId = technicians.find((t) => t.recommended)?.id || '';
+
   async function handleAssign(requestId) {
-    const technicianId = selections[requestId];
+    const technicianId = selections[requestId] ?? recommendedId;
     if (!technicianId) return;
 
     setAssigningId(requestId);
@@ -221,7 +226,7 @@ function ManageRequests() {
                       <>
                         <div className="manage-requests-assign-control">
                           <select
-                            value={selections[request.requestId] || ''}
+                            value={selections[request.requestId] ?? recommendedId}
                             onChange={(event) =>
                               setSelections((prev) => ({ ...prev, [request.requestId]: event.target.value }))
                             }
@@ -230,17 +235,14 @@ function ManageRequests() {
                             <option value="">Select technician</option>
                             {technicians.map((technician) => (
                               <option key={technician.id} value={technician.id}>
-                                {technician.name}
-                                {technician.availabilityStatus
-                                  ? ` (${AVAILABILITY_LABELS[technician.availabilityStatus]})`
-                                  : ''}
+                                {technicianOptionLabel(technician)}
                               </option>
                             ))}
                           </select>
                           <button
                             type="button"
                             className="manage-requests-assign-button"
-                            disabled={!selections[request.requestId] || assigningId === request.requestId}
+                            disabled={!(selections[request.requestId] ?? recommendedId) || assigningId === request.requestId}
                             onClick={() => handleAssign(request.requestId)}
                           >
                             {assigningId === request.requestId ? 'Assigning…' : 'Assign'}

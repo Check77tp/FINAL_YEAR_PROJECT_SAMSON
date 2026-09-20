@@ -17,6 +17,16 @@ export const PRIORITY_LABELS = {
 
 export const PRIORITY_VALUES = ['low', 'medium', 'high', 'critical'];
 
+// Dropdown label for a technician: recommended one is starred and every entry
+// shows availability + current workload, e.g.
+// "★ James Jadi — On Job, 1 active".
+export function technicianOptionLabel(t) {
+  const availability = AVAILABILITY_LABELS[t.availabilityStatus];
+  const workload = t.activeTasks === undefined ? null : `${t.activeTasks} active`;
+  const detail = [availability, workload].filter(Boolean).join(', ');
+  return `${t.recommended ? '★ ' : ''}${t.name}${detail ? ` — ${detail}` : ''}`;
+}
+
 export const AVAILABILITY_LABELS = {
   available: 'Available',
   on_job: 'On Job',

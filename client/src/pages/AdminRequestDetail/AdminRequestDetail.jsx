@@ -13,6 +13,7 @@ import {
   PRIORITY_VALUES,
   AVAILABILITY_LABELS,
   categoryIcon,
+  technicianOptionLabel,
 } from '../../utils/requestFormat';
 import { StarIcon, MapPinIcon } from '../../components/icons';
 import RequestTimeline from '../../components/RequestTimeline';
@@ -63,12 +64,16 @@ function AdminRequestDetail() {
       .catch(() => {});
   }, [load, liveVersion]);
 
+  // Server-recommended technician is preselected (one tap to assign).
+  const recommendedId = technicians.find((t) => t.recommended)?.id || '';
+  const chosenTechnician = selectedTechnician || recommendedId;
+
   async function handleAssign() {
-    if (!selectedTechnician) return;
+    if (!chosenTechnician) return;
     setAssigning(true);
     setActionError('');
     try {
-      await assignTechnician(requestId, selectedTechnician);
+      await assignTechnician(requestId, chosenTechnician);
       await load();
     } catch (err) {
       setActionError(err.message);
@@ -201,22 +206,21 @@ function AdminRequestDetail() {
         ) : request.status === 'open' ? (
           <div className="admin-request-detail-assign">
             <select
-              value={selectedTechnician}
+              value={chosenTechnician}
               onChange={(e) => setSelectedTechnician(e.target.value)}
               disabled={assigning}
             >
               <option value="">Select technician</option>
               {technicians.map((t) => (
                 <option key={t.id} value={t.id}>
-                  {t.name}
-                  {t.availabilityStatus ? ` (${AVAILABILITY_LABELS[t.availabilityStatus]})` : ''}
+                  {technicianOptionLabel(t)}
                 </option>
               ))}
             </select>
             <button
               type="button"
               className="admin-request-detail-assign-button"
-              disabled={!selectedTechnician || assigning}
+              disabled={!chosenTechnician || assigning}
               onClick={handleAssign}
             >
               {assigning ? 'Assigning…' : 'Assign'}
