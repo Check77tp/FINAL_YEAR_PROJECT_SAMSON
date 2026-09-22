@@ -18,6 +18,7 @@ import {
 import { StarIcon, MapPinIcon } from '../../components/icons';
 import RequestTimeline from '../../components/RequestTimeline';
 import ResolutionProof from '../../components/ResolutionProof';
+import CommentsThread from '../../components/CommentsThread';
 import SlaBadge from '../../components/SlaBadge';
 import './AdminRequestDetail.css';
 import { useLiveVersion } from '../../hooks/useLive';
@@ -252,6 +253,11 @@ function AdminRequestDetail() {
           <ResolutionProof resolution={request.resolution} />
         </section>
       )}
+
+      <section className="admin-request-detail-section">
+        <h2 className="admin-request-detail-section-title">Comments</h2>
+        <CommentsThread requestId={request.requestId} closed={request.status === 'closed'} />
+      </section>
 
       <section className="admin-request-detail-section">
         <h2 className="admin-request-detail-section-title">Status Timeline</h2>

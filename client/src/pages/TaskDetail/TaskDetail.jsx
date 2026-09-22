@@ -6,6 +6,7 @@ import { StarIcon, MapPinIcon } from '../../components/icons';
 import RequestTimeline from '../../components/RequestTimeline';
 import SlaBadge from '../../components/SlaBadge';
 import AffectedBadge from '../../components/AffectedBadge';
+import CommentsThread from '../../components/CommentsThread';
 import ResolutionProof from '../../components/ResolutionProof';
 import ResolutionProofForm from '../../components/ResolutionProofForm';
 import './TaskDetail.css';
@@ -133,6 +134,11 @@ function TaskDetail() {
           <ResolutionProof resolution={request.resolution} />
         </section>
       )}
+
+      <section className="task-detail-section">
+        <h2 className="task-detail-section-title">Comments</h2>
+        <CommentsThread requestId={request.requestId} closed={request.status === 'closed'} />
+      </section>
 
       <section className="task-detail-section">
         <h2 className="task-detail-section-title">Progress Timeline</h2>

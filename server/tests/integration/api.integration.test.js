@@ -55,6 +55,7 @@ vi.mock('../../src/repositories/reports.repository.js');
 vi.mock('../../src/repositories/activity.repository.js');
 vi.mock('../../src/repositories/push.repository.js');
 vi.mock('../../src/repositories/announcements.repository.js');
+vi.mock('../../src/repositories/comments.repository.js');
 vi.mock('../../src/services/push.service.js');
 vi.mock('../../src/config/anthropic.js', () => ({ aiEnabled: false, aiModel: 'test', anthropic: null }));
 
@@ -66,6 +67,7 @@ import * as upvotesRepository from '../../src/repositories/upvotes.repository.js
 import * as proofsRepository from '../../src/repositories/proofs.repository.js';
 import * as storageRepository from '../../src/repositories/storage.repository.js';
 import * as announcementsRepository from '../../src/repositories/announcements.repository.js';
+import * as commentsRepository from '../../src/repositories/comments.repository.js';
 import * as pushService from '../../src/services/push.service.js';
 
 const STUDENT = USERS['student-token'];
@@ -599,5 +601,58 @@ describe('announcements', () => {
     expect(usersRepository.updateHostel).toHaveBeenCalledWith(STUDENT.user_id, 'Soweto');
     const bad = await request(app).put('/api/announcements/hostel/me').set(as('student-token')).send({ hostel: '  ' });
     expect(bad.status).toBe(400);
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe('comments on a request', () => {
+  const commentRow = (over = {}) => ({
+    comment_id: 1,
+    request_id: 7,
+    body: 'It is the shower tap',
+    created_at: new Date().toISOString(),
+    author: { user_id: STUDENT.user_id, name: STUDENT.name, role: 'student' },
+    ...over,
+  });
+
+  beforeEach(() => {
+    requestsRepository.findRequestById.mockResolvedValue({ request_id: 7, student_id: STUDENT.user_id, status: 'in_progress' });
+    requestsRepository.findCurrentAssignment.mockResolvedValue({ technician_id: TECH.user_id });
+    commentsRepository.insertComment.mockResolvedValue(commentRow());
+    commentsRepository.findCommentsByRequestId.mockResolvedValue([commentRow()]);
+  });
+
+  it('the student, the assigned technician and an admin can read and post', async () => {
+    for (const token of ['student-token', 'tech-token', 'admin-token']) {
+      const get = await request(app).get('/api/requests/7/comments').set(as(token));
+      expect(get.status).toBe(200);
+      expect(get.body.comments[0]).toMatchObject({ body: 'It is the shower tap', author: { role: 'student' } });
+
+      const post = await request(app).post('/api/requests/7/comments').set(as(token)).send({ body: 'Thanks' });
+      expect(post.status).toBe(201);
+    }
+  });
+
+  it('comments are attributed to the authenticated user, not to a body field', async () => {
+    await request(app).post('/api/requests/7/comments').set(as('student-token')).send({ body: 'hello', authorId: USERS['admin-token'].user_id });
+    expect(commentsRepository.insertComment.mock.calls[0][0].authorId).toBe(STUDENT.user_id);
+  });
+
+  it('another student and an unassigned technician are refused (403)', async () => {
+    for (const token of ['student2-token', 'tech2-token']) {
+      expect((await request(app).get('/api/requests/7/comments').set(as(token))).status).toBe(403);
+      expect((await request(app).post('/api/requests/7/comments').set(as(token)).send({ body: 'hi' })).status).toBe(403);
+    }
+    expect(commentsRepository.insertComment).not.toHaveBeenCalled();
+  });
+
+  it('empty comments and closed requests are rejected (400)', async () => {
+    expect((await request(app).post('/api/requests/7/comments').set(as('student-token')).send({ body: '   ' })).status).toBe(400);
+    requestsRepository.findRequestById.mockResolvedValue({ request_id: 7, student_id: STUDENT.user_id, status: 'closed' });
+    expect((await request(app).post('/api/requests/7/comments').set(as('student-token')).send({ body: 'hi' })).status).toBe(400);
+  });
+
+  it('requires authentication', async () => {
+    expect((await request(app).get('/api/requests/7/comments')).status).toBe(401);
   });
 });

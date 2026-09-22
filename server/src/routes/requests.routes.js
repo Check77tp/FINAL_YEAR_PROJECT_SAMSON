@@ -4,6 +4,7 @@ import * as requestsService from '../services/requests.service.js';
 import * as ratingsService from '../services/ratings.service.js';
 import * as upvotesService from '../services/upvotes.service.js';
 import * as triageService from '../services/triage.service.js';
+import * as commentsService from '../services/comments.service.js';
 import { authenticate } from '../middleware/authenticate.js';
 import { requireRole } from '../middleware/requireRole.js';
 
@@ -244,6 +245,36 @@ router.post('/:requestId/rating', authenticate, requireRole('student'), async (r
       comment: comment?.trim() || null,
     });
     res.status(201).json({ status: 'ok', rating: result });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Conversation on a request: the student who reported it, the assigned
+// technician and administrators (enforced in the service).
+router.get('/:requestId/comments', authenticate, async (req, res, next) => {
+  try {
+    const requestId = parseRequestId(req.params.requestId, res);
+    if (requestId === null) return;
+
+    const comments = await commentsService.listComments({ requestId, actingUser: req.user });
+    res.status(200).json({ status: 'ok', comments });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/:requestId/comments', authenticate, async (req, res, next) => {
+  try {
+    const requestId = parseRequestId(req.params.requestId, res);
+    if (requestId === null) return;
+
+    const comment = await commentsService.addComment({
+      requestId,
+      actingUser: req.user,
+      body: req.body.body,
+    });
+    res.status(201).json({ status: 'ok', comment });
   } catch (err) {
     next(err);
   }

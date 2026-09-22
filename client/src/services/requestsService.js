@@ -87,3 +87,16 @@ getMyRequests.peek = () => peekResponse('/requests/mine')?.requests;
 getAllRequests.peek = () => peekResponse('/requests')?.requests;
 getAssignedRequests.peek = () => peekResponse('/requests/assigned-to-me')?.requests;
 getRequestDetail.peek = (requestId) => peekResponse(`/requests/${requestId}`)?.request;
+
+// Conversation on a request (student, assigned technician, administrators).
+export async function getComments(requestId) {
+  const data = await apiGet(`/requests/${requestId}/comments`, { auth: true });
+  return data.comments;
+}
+
+export async function addComment(requestId, body) {
+  const data = await apiPost(`/requests/${requestId}/comments`, { body }, { auth: true });
+  return data.comment;
+}
+
+getComments.peek = (requestId) => peekResponse(`/requests/${requestId}/comments`)?.comments;
