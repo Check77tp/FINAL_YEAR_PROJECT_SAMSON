@@ -39,3 +39,14 @@ export async function findAllRatings() {
   if (error) throw error;
   return data;
 }
+
+// Requests since a date, with just what recurring-issue detection needs.
+export async function findRequestsForRecurrence(sinceIso) {
+  const { data, error } = await supabase
+    .from('maintenance_requests')
+    .select('request_id, hostel, room, description, status, created_at, category:categories ( category_id, name )')
+    .gte('created_at', sinceIso);
+
+  if (error) throw error;
+  return data;
+}

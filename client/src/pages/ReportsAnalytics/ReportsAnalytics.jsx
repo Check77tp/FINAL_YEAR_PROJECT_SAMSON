@@ -6,6 +6,7 @@ import { downloadCsv } from '../../utils/csv';
 import BarChart from '../../components/BarChart';
 import LineChart from '../../components/LineChart';
 import HostelHeatmap from '../../components/HostelHeatmap';
+import RecurringIssues from '../../components/RecurringIssues';
 import { DownloadIcon, PrinterIcon, MailIcon } from '../../components/icons';
 import './ReportsAnalytics.css';
 import { useLiveVersion } from '../../hooks/useLive';
@@ -174,6 +175,8 @@ function ReportsAnalytics() {
           </section>
 
           {requests && <HostelHeatmap requests={requests} />}
+
+          <RecurringIssues />
 
           <div className="reports-analytics-charts">
             <section className="reports-analytics-section">

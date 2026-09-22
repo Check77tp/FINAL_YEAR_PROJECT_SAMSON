@@ -6,6 +6,7 @@ import { getAnalytics } from '../../services/reportsService';
 import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
 import DonutChart from '../../components/DonutChart';
 import LineChart from '../../components/LineChart';
+import RecurringIssues from '../../components/RecurringIssues';
 import { slaStateAt } from '../../components/SlaBadge';
 import './AdminHome.css';
 import { useLiveVersion } from '../../hooks/useLive';
@@ -118,6 +119,8 @@ function AdminHome() {
           </div>
         </>
       )}
+
+      <RecurringIssues limit={2} showLink />
 
       <div className="admin-home-links">
         <Link to="/manage-requests" className="admin-home-link admin-home-link-primary">

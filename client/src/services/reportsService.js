@@ -13,3 +13,10 @@ getAnalytics.peek = () => peekResponse('/reports/analytics')?.analytics;
 export function emailWeeklySummary() {
   return apiPost('/reports/digest/send', {}, { auth: true });
 }
+
+// Faults that keep coming back to the same room / building (administrators).
+export async function getRecurringIssues() {
+  const data = await apiGet('/reports/recurring', { auth: true });
+  return data.issues;
+}
+getRecurringIssues.peek = () => peekResponse('/reports/recurring')?.issues;

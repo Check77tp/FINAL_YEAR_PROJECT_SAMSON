@@ -68,6 +68,7 @@ import * as proofsRepository from '../../src/repositories/proofs.repository.js';
 import * as storageRepository from '../../src/repositories/storage.repository.js';
 import * as announcementsRepository from '../../src/repositories/announcements.repository.js';
 import * as commentsRepository from '../../src/repositories/comments.repository.js';
+import * as reportsRepository from '../../src/repositories/reports.repository.js';
 import * as pushService from '../../src/services/push.service.js';
 
 const STUDENT = USERS['student-token'];
@@ -654,5 +655,26 @@ describe('comments on a request', () => {
 
   it('requires authentication', async () => {
     expect((await request(app).get('/api/requests/7/comments')).status).toBe(401);
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe('recurring issue detection', () => {
+  const plumbing = { category_id: 2, name: 'Plumbing' };
+  const rec = (id, days) => ({
+    request_id: id, hostel: 'Kalingalinga', room: 'Block C, Room 24', description: 'Tap leaks',
+    status: 'closed', created_at: new Date(Date.now() - days * 86400e3).toISOString(), category: plumbing,
+  });
+
+  it('administrators get the repeated faults; everyone else is refused', async () => {
+    reportsRepository.findRequestsForRecurrence.mockResolvedValue([rec(1, 30), rec(2, 15), rec(3, 2)]);
+
+    const res = await request(app).get('/api/reports/recurring').set(as('admin-token'));
+
+    expect(res.status).toBe(200);
+    expect(res.body.issues).toHaveLength(1);
+    expect(res.body.issues[0]).toMatchObject({ scope: 'room', count: 3, hostel: 'Kalingalinga', category: { name: 'Plumbing' } });
+    expect((await request(app).get('/api/reports/recurring').set(as('student-token'))).status).toBe(403);
+    expect((await request(app).get('/api/reports/recurring').set(as('tech-token'))).status).toBe(403);
   });
 });
