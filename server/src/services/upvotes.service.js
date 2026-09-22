@@ -12,6 +12,11 @@ import { httpError } from '../utils/httpError.js';
 const UPVOTABLE_STATUSES = ['open', 'assigned', 'in_progress'];
 const COMMUNITY_FEED_LIMIT = 12;
 
+// An issue this many students have backed is clearly not confined to one
+// building, so it is shown to EVERY student, whatever their hostel - they can
+// back it too instead of filing yet another duplicate.
+export const CAMPUS_WIDE_UPVOTE_THRESHOLD = 30;
+
 // { requestId -> count } from raw upvote rows.
 export function countByRequest(upvoteRows) {
   const counts = new Map();
@@ -23,14 +28,21 @@ export function countByRequest(upvoteRows) {
 
 // Pure ranking rule, kept separate so it can be unit-tested without a
 // database: other students' active requests, optionally limited to one
-// hostel, most-upvoted first (ties: newest first), capped for the UI strip.
+// hostel - EXCEPT widespread issues (>= CAMPUS_WIDE_UPVOTE_THRESHOLD votes),
+// which are shown to everyone - most-upvoted first (ties: newest first),
+// capped for the UI strip.
 export function rankCommunityRequests({ rows, upvoteRows, studentId, hostel }) {
   const counts = countByRequest(upvoteRows);
   const mine = new Set(upvoteRows.filter((u) => u.user_id === studentId).map((u) => u.request_id));
 
   return rows
     .filter((row) => row.student_id !== studentId)
-    .filter((row) => !hostel || row.hostel === hostel)
+    .filter(
+      (row) =>
+        !hostel ||
+        row.hostel === hostel ||
+        (counts.get(row.request_id) || 0) >= CAMPUS_WIDE_UPVOTE_THRESHOLD
+    )
     .map((row) => ({
       requestId: row.request_id,
       description: row.description,
@@ -40,6 +52,7 @@ export function rankCommunityRequests({ rows, upvoteRows, studentId, hostel }) {
       createdAt: row.created_at,
       category: row.category ? { id: row.category.category_id, name: row.category.name } : null,
       upvoteCount: counts.get(row.request_id) || 0,
+      campusWide: (counts.get(row.request_id) || 0) >= CAMPUS_WIDE_UPVOTE_THRESHOLD,
       hasUpvoted: mine.has(row.request_id),
     }))
     .sort(

@@ -4,7 +4,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as upvotesRepository from '../repositories/upvotes.repository.js';
 import * as requestsRepository from '../repositories/requests.repository.js';
-import { addUpvote, removeUpvote, rankCommunityRequests, listCommunityRequests } from './upvotes.service.js';
+import {
+  addUpvote,
+  removeUpvote,
+  rankCommunityRequests,
+  listCommunityRequests,
+  CAMPUS_WIDE_UPVOTE_THRESHOLD,
+} from './upvotes.service.js';
 
 vi.mock('../repositories/upvotes.repository.js');
 vi.mock('../repositories/requests.repository.js');
@@ -66,6 +72,45 @@ describe('rankCommunityRequests', () => {
     const [item] = rankCommunityRequests({ rows: [row(1)], upvoteRows: [], studentId: 'me', hostel: null });
     expect(item).not.toHaveProperty('student_id');
     expect(item).not.toHaveProperty('student');
+  });
+});
+
+describe('campus-wide issues (30+ upvotes)', () => {
+  const votes = (id, n) => Array.from({ length: n }, (_, i) => ({ request_id: id, user_id: `voter-${i}` }));
+
+  it('the threshold is 30', () => {
+    expect(CAMPUS_WIDE_UPVOTE_THRESHOLD).toBe(30);
+  });
+
+  it('shows a 30+ vote issue to students in OTHER hostels', () => {
+    const result = rankCommunityRequests({
+      rows: [row(1, { hostel: 'Goma Hall' }), row(2, { hostel: 'Goma Hall' })],
+      upvoteRows: votes(1, 30), // issue 1 is campus-wide, issue 2 is not
+      studentId: 'me',
+      hostel: 'Kalingalinga',
+    });
+    expect(result.map((r) => r.requestId)).toEqual([1]);
+    expect(result[0]).toMatchObject({ campusWide: true, upvoteCount: 30, hostel: 'Goma Hall' });
+  });
+
+  it('29 votes is not enough - still limited to its own hostel', () => {
+    const result = rankCommunityRequests({
+      rows: [row(1, { hostel: 'Goma Hall' })],
+      upvoteRows: votes(1, 29),
+      studentId: 'me',
+      hostel: 'Kalingalinga',
+    });
+    expect(result).toEqual([]);
+  });
+
+  it('a campus-wide issue still never shows to its own reporter', () => {
+    const result = rankCommunityRequests({
+      rows: [row(1, { hostel: 'Goma Hall', student_id: 'me' })],
+      upvoteRows: votes(1, 40),
+      studentId: 'me',
+      hostel: 'Kalingalinga',
+    });
+    expect(result).toEqual([]);
   });
 });
 

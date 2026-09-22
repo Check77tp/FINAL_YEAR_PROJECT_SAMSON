@@ -89,6 +89,16 @@
   color: var(--color-status-in-progress-text);
 }
 
+.community-issues-elsewhere {
+  align-self: flex-start;
+  padding: 2px 8px;
+  border-radius: var(--radius-badge);
+  background: var(--color-tertiary-fixed);
+  color: var(--color-on-tertiary-fixed-variant);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+}
+
 .community-issues-description {
   flex: 1;
   font-size: var(--font-size-body-sm);

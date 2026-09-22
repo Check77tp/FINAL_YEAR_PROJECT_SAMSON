@@ -37,6 +37,13 @@
   background: var(--color-surface-container-lowest);
 }
 
+.similar-issues-elsewhere {
+  color: var(--color-tertiary);
+  font-size: var(--font-size-label-sm);
+  font-style: normal;
+  font-weight: var(--font-weight-label-md);
+}
+
 .similar-issues-description {
   font-size: var(--font-size-body-sm);
   color: var(--color-on-surface);

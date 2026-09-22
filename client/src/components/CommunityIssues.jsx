@@ -39,7 +39,8 @@ function CommunityIssues() {
           Already reported{hostelLabel}
         </h2>
         <p className="community-issues-note">
-          Same problem? Tap &ldquo;Me too&rdquo; instead of filing a new request.
+          Same problem? Tap &ldquo;Me too&rdquo; instead of filing a new request. Problems backed by
+          30 or more students are shown to everyone.
         </p>
       </div>
 
@@ -70,6 +71,11 @@ function CommunityIssues() {
                   {STATUS_LABELS[item.status] || item.status}
                 </span>
               </div>
+              {item.hostel && item.hostel !== feed.hostel && (
+                <span className="community-issues-elsewhere">
+                  Widespread &middot; also affecting {item.hostel}
+                </span>
+              )}
               <p className="community-issues-description">{item.description}</p>
               <UpvoteButton item={item} onChange={(patch) => updateItem(item.requestId, patch)} />
             </li>

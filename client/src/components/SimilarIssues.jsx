@@ -44,7 +44,12 @@ function SimilarIssues({ hostel, categoryId }) {
       <ul className="similar-issues-list">
         {similar.map((item) => (
           <li key={item.requestId} className="similar-issues-item">
-            <span className="similar-issues-description">{item.description}</span>
+            <span className="similar-issues-description">
+              {item.description}
+              {item.hostel && item.hostel !== hostel && (
+                <em className="similar-issues-elsewhere"> — widespread, also in {item.hostel}</em>
+              )}
+            </span>
             <UpvoteButton item={item} onChange={(patch) => updateItem(item.requestId, patch)} />
           </li>
         ))}
