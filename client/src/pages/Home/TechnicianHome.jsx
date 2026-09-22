@@ -7,6 +7,7 @@ import { ClipboardListIcon, CheckCircleIcon } from '../../components/icons';
 import SlaBadge from '../../components/SlaBadge';
 import AffectedBadge from '../../components/AffectedBadge';
 import MyPerformance from '../../components/MyPerformance';
+import AnnouncementBanner from '../../components/AnnouncementBanner';
 import { setOwnAvailability } from '../../services/usersService';
 import {
   STATUS_LABELS,
@@ -14,6 +15,7 @@ import {
   AVAILABILITY_LABELS,
   categoryIcon,
   formatDate,
+  isPreventiveRequest,
 } from '../../utils/requestFormat';
 import './TechnicianHome.css';
 import { useLiveVersion } from '../../hooks/useLive';
@@ -25,6 +27,44 @@ const AVAILABILITY_VALUES = ['available', 'on_job', 'off_duty'];
 // calendar/map/efficiency widgets (none of that is backed by real data).
 const ACTIVE_STATUSES = ['assigned', 'in_progress'];
 const COMPLETED_STATUSES = ['resolved', 'closed'];
+
+// Shared by "My Active Tasks" and "My Maintenance Jobs" below — same card,
+// different data.
+function TaskCard({ request }) {
+  const Icon = categoryIcon(request.category?.name);
+  return (
+    <Link to={`/tasks/${request.requestId}`} className="technician-home-task-card">
+      <div className="technician-home-task-top">
+        <span className="technician-home-task-id">#REQ-{request.requestId}</span>
+        <div className="technician-home-task-badges">
+          {request.priority && (
+            <span className={`technician-home-priority technician-home-priority-${request.priority}`}>
+              {PRIORITY_LABELS[request.priority]}
+            </span>
+          )}
+          <span className={`technician-home-status technician-home-status-${request.status}`}>
+            {STATUS_LABELS[request.status] || request.status}
+          </span>
+          <SlaBadge sla={request.sla} />
+          <AffectedBadge count={request.upvoteCount} />
+        </div>
+      </div>
+      <p className="technician-home-task-description">{request.description}</p>
+      {(request.hostel || request.room) && (
+        <p className="technician-home-task-location">
+          {[request.hostel, request.room].filter(Boolean).join(', ')}
+        </p>
+      )}
+      <div className="technician-home-task-bottom">
+        <span className="technician-home-task-category">
+          <Icon width={16} height={16} />
+          {request.category?.name || 'Uncategorized'}
+        </span>
+        <span className="technician-home-task-date">{formatDate(request.createdAt)}</span>
+      </div>
+    </Link>
+  );
+}
 
 function TechnicianHome() {
   const liveVersion = useLiveVersion(); // refetch when the server reports a change
@@ -56,7 +96,14 @@ function TechnicianHome() {
 
   const active = (requests || []).filter((r) => ACTIVE_STATUSES.includes(r.status));
   const completedCount = (requests || []).filter((r) => COMPLETED_STATUSES.includes(r.status)).length;
-  const activePreview = active.slice(0, 3);
+  // Preventive-maintenance schedules (item 11) generate a normal request
+  // assigned like any other — split those out into their own panel instead
+  // of mixing scheduled checks in with faults students reported, so a
+  // technician can tell the two apart at a glance.
+  const reportedActive = active.filter((r) => !isPreventiveRequest(r.description));
+  const maintenanceJobs = active.filter((r) => isPreventiveRequest(r.description));
+  const activePreview = reportedActive.slice(0, 3);
+  const maintenanceJobsPreview = maintenanceJobs.slice(0, 3);
 
   return (
     <main className="technician-home">
@@ -64,6 +111,8 @@ function TechnicianHome() {
         <h1 className="technician-home-title">Welcome back, {user?.name?.split(' ')[0]}!</h1>
         <p className="technician-home-subtitle">Here&rsquo;s what&rsquo;s on your plate today.</p>
       </header>
+
+      <AnnouncementBanner />
 
       <div className="technician-home-availability">
         <span className="technician-home-availability-label">Your status:</span>
@@ -119,45 +168,39 @@ function TechnicianHome() {
 
         {activePreview.length > 0 && (
           <ul className="technician-home-task-list">
-            {activePreview.map((request) => {
-              const Icon = categoryIcon(request.category?.name);
-              return (
-                <li key={request.requestId}>
-                  <Link to={`/tasks/${request.requestId}`} className="technician-home-task-card">
-                    <div className="technician-home-task-top">
-                      <span className="technician-home-task-id">#REQ-{request.requestId}</span>
-                      <div className="technician-home-task-badges">
-                        {request.priority && (
-                          <span
-                            className={`technician-home-priority technician-home-priority-${request.priority}`}
-                          >
-                            {PRIORITY_LABELS[request.priority]}
-                          </span>
-                        )}
-                        <span className={`technician-home-status technician-home-status-${request.status}`}>
-                          {STATUS_LABELS[request.status] || request.status}
-                        </span>
-                        <SlaBadge sla={request.sla} />
-                        <AffectedBadge count={request.upvoteCount} />
-                      </div>
-                    </div>
-                    <p className="technician-home-task-description">{request.description}</p>
-                    {(request.hostel || request.room) && (
-                      <p className="technician-home-task-location">
-                        {[request.hostel, request.room].filter(Boolean).join(', ')}
-                      </p>
-                    )}
-                    <div className="technician-home-task-bottom">
-                      <span className="technician-home-task-category">
-                        <Icon width={16} height={16} />
-                        {request.category?.name || 'Uncategorized'}
-                      </span>
-                      <span className="technician-home-task-date">{formatDate(request.createdAt)}</span>
-                    </div>
-                  </Link>
-                </li>
-              );
-            })}
+            {activePreview.map((request) => (
+              <li key={request.requestId}>
+                <TaskCard request={request} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="technician-home-tasks technician-home-maintenance-jobs">
+        <div className="technician-home-tasks-header">
+          <h2 className="technician-home-tasks-title">My Maintenance Jobs</h2>
+          {maintenanceJobs.length > 3 && (
+            <Link to="/tasks" className="technician-home-view-all">
+              View All Tasks &rarr;
+            </Link>
+          )}
+        </div>
+
+        {!error && requests !== null && maintenanceJobsPreview.length === 0 && (
+          <p className="technician-home-empty">
+            No scheduled maintenance checks assigned to you right now — these appear here when a
+            preventive maintenance schedule falls due and is assigned to you.
+          </p>
+        )}
+
+        {maintenanceJobsPreview.length > 0 && (
+          <ul className="technician-home-task-list">
+            {maintenanceJobsPreview.map((request) => (
+              <li key={request.requestId}>
+                <TaskCard request={request} />
+              </li>
+            ))}
           </ul>
         )}
       </section>

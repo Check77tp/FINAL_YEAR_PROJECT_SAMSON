@@ -79,6 +79,17 @@ export const HOSTELS = [
   'Other',
 ];
 
+// Mirrors server/src/utils/preventive.js — a preventive-maintenance schedule
+// generates a normal request, tagged only by this description prefix (there
+// is no separate "type" column). Used here to give a technician a distinct
+// "My Maintenance Jobs" panel instead of mixing scheduled checks in with
+// requests students reported.
+export const PREVENTIVE_PREFIX = 'Preventive maintenance: ';
+
+export function isPreventiveRequest(description) {
+  return typeof description === 'string' && description.startsWith(PREVENTIVE_PREFIX);
+}
+
 const CATEGORY_ICONS = {
   plumbing: DropletIcon,
   electrical: BoltIcon,

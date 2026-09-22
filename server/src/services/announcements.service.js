@@ -36,6 +36,14 @@ export function selectForStudent(rows, studentHostel, now = new Date()) {
   );
 }
 
+// Pure: the announcements a technician should see - every active one,
+// regardless of hostel. Unlike a student, a technician isn't tied to one
+// hostel (they can be assigned a task anywhere), so hostel-scoped notices
+// (e.g. "water off in Block C") are still useful context for them.
+export function selectForTechnician(rows, now = new Date()) {
+  return rows.filter((row) => isActive(row, now));
+}
+
 // Who receives the push: students who chose this hostel in Settings, plus
 // students who never did but whose latest request was in it.
 export async function resolveRecipients(hostel) {
@@ -97,12 +105,17 @@ export async function createAnnouncement({ adminId, title, message, hostel, expi
   return { announcement: mapAnnouncement(row), recipients };
 }
 
-// Students see what applies to them; administrators see everything (including
+// Students see what applies to them; technicians see every active notice
+// (they aren't tied to one hostel); administrators see everything (including
 // expired ones, so they can manage them); everyone else sees none.
 export async function listForUser(user, now = new Date()) {
   if (user.role === 'administrator') {
     const rows = await announcementsRepository.findRecentAnnouncements();
     return rows.map((row) => ({ ...mapAnnouncement(row), active: isActive(row, now) }));
+  }
+  if (user.role === 'technician') {
+    const rows = await announcementsRepository.findRecentAnnouncements();
+    return selectForTechnician(rows, now).map(mapAnnouncement);
   }
   if (user.role !== 'student') return [];
 

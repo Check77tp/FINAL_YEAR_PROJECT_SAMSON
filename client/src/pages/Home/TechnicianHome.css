@@ -81,6 +81,10 @@
   margin-bottom: var(--spacing-lg);
 }
 
+.technician-home-tasks {
+  margin-bottom: var(--spacing-lg);
+}
+
 .technician-home-tasks-header {
   display: flex;
   align-items: baseline;

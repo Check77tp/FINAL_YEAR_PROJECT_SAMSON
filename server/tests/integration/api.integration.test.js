@@ -598,6 +598,19 @@ describe('announcements', () => {
     expect(res.body.announcements.map((a) => a.id)).toEqual([1, 2]);
   });
 
+  it('a technician receives every active announcement, regardless of hostel', async () => {
+    announcementsRepository.findRecentAnnouncements.mockResolvedValue([
+      announcementRow({ announcement_id: 1, hostel: null }),
+      announcementRow({ announcement_id: 2, hostel: 'Kalingalinga' }),
+      announcementRow({ announcement_id: 3, hostel: 'Soweto' }),
+    ]);
+
+    const res = await request(app).get('/api/announcements').set(as('tech-token'));
+
+    expect(res.status).toBe(200);
+    expect(res.body.announcements.map((a) => a.id)).toEqual([1, 2, 3]);
+  });
+
   it('a student can set their hostel; an empty one is rejected', async () => {
     const ok = await request(app).put('/api/announcements/hostel/me').set(as('student-token')).send({ hostel: 'Soweto' });
     expect(ok.status).toBe(200);

@@ -14,9 +14,11 @@ function loadDismissed() {
   }
 }
 
-// Notices from administrators, shown at the top of a student's dashboard
-// (only the ones for their hostel, plus all-hostel notices). A student can
-// dismiss one; the choice is remembered on this device.
+// Notices from administrators, shown at the top of a dashboard. A student
+// sees only the ones for their hostel plus all-hostel notices; a technician
+// sees every active one, since they aren't tied to one hostel (see
+// announcements.service.js). Either can dismiss one; the choice is
+// remembered on this device.
 function AnnouncementBanner() {
   const liveVersion = useLiveVersion();
   const [items, setItems] = useState(() => getAnnouncements.peek() ?? []);

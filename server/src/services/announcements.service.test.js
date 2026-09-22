@@ -3,7 +3,13 @@ import * as announcementsRepository from '../repositories/announcements.reposito
 import * as usersRepository from '../repositories/users.repository.js';
 import * as requestsRepository from '../repositories/requests.repository.js';
 import { notifyUsers } from './push.service.js';
-import { createAnnouncement, listForUser, selectForStudent, resolveRecipients } from './announcements.service.js';
+import {
+  createAnnouncement,
+  listForUser,
+  selectForStudent,
+  selectForTechnician,
+  resolveRecipients,
+} from './announcements.service.js';
 
 vi.mock('../repositories/announcements.repository.js');
 vi.mock('../repositories/users.repository.js');
@@ -36,6 +42,18 @@ describe('selectForStudent (who sees what)', () => {
   it('hides expired notices', () => {
     const rows = [row(1, { expires_at: '2026-09-09T00:00:00Z' }), row(2, { expires_at: '2026-09-11T00:00:00Z' })];
     expect(selectForStudent(rows, null, NOW).map((r) => r.announcement_id)).toEqual([2]);
+  });
+});
+
+describe('selectForTechnician (who sees what)', () => {
+  it('shows every active notice regardless of hostel', () => {
+    const rows = [row(1), row(2, { hostel: 'Kalingalinga' }), row(3, { hostel: 'Soweto' })];
+    expect(selectForTechnician(rows, NOW).map((r) => r.announcement_id)).toEqual([1, 2, 3]);
+  });
+
+  it('hides expired notices', () => {
+    const rows = [row(1, { expires_at: '2026-09-09T00:00:00Z' }), row(2, { expires_at: '2026-09-11T00:00:00Z' })];
+    expect(selectForTechnician(rows, NOW).map((r) => r.announcement_id)).toEqual([2]);
   });
 });
 
@@ -128,7 +146,12 @@ describe('listForUser', () => {
     expect(list.find((a) => a.id === 4).active).toBe(false);
   });
 
-  it('technicians see none', async () => {
-    expect(await listForUser({ user_id: 't', role: 'technician' }, NOW)).toEqual([]);
+  it('a technician sees every active notice, regardless of hostel', async () => {
+    const list = await listForUser({ user_id: 't', role: 'technician' }, NOW);
+    expect(list.map((a) => a.id)).toEqual([1, 2, 3]);
+  });
+
+  it('other roles see none', async () => {
+    expect(await listForUser({ user_id: 'x', role: 'someone-else' }, NOW)).toEqual([]);
   });
 });
