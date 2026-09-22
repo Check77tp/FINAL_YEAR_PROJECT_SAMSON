@@ -81,6 +81,7 @@ like a normal app, loads faster and can send you notifications.
 ### 2.1 Your dashboard
 After signing in you see:
 
+- **Announcements** — notices from administrators for your hostel, or for everyone (see 2.1a).
 - **Active Requests** and **Completed** — how many of your requests are still being worked on or finished.
 - **Report New Issue** — the big green button.
 - **Already reported in your hostel** — issues other students have already reported (see 2.3).
@@ -90,14 +91,25 @@ After signing in you see:
 |---|---|
 | ![Student dashboard on a phone](screenshots/02-student-dashboard-mobile.png) | ![Student dashboard on a computer](screenshots/03-student-dashboard-desktop.png) |
 
+### 2.1a Announcements
+Notices from administrators appear at the top of your dashboard — either for **your hostel** only, or for **all hostels**. Each one shows who posted it and when.
+
+- Tap **✕** to dismiss a notice you have read. It will not show again on this device.
+- You also get a **push notification** for a new announcement, if you turned notifications on (see [section 5](#5-settings-notifications-and-dark-mode)).
+- Which notices you see depends on your **hostel** — set it once in Settings (see 5) so you get the right ones.
+
+![Announcements on the student dashboard](screenshots/manual/n03-student-announcements-and-widespread.png)
+
 ### 2.2 Report a new issue
 1. Press **Report New Issue**.
 2. **Choose a category** (Plumbing, Electrical, Furniture …).
 3. **Select your hostel** and, if you like, type your **room**.
 4. **Say how urgent it is** — Low, Medium, High or Critical (see [section 7](#7-meanings-of-statuses-priorities-and-badges)).
 5. **Describe the problem.** Be specific: *"The tap in the bathroom leaks even when tightly closed."*
-6. *(Optional)* **Attach a photo** — tap the photo area and take or choose a picture (JPG, PNG or WebP, up to 5 MB).
+6. *(Optional)* **Attach a photo** — press **Take photo** to use your camera (on a computer, a live preview opens so you can capture one), or **Choose from files** to pick an existing picture (JPG, PNG or WebP, up to 5 MB). Large photos are shrunk automatically so they upload quickly.
 7. Press **Submit Request**.
+
+![Photo options: Take photo or Choose from files](screenshots/manual/n04-photo-take-or-choose.png)
 
 ![Report an issue, with duplicate warning and suggestion](screenshots/04-report-issue-ai-and-duplicates.png)
 
@@ -109,13 +121,14 @@ After signing in you see:
 > **No internet?** You can still write the request. It is saved on your device and sent automatically when you are back online (see [section 6](#6-working-offline)).
 
 ### 2.3 Back a problem someone else already reported ("Me too")
-On your dashboard, swipe through **Already reported in <your hostel>**. Each card
+On your dashboard, swipe through **Already reported in &lt;your hostel&gt;**. Each card
 shows the category, a short description and its status.
 
 - Tap **Me too** if you have the same problem. The button turns green and shows **Upvoted**.
 - Tap it again to take your vote back.
 - You cannot vote on your own requests, or on ones that are already resolved.
 - Other students' names are never shown.
+- **Widespread problems (30 or more "Me too" votes)** are shown to students in **every** hostel, not just where it was reported — labelled **"Widespread · also affecting &lt;hostel&gt;"**. A fault that big is probably a campus-wide issue (e.g. water pressure), so everyone affected can back it.
 
 ### 2.4 Track your requests
 Open **My Requests** in the menu. Use the tabs to switch between active and finished requests, or the search box in the top bar to find one.
@@ -128,10 +141,15 @@ Tap any request to see its full page:
 
 - the **status** and **priority**,
 - who is **assigned** to fix it,
+- a **Comments** box to talk with the technician and administrators about your request (e.g. "Which tap is it?"),
 - a **timeline** showing every step with dates,
 - for finished jobs, a **Work Completed** section with the technician's photo and note.
 
 ![Request in progress](screenshots/manual/m07-request-detail-in-progress.png)
+
+**Comments** — type your message and press **Send** (or Ctrl+Enter). Only you, the technician assigned to your request, and administrators can see or post comments on it — nobody else. Everyone involved gets a notification when someone new comments. Comments are turned off once a request is Closed.
+
+![A comment conversation on a request](screenshots/manual/n05-comments-thread.png)
 
 The page updates by itself when something changes — you do not need to refresh. You
 can also press **Refresh Status**.
@@ -149,13 +167,14 @@ repair**. Tap 1–5 stars (5 is best) and, if you wish, add a comment. You can r
 ### 3.1 Your dashboard
 - Choose your **status** at the top — **Available**, **On Job** or **Off Duty**. Administrators use this when deciding who to assign, so keep it accurate.
 - See how many jobs are **Assigned** to you and how many you have **Completed**.
+- **My Performance** — your scorecard for the last 30 days: jobs resolved, average time, your on-time rate, and your rating from students. It also shows your rank among your colleagues, and warns you if any of your jobs are overdue.
 - **My Active Tasks** lists your current jobs, with their priority and a deadline badge.
 
-![Technician dashboard](screenshots/09-technician-dashboard.png)
+![Technician dashboard with My Performance](screenshots/manual/n09-technician-my-performance.png)
 
 ### 3.2 See your tasks
 Open **My Tasks**. Each card shows the request number, priority, status, a
-deadline badge (for example *Due in 42h* or *Overdue 3h*), the description and the location.
+deadline badge (for example *Due in 42h* or *Overdue 3h*), a **"+N students affected"** badge when several students backed the same issue with "Me too" (see 2.3) — tackle those first — the description and the location.
 
 ![My tasks](screenshots/manual/m13-my-tasks.png)
 
@@ -171,8 +190,9 @@ photo (if any), and the timeline.
 ### 3.4 Add proof of the finished work (optional)
 When you resolve a task you can:
 
-- **Add a photo** of the finished repair — tap the camera area; on a phone your camera opens. Use **Retake photo** if needed.
+- **Add a photo** of the finished repair — press **Take photo** (your camera opens on a phone; a live preview opens on a computer) or **Choose from files**. Use **Retake photo** if needed.
 - **Add a note** (up to 500 characters), e.g. *"Replaced the washer and tested for leaks."*
+- You can also **Comment** on the task to ask the student or administrators a question (see 2.4).
 
 The student and the administrators will see this under **Work Completed**. Photos are
 automatically reduced in size so they upload quickly on mobile data.
@@ -196,7 +216,11 @@ A quick health check of maintenance operations:
 ![Admin dashboard](screenshots/06-admin-dashboard.png)
 
 ### 4.2 Manage requests and assign a technician
-Open **Manage Requests**. Every request appears with:
+Open **Manage Requests**. Use the **Overdue** tab to see, at a glance, every request that has passed its target time — regardless of its status — with a count badge. The dashboard's **Overdue Requests** tile (4.1) opens straight into this tab.
+
+![The Overdue tab](screenshots/manual/n01-overdue-tab.png)
+
+Every request appears with:
 
 | What you see | Meaning |
 |---|---|
@@ -215,7 +239,7 @@ Each entry shows workload, e.g. *★ John Mwembe (1 active)*. People who are *Of
 Use the tabs (All, Open, Assigned, In Progress, Resolved, Closed) to filter, or the top search box (by number, description, category, student name or ID).
 
 ### 4.3 A single request
-Click a request number to open its page: the reporter, the full description, the photo, the timeline, the technician's **Work Completed** proof and the student's rating. From here you can also:
+Click a request number to open its page: the reporter, the full description, the photo, a **Comments** box (you, the student and the assigned technician can talk there — see 2.4), the timeline, the technician's **Work Completed** proof and the student's rating. From here you can also:
 
 - change **priority**,
 - **assign** a technician (open requests),
@@ -240,21 +264,58 @@ Open **Reports & Analytics**:
 - **Resolution Trend** for the last 7 days.
 - **Hostel Hotspots** — a grid of hostels × categories; **darker = more requests**. The sentence above it names the busiest hostel. Use **All time / Still open** to switch between history and what needs doing now.
 - **Requests by Category**, **Requests by Hostel** and **Technician Workload**.
+- **Technician Performance** — a table ranking every technician by jobs resolved, average time, on-time rate, jobs on hand, overdue count and student rating, over a window you choose (7/30/90 days or all time).
+- **Needs a Permanent Fix** — faults that keep coming back to the **same room** (3 or more times in 60 days) or across a **whole hostel** (6 or more times in 30 days), with a suggestion and a **"Plan a preventive check"** link (see 4.7).
 
 ![Reports and analytics](screenshots/manual/m12-reports-top.png)
 
 ![Hostel hotspots](screenshots/08-reports-heatmap.png)
+
+![Technician performance table](screenshots/manual/n06-technician-performance.png)
+
+![Needs a Permanent Fix](screenshots/manual/n07-needs-permanent-fix.png)
 
 **Export and share**
 - **Export CSV** — downloads every request as a spreadsheet.
 - **Print / Save as PDF** — produces a clean printable report.
 - **Email me the summary** — sends the weekly summary to your own email address straight away.
 
-### 4.6 Automatic alerts and emails
+### 4.6 Send an announcement
+Open **Announcements** to notify students. This is for hostel-wide notices — a water cut, a fire drill, anything everyone in a building (or everyone, full stop) needs to know.
+
+1. Write a **Title** and a **Message**.
+2. Choose **Send to** — one hostel, or **All hostels**.
+3. Choose when it **Expires** (or leave it to never expire).
+4. Press **Post announcement**.
+
+Students in the audience see it as a banner on their dashboard (2.1a) and get a push notification. The list below the form shows every announcement you have posted, whether it is still **Active** or has **Expired**, and lets you **Delete** one early.
+
+![Posting an announcement](screenshots/manual/n02-announcements-admin.png)
+
+### 4.7 Preventive maintenance
+Open **Preventive** to schedule recurring checks — inspecting the geysers every month, testing fire extinguishers every quarter — so problems are caught before a student has to report them.
+
+1. Press **+ New schedule**.
+2. Fill in **what needs doing**, the **category**, **hostel** (and, optionally, a specific room/area), **how often**, the **priority** of the task it creates, and when the **first task is due**.
+3. Press **Create schedule**.
+
+When a schedule falls due, the system creates a normal maintenance request for it automatically — it goes through assignment, technician work and proof of work exactly like a student-reported request, just labelled *"Preventive maintenance: ..."*. A new task is **not** created while the previous one for that schedule is still open, so tasks never pile up.
+
+For each schedule you can:
+- **Run now** — create its task immediately, without waiting for it to fall due.
+- **Pause** / **Resume** — Resuming moves the next due date into the future, so it does not fire instantly for an old date.
+- **Delete** — removes the schedule; tasks it already created are kept.
+
+![Preventive maintenance schedules](screenshots/manual/n08-preventive-maintenance.png)
+
+> **Tip:** on the **Needs a Permanent Fix** card (4.5), press **Plan a preventive check** to jump here with the hostel, room and category already filled in.
+
+### 4.8 Automatic alerts and emails
 You do not need to do anything for these:
 - **Overdue alerts** — the system checks every hour for requests that have passed their deadline and notifies all administrators and the assigned technician. If a request stays overdue you get a **reminder**: every **4 hours** for Critical and High requests, and **once a day** for Medium and Low. Reminders stop as soon as the request is Resolved.
 - **New request and status alerts** — push notifications (if you turned them on).
 - **Weekly summary email** — every Monday at 08:00 (Lusaka time) to all administrators.
+- **Preventive maintenance tasks** — created automatically when a schedule (4.7) falls due.
 
 ---
 
@@ -265,9 +326,12 @@ Open **Settings** in the menu.
 ![Settings](screenshots/12-settings-notifications-appearance.png)
 
 - **Profile** — change your **name** or **photo** (**Edit Profile**, or tap the camera on your picture). Your ID, email and role cannot be changed here.
+- **My hostel** *(students only)* — choose where you live so you receive announcements for your hostel (4.6) and your "Already reported" feed defaults to the right place.
 - **Appearance** — choose **System** (follows your device), **Light** or **Dark**. The 🌙 button in the top bar switches quickly.
 - **Push Notifications** — turn on alerts on *this device*, even when the app is closed. You are asked for permission once. If you previously pressed "Block", allow notifications for the site in your browser settings first.
 - **Sign Out** — sign out safely. This also stops notifications on that device, so nobody else using the phone receives yours.
+
+![My hostel setting](screenshots/manual/n10-settings-my-hostel.png)
 
 ![Editing your profile](screenshots/manual/m09-settings-edit-profile.png)
 
@@ -345,6 +409,12 @@ Your own requests are private. The *Already reported* strip shows only the issue
 
 **Why can't I press "Me too" on some cards?**
 You cannot vote on your own requests, or ones that are already resolved.
+
+**Who can see the comments on my request?**
+Only you, the technician assigned to it, and administrators. Nobody else — not even other technicians.
+
+**I set my hostel in Settings but I'm not seeing announcements for it.**
+Announcements sent before you set your hostel, or ones that have since expired, will not show. New ones for your hostel will appear from now on.
 
 **Why don't I get notifications?**
 Check **Settings → Push Notifications** is on for this device, and that notifications are allowed for the site in your browser. On iPhone, add the app to your Home Screen first.

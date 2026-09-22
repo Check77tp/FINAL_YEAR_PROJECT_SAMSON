@@ -36,7 +36,7 @@ database; every rule is enforced on the server.
 |---|---|
 | ![Student dashboard, mobile](screenshots/02-student-dashboard-mobile.png) | ![Student dashboard, desktop](screenshots/03-student-dashboard-desktop.png) |
 
-The **"Already reported in <hostel>"** strip lets students back an existing issue
+The **"Already reported in &lt;hostel&gt;"** strip lets students back an existing issue
 with *Me too* instead of filing a duplicate. The count tells administrators how
 many people a fault affects. Other students' names are never shown.
 
@@ -77,18 +77,43 @@ Animated category ring and resolution trend, plus an **Overdue Requests** tile.
 |---|
 | ![Reports with hostel heatmap](screenshots/08-reports-heatmap.png) |
 
-The heatmap answers *"where should maintenance go this week?"*. Reports can also be
+The heatmap answers *"where should maintenance go this week?"*. Reports also has a
+**Technician Performance** table and a **Needs a Permanent Fix** card (below), can be
 exported to CSV/PDF, and a weekly summary is emailed on Monday mornings.
+
+| Technician Performance | Needs a Permanent Fix |
+|---|---|
+| ![Technician performance table](screenshots/manual/n06-technician-performance.png) | ![Needs a Permanent Fix, recurring issues](screenshots/manual/n07-needs-permanent-fix.png) |
+
+- **Technician Performance** ranks every technician (resolved, avg. time, on-time rate, jobs on hand, overdue, rating) over a chosen window.
+- **Needs a Permanent Fix** flags faults repeating at the same room (3+/60 days) or hostel (6+/30 days), each with a **"Plan a preventive check"** link.
+
+| Overdue tab | Announcements | Preventive Maintenance |
+|---|---|---|
+| ![The Overdue tab in Manage Requests](screenshots/manual/n01-overdue-tab.png) | ![Posting an announcement](screenshots/manual/n02-announcements-admin.png) | ![Preventive maintenance schedules](screenshots/manual/n08-preventive-maintenance.png) |
+
+- **Manage Requests → Overdue tab** lists everything past its SLA deadline in one place; the dashboard's Overdue tile links straight into it.
+- **Announcements** posts a notice to one hostel or everyone, with an optional expiry — shown as a banner on the student dashboard and pushed to their phones.
+- **Preventive Maintenance** schedules recurring checks (e.g. "inspect the geysers monthly"); the system creates the maintenance request automatically when one falls due, so a schedule flows through assignment and proof of work exactly like a student report.
 
 ### Technician
 
-| Task list | Proof of work |
+| Task list, with My Performance | Proof of work |
 |---|---|
-| ![Technician dashboard](screenshots/09-technician-dashboard.png) | ![Proof of work form](screenshots/10-technician-proof-of-work.png) |
+| ![Technician dashboard with My Performance](screenshots/manual/n09-technician-my-performance.png) | ![Proof of work form](screenshots/10-technician-proof-of-work.png) |
 
-When resolving, a technician can optionally add a photo of the finished work (the
-camera opens directly on a phone) and a note. The image is compressed in the browser
-before upload. The photo can be made mandatory by setting `REQUIRE_RESOLUTION_PROOF=true`.
+- **My Performance** — the technician's own 30-day scorecard: resolved, average time, on-time rate, rating, and rank among colleagues.
+- Task cards show a **"+N students affected"** badge when several students backed the same issue with "Me too", so widely-felt problems get fixed first.
+- When resolving, a technician can optionally **take a photo** (camera on a phone; a live preview on a computer) **or choose one from files**, plus a note. The image is compressed in the browser before upload. The photo can be made mandatory by setting `REQUIRE_RESOLUTION_PROOF=true`.
+
+### Communication and community
+
+| Comments on a request | Widespread issues (30+ upvotes) |
+|---|---|
+| ![A comment conversation on a request](screenshots/manual/n05-comments-thread.png) | ![Announcements and a widespread "Me too" card on the student dashboard](screenshots/manual/n03-student-announcements-and-widespread.png) |
+
+- Any request has a **Comments** thread — only the reporting student, the assigned technician and administrators can see or post ("Which tap is it?").
+- An issue backed by **30 or more "Me too" votes** is shown to students in every hostel, not just where it was reported, labelled *"Widespread"* — because a fault that size is unlikely to be confined to one building.
 
 ### Everyone
 
@@ -101,22 +126,26 @@ Supabase Auth needs. Settings hold **push notifications** and **light/dark/syste
 
 ---
 
-## 3. Suggested live-demo script (≈ 8 minutes)
+## 3. Suggested live-demo script (≈ 10 minutes)
 
 1. **Student (phone-sized window).** Open the dashboard → point at the *Already
-   reported* strip → tap *Me too* on one issue.
+   reported* strip and an announcement banner → tap *Me too* on one issue.
 2. **Report an issue.** Choose a hostel + category → the duplicate warning appears.
    Type "the socket near my bed is sparking" → the suggestion jumps to *Critical* → *Apply* → submit.
 3. **Administrator (second window).** The new request appears **without a refresh**
-   (live update) with a toast. Show the *Overdue* tile, the SLA badges and the
+   (live update) with a toast. Show the *Overdue* tab, the SLA badges and the
    *+N affected* badge. Assign the ★ recommended technician in one tap.
-4. **Student window** updates live: status → *Assigned*.
-5. **Technician.** Open the task → *Start Task* → add a photo and a short note →
-   *Mark as Resolved*.
+4. **Student window** updates live: status → *Assigned*. Post a **comment** asking
+   which tap it is — it appears for the technician too.
+5. **Technician.** Open the task → *Start Task* → add a photo (camera or file) and a
+   short note → *Mark as Resolved*. Point at **My Performance** on the dashboard.
 6. **Student** sees *Work Completed* with the photo and note; rate it.
-7. **Administrator → Reports.** Show the heatmap, the trend, export CSV, and the
+7. **Administrator → Reports.** Show the heatmap, **Technician Performance**,
+   **Needs a Permanent Fix** (→ *Plan a preventive check*), export CSV, and the
    *Email me the summary* button.
-8. **Show two "PWA" moments**: toggle dark mode; switch the browser to offline and
+8. **Administrator → Announcements.** Post a notice to one hostel; it lands on the
+   student's dashboard. **→ Preventive.** Show a schedule and *Run now*.
+9. **Show two "PWA" moments**: toggle dark mode; switch the browser to offline and
    draft a request (it queues), then go online and watch it sync. Mention install-to-home-screen.
 
 Have these ready beforehand: a student, an administrator and a technician login,
@@ -140,8 +169,11 @@ the SQL migrations applied, and at least a few requests in different states.
 | PWA: manifest, service worker, offline drafting, sync on reconnect | Installable, cache strategies, IndexedDB draft queue |
 | Non-functional: usability, performance, security, maintainability | See ARCHITECTURE.md §8, §11, §12 |
 
-Beyond the brief: upvotes, SLA timers and overdue alerts, push notifications, live
-updates, AI triage, proof of work, dark mode, heatmap, weekly email.
+Beyond the brief: upvotes (with campus-wide visibility), SLA timers with overdue
+alerts and reminders, push notifications, live updates, AI triage, camera-capture
+proof of work, dark mode, hostel heatmap, weekly email, admin announcements,
+per-request comments, recurring-issue detection, technician performance, and
+preventive-maintenance scheduling.
 
 ---
 
@@ -186,16 +218,16 @@ are served from the service-worker cache. On the free host the first request aft
 idle can be slow (cold start), which a scheduled health-check ping avoids.
 
 **What are the weaknesses?**
-(1) The 48 integration tests fake the database, so they prove the routes → services →
+(1) The 70 integration tests fake the database, so they prove the routes → services →
 repositories wiring and access control, but not Postgres/RLS itself (that is checked in
 Supabase and by manual UAT); the front-end browser checks are not yet an automated suite. (2) Live updates, the token cache and the rate limiter are in
 memory, so they assume a single server instance. (3) Optional integrations (AI, email,
 push) need configuration. See ARCHITECTURE.md §13 — being upfront about these is deliberate.
 
 **What would you build next?**
-Integration tests with a test database, a shared store (Redis) for multi-instance
-scaling, recurring-issue detection, preventive-maintenance schedules, and an SMS fallback
-for students without data.
+Integration tests with a real test database, a shared store (Redis) for multi-instance
+scaling, letting a student edit or cancel their own request before it's assigned, and
+an SMS fallback for students without data.
 
 **How do you know the SLA/overdue logic is right?**
 It is a pure function with unit tests for every state and boundary (on track, at risk,

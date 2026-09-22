@@ -40,7 +40,7 @@ A Progressive Web App for reporting and managing hostel maintenance at the Unive
 | Rule | The browser **never** talks to Supabase; all access goes through the Express REST API |
 | Data | Supabase PostgreSQL (with Row Level Security), Supabase Auth, Supabase Storage |
 | Lifecycle | `Open → Assigned → In Progress → Resolved → Closed`, enforced server-side, every transition recorded |
-| Extras | Upvotes, SLA timers + overdue alerts, live updates (SSE), Web Push, AI triage, proof of work, dark mode, analytics with heatmap and CSV/PDF export, weekly email |
+| Extras | Upvotes (incl. campus-wide visibility at 30+ votes), SLA timers + overdue alerts/reminders, live updates (SSE), Web Push, AI triage, camera-capture proof of work, dark mode, analytics with heatmap/CSV/PDF export, weekly email, admin announcements, per-request comments, recurring-issue detection, technician performance, preventive-maintenance scheduling |
 
 ---
 
@@ -90,7 +90,7 @@ cp .env.example .env          # VITE_API_BASE_URL=http://localhost:5000/api
 
 ### Create the database
 In the Supabase dashboard → **SQL Editor**, run the files in `server/sql/` **in
-numeric order** (`001` … `012`); see [section 5.4](#54-migrations). Then create the
+numeric order** (`001` … `015`); see [section 5.4](#54-migrations). Then create the
 first administrator account (section 15, "First administrator").
 
 ### Run
@@ -173,6 +173,7 @@ The client holds **no Supabase key** and no secrets.
 | `role` | user_role | default `student` |
 | `availability_status` | technician_availability | default `available`; meaningful for technicians |
 | `avatar_url` | text | profile photo |
+| `hostel` | text null | student's hostel (migration `013`); set in Settings or learned from their first request; targets announcements |
 | `created_at` | timestamptz | |
 
 **categories** — `category_id` PK, `name` unique, `description`
@@ -205,6 +206,14 @@ The client holds **no Supabase key** and no secrets.
 
 **job_runs** — `job_name` PK, `last_run_at` (prevents duplicate scheduled jobs after a restart)
 
+**announcements** — `announcement_id` PK, `title`, `message`, `hostel` (null = all hostels), `created_by` FK, `created_at`, `expires_at` (null = never)
+
+**request_comments** — `comment_id` PK, `request_id` FK, `author_id` FK, `body`, `created_at` (one row per message; ordered oldest-first for the conversation view)
+
+**maintenance_schedules** — `schedule_id` PK, `title`, `description`, `category_id` FK, `hostel`, `room`, `priority`, `frequency_days` (1–730), `next_due_at`, `active`, `created_by` FK, `created_at`, `last_generated_at`
+
+**maintenance_schedule_runs** — `run_id` PK, `schedule_id` FK, `request_id` FK, `created_at` (which request each schedule produced, so a new task is never created while the previous one is still open)
+
 ### 5.3 Security in the database
 - **Row Level Security is enabled on every table**, as a second line of defence behind the server: students see only their own rows, technicians only their assigned work, administrators broad access. Helper: `public.current_user_role()`.
 - Foreign keys enforce referential integrity everywhere.
@@ -227,8 +236,12 @@ Run **in order** in the Supabase SQL Editor. Each file is written to be run once
 | `010_push_subscriptions.sql` | Web Push subscriptions |
 | `011_overdue_alerts_and_job_runs.sql` | `overdue_notified_at`, `job_runs` |
 | `012_resolution_proofs.sql` | Proof-of-work photos and notes |
+| `013_announcements_and_user_hostel.sql` | `announcements` table, `users.hostel`. **Safe to re-run** |
+| `014_request_comments.sql` | `request_comments`. **Safe to re-run** |
+| `015_preventive_maintenance.sql` | `maintenance_schedules`, `maintenance_schedule_runs`. **Safe to re-run** |
 
 > Categories are managed in the `categories` table. Add e.g. *Carpentry* or *Internet/IT* by inserting rows; the UI picks them up.
+> Migrations `013`–`015` use `create table if not exists` / `drop policy if exists` so running them again is harmless — useful if you are not sure whether one already ran.
 
 ### 5.5 Storage
 | Bucket | Contents | Paths |
@@ -251,9 +264,9 @@ server/
   src/services/              BUSINESS LOGIC: rules; no req/res; unit-testable
   src/repositories/          DATA ACCESS: the only files that import Supabase
   src/middleware/            authenticate, requireRole, errorHandler
-  src/jobs/scheduler.js      background timers
+  src/jobs/scheduler.js      background timers (overdue, weekly email, preventive maintenance)
   src/config/                env, supabaseClient, webPush, mailer, anthropic
-  src/utils/                 sla.js (pure SLA rule), labels.js, httpError.js
+  src/utils/                 sla.js (pure SLA + reminder rule), preventive.js, labels.js, httpError.js
 ```
 Layers only call **downward**. A route never touches the database; a repository never contains a business rule.
 
@@ -265,10 +278,15 @@ Layers only call **downward**. A route never touches the database; a repository 
 | `triage.service` | Category/priority suggestion (Claude or rules) + safety floor + rate limit |
 | `users.service` | Profiles, technician ranking, availability |
 | `reports.service` | Analytics maths (resolution time, workload, trends, heatmap inputs) |
-| `overdue.service` | Overdue detection and alerts |
+| `overdue.service` | Overdue detection, first alerts and repeat reminders |
 | `digest.service` | Weekly statistics, email template, schedule |
 | `push.service` | Subscribe/unsubscribe, deliver, clean up dead subscriptions |
 | `events.service` | Live-update hub (Server-Sent Events) |
+| `announcements.service` | Create/list/delete announcements, audience resolution, a student's hostel |
+| `comments.service` | Per-request conversation (student/assigned technician/admins only), notifications |
+| `recurrence.service` | Detects faults repeating at the same room or across a hostel |
+| `performance.service` | Per-technician resolution/on-time/rating maths over a time window |
+| `schedules.service` | Preventive-maintenance schedules; creates requests when they fall due |
 | `ratings.service`, `categories.service`, `activity.service` | Ratings, category list, recent activity |
 
 ### 6.2 Request pipeline
@@ -323,7 +341,7 @@ A request is alerted when it first becomes overdue, then reminded at the reminde
 Order by availability (`available` < `on_job` < `off_duty`), then fewest active tasks (assigned/in-progress), then name. The first entry is `recommended` unless that technician is off duty.
 
 ### 7.5 Upvotes ("Me too")
-Students only; not on own requests; only on `open/assigned/in_progress`; idempotent; the community feed shows other students' active requests for the student's hostel (defaults to the hostel of their latest request), ranked by votes then recency, capped at 12, **with no names or ids**.
+Students only; not on own requests; only on `open/assigned/in_progress`; idempotent; the community feed shows other students' active requests for the student's hostel (defaults to the hostel set in Settings, or of their latest request), ranked by votes then recency, capped at 12, **with no names or ids**. A request with `CAMPUS_WIDE_UPVOTE_THRESHOLD` (30) or more upvotes is shown to students in **every** hostel, not just its own, flagged `campusWide: true` — a fault that widespread is unlikely to be confined to one building.
 
 ### 7.6 AI / rules triage
 - With `ANTHROPIC_API_KEY`: Claude returns schema-constrained JSON `{categoryId, priority, reason}`; on any failure the rules engine answers.
@@ -341,8 +359,32 @@ When resolving, a technician may attach a photo and note. The photo is validated
 | Assigned | student, technician, admins | student, technician |
 | Status change | student, assigned technician, admins | student |
 | Becomes overdue | admins, technician | admins, technician |
+| New comment | the other people in the conversation (never the author) | same |
+| New announcement | students targeted by its hostel (or all) | same |
 
 Push delivery never blocks or fails the action that triggered it.
+
+### 7.9 Admin announcements
+Title 3–80 chars, message 5–500 chars, optional expiry (must be in the future). `hostel: null` targets every student; a named hostel targets students who **chose** it in Settings **plus** students whose **latest request** was there (deduplicated) — so a student never has to set their hostel manually to receive notices, though doing so is more reliable. Sending is a side effect (never blocks creating the announcement); a student sees an announcement if it is not expired and (`hostel === null` or `hostel === their hostel`).
+
+### 7.10 Comments on a request
+Only the reporting student, the currently assigned technician, and administrators may read or post (403 otherwise) — exactly the same audience as reading the request itself. Body 1–1000 chars after trimming; no comments once a request is `closed`; 15 posts/minute per user. The author is always the authenticated user, never a request-body field. Posting notifies the *other* people in the conversation, never the author.
+
+### 7.11 Recurring issue detection
+Pure function over recent requests (`recurrence.service.detectRecurringIssues`), excluding preventive-maintenance-generated requests (7.13). Two levels:
+
+| Scope | Threshold | Window |
+|---|---|---|
+| Same room, same category | 3+ reports | 60 days |
+| Same hostel, same category (any room) | 6+ reports | 30 days |
+
+Room text is normalised (case/whitespace) so "Block C, Room 24" and "block c,  room 24" count as the same room. `severity` is `high` at double the threshold, otherwise `watch`. Results are sorted most-frequent first. Each result links to **Plan a preventive check**, prefilling a new schedule (7.13) with the matching category/hostel/room.
+
+### 7.12 Technician performance
+Pure function (`performance.service.computeTechnicianPerformance`) over a chosen window (7/30/90/365 days, or 0 = all time — `ALLOWED_WINDOWS`). Per technician: `resolved` (finished in the window), `avgResolutionHours` (measured from **assignment**, not submission — so time an administrator took to assign is not counted against the technician), `onTimeRate` (% resolved within the request's SLA target, measured end-to-end from submission), `active` jobs on hand, `overdueNow`, and `avgRating` from students. A reassigned request counts only for the most recent assignee. No work in the window gives `null` averages, never `0` or `NaN`. Administrators see every technician (`GET /reports/technician-performance`); a technician sees only their own numbers plus their rank (`GET /reports/my-performance`).
+
+### 7.13 Preventive maintenance
+An administrator-defined recurring task (`maintenance_schedules`: category, hostel, optional room, priority, frequency in days, next due date). An hourly job (`schedules.service.runDueSchedules`) finds schedules whose `next_due_at` has passed and, for each: **advances `next_due_at` first** (so a failure cannot cause the same schedule to fire again on the next hourly check), then — **only if the previous task it generated is finished** (not `open`/`assigned`/`in_progress`) — creates a normal maintenance request via the same `requests.service.createRequest` path used for student submissions (so it gets a `status_history` row, SLA, admin notification, everything). The request is reported by the administrator who owns the schedule and its description is prefixed `"Preventive maintenance: "` (`utils/preventive.js`), which excludes it from the student "Already reported" feed (7.5), from recurring-issue detection (7.11), and from learning a hostel for the reporting admin. A schedule resumed after being paused jumps its due date to the next future occurrence rather than firing immediately for a stale date. An administrator can also **run a schedule immediately** (`POST /schedules/:id/run-now`), subject to the same "previous task finished" rule.
 
 ---
 
@@ -370,9 +412,10 @@ Bodies are JSON. `:id` is the numeric `request_id`.
 | `GET /requests` | administrator | all requests (each has `upvoteCount`) | `{ requests }` |
 | `POST /requests/:id/assign` | administrator | `technicianId` (uuid) | `{ requestId, status:"assigned", technicianId }` |
 | `PATCH /requests/:id/priority` | administrator | `priority` | `{ requestId, priority }` |
-| `GET /requests/assigned-to-me` | technician | | `{ requests }` |
+| `GET /requests/assigned-to-me` | technician | (each has `upvoteCount`) | `{ requests }` |
 | `GET /requests/:id` | scoped* | | `{ request }` incl. `history`, `rating`, `upvoteCount`, `resolution` |
 | `PATCH /requests/:id/status` | technician (assigned) / administrator | `status`; optional `resolutionPhoto` (data URL), `resolutionNote` | `{ requestId, status }` |
+| `GET /requests/:id/comments` · `POST /requests/:id/comments` | scoped* | `POST` body: `{ body }` (1–1000 chars) | `{ comments }` / `201 { comment }` |
 
 \*owner student, assigned technician, or administrator.
 
@@ -394,8 +437,30 @@ Bodies are JSON. `:id` is the numeric `request_id`.
 |---|---|---|
 | `GET /reports/analytics` | administrator | `averageResolutionHours, averageRating, thisMonth{totalRequests,resolved}, requestsByCategory, requestsByHostel, workloadByTechnician, resolutionTrend` |
 | `POST /reports/digest/send` | administrator | emails the weekly summary to the caller → `{ sentTo }` (`503` if email not configured) |
+| `GET /reports/recurring` | administrator | `{ issues }` — faults repeating at a room or hostel level (7.11) |
+| `GET /reports/technician-performance?days=` | administrator | `?days` one of `7,30,90,365,0` (default 30) → `{ days, technicians }` (7.12) |
+| `GET /reports/my-performance?days=` | technician | own numbers + rank → `{ days, performance, rank, outOf }` |
 
-### 8.5 Live updates and push
+### 8.5 Announcements
+| Method & path | Role | Body / notes | Response |
+|---|---|---|---|
+| `POST /announcements` | administrator | `title`, `message`, `hostel` (omit/null = all), `expiresAt?` (ISO, future) | `201 { announcement, recipients }` |
+| `GET /announcements` | any | students: only what applies to them; administrators: everything, each flagged `active` | `{ announcements }` |
+| `DELETE /announcements/:id` | administrator | — | `{ id, deleted: true }` |
+| `GET /announcements/hostel/me` · `PUT /announcements/hostel/me` | student | `PUT` body `{ hostel }` | `{ hostel }` |
+
+### 8.6 Preventive maintenance schedules
+All administrator-only (`server/src/routes/schedules.routes.js` applies `requireRole('administrator')` to the whole router).
+
+| Method & path | Body / notes | Response |
+|---|---|---|
+| `GET /schedules` | | `{ schedules, frequencies: [7,14,30,90,180,365] }` |
+| `POST /schedules` | `title`, `categoryId`, `hostel`, `frequencyDays`; optional `description`, `room`, `priority`, `firstDueAt` | `201 { schedule }` |
+| `PATCH /schedules/:id` | `{ active }` — pause/resume | `{ id, active }` |
+| `DELETE /schedules/:id` | (existing generated tasks are kept) | `{ id, deleted: true }` |
+| `POST /schedules/:id/run-now` | creates the task immediately; `400` if the previous one is still open | `201 { scheduleId, requestId }` |
+
+### 8.7 Live updates and push
 | Method & path | Notes |
 |---|---|
 | `GET /events` | **Server-Sent Events** stream (`text/event-stream`), authenticated. Events: `ready`, `request` with `{type:"request_changed", requestId, message, actorId}`. Heartbeat every 25 s |
@@ -415,9 +480,11 @@ Bodies are JSON. `:id` is the numeric `request_id`.
 | `/` | Home (role-specific dashboard) | all |
 | `/requests`, `/requests/new`, `/requests/:id` | My Requests, Report Issue, Request Detail | student |
 | `/tasks`, `/tasks/:id` | My Tasks, Task Detail | technician |
-| `/manage-requests`, `/manage-requests/:id` | Manage Requests, Admin Request Detail | administrator |
+| `/manage-requests`, `/manage-requests/:id` | Manage Requests (incl. Overdue tab), Admin Request Detail | administrator |
 | `/user-management` | User Management | administrator |
-| `/reports` | Reports & Analytics | administrator |
+| `/announcements` | Announcements | administrator |
+| `/preventive-maintenance` | Preventive Maintenance | administrator |
+| `/reports` | Reports & Analytics (incl. Technician Performance, Needs a Permanent Fix) | administrator |
 | `/profile` | Account Settings | all |
 
 `ProtectedRoute` redirects and hides pages by role — a **convenience only**; the server enforces access.
@@ -426,11 +493,15 @@ Bodies are JSON. `:id` is the numeric `request_id`.
 ```
 client/src/
   pages/        one folder per screen (Page.jsx + Page.css)
-  components/   shared UI: Sidebar, TopNav, StatCard, SlaBadge, charts, UpvoteButton,
-                CommunityIssues, SimilarIssues, TriageSuggestion, ResolutionProof(Form),
-                HostelHeatmap, NotificationSettings, ThemeToggle
-  services/     api.js (fetch wrapper), apiCache.js, requests/users/reports/... service
-                modules, draftQueue/draftSync (offline), pushService, liveEvents, theme
+  components/   shared UI: Sidebar, TopNav, StatCard, SlaBadge, AffectedBadge, charts,
+                UpvoteButton, CommunityIssues, SimilarIssues, TriageSuggestion,
+                ResolutionProof(Form), PhotoInput (camera capture / file picker),
+                HostelHeatmap, RecurringIssues, TechnicianPerformance, MyPerformance,
+                AnnouncementBanner, HostelSetting, CommentsThread,
+                NotificationSettings, ThemeToggle
+  services/     api.js (fetch wrapper), apiCache.js, requests/users/reports/
+                announcements/schedules/... service modules, draftQueue/draftSync
+                (offline), pushService, liveEvents, theme
   hooks/        useAuth (session), useLive (live updates), useDraftSync
   styles/       variables.css (design tokens), theme.css (dark theme)
   utils/        requestFormat (labels/icons), csv, image (photo compression)
@@ -473,6 +544,7 @@ Jobs run as plain timers inside the Express process (`src/jobs/scheduler.js`); e
 |---|---|---|
 | Overdue monitor | first run 30 s after start, then **every hour** (check interval); reminders every 4 h / 24 h by priority | See 7.3 |
 | Weekly summary email | checked hourly; sends Monday ≥ 06:00 UTC (08:00 Lusaka) | Catches up if a week was missed; run recorded in `job_runs` **before** sending so a failure/restart cannot duplicate |
+| Preventive maintenance | first run 30 s after start, then **every hour** | Creates a request for each schedule whose `next_due_at` has passed, unless the previous one it generated is still open. See 7.13 |
 
 Integrations degrade gracefully:
 
@@ -502,7 +574,7 @@ Integrations degrade gracefully:
 ---
 
 ## 13. Testing and CI
-158 automated tests (110 unit + 48 integration). Run `npm test` in `server/`. GitHub Actions
+253 automated tests (183 unit + 70 integration). Run `npm test` in `server/`. GitHub Actions
 (`.github/workflows/ci.yml`) runs the server tests and the client lint + build on every push
 and pull request, with no secrets. Full detail in [TESTING.md](TESTING.md).
 
@@ -560,6 +632,8 @@ with `role = 'administrator'` and an `id_number` (or register a student and chan
 | "permission denied for table ..." | Service-role grants missing | Run `003_grant_service_role_privileges.sql` |
 | Resolving fails only when a photo is attached | `012` not run, or `request-photos` bucket missing | Run `012` / `005` |
 | Overdue monitor logs "(has sql/011 been run?)" | Migration `011` missing | Run it |
+| Preventive maintenance monitor logs "(has sql/015 been run?)" | Migration `015` missing | Run it |
+| Posting an announcement / comment fails, or a student's hostel won't save | Migration `013` / `014` missing | Run it (both are safe to re-run) |
 | "Email is not configured" (503) | SMTP variables missing | Set `SMTP_*`, `APP_URL`; restart |
 | Notifications toggle greyed out / "blocked" | Browser permission denied, or unsupported browser | Allow notifications for the site; on iPhone add to Home Screen first |
 | "Push notifications are not enabled on the server yet" | VAPID keys missing | Set `VAPID_*` and restart |
@@ -579,7 +653,7 @@ Use Supabase's dashboard backups. Uploaded photos live in Supabase Storage.
 ## 16. Extending the system
 
 ### Add a field to requests (e.g. "urgent flag")
-1. New migration in `server/sql/` (`013_...sql`), run it in Supabase.
+1. New migration in `server/sql/` (`016_...sql`), run it in Supabase.
 2. Repository: add the column to the relevant `SELECT` / insert.
 3. Service: map it in `mapRequestRow`, apply any rule.
 4. Route: validate the new body field.
