@@ -5,6 +5,7 @@ import { getAssignedRequests } from '../../services/requestsService';
 import StatCard from '../../components/StatCard';
 import { ClipboardListIcon, CheckCircleIcon } from '../../components/icons';
 import SlaBadge from '../../components/SlaBadge';
+import AffectedBadge from '../../components/AffectedBadge';
 import { setOwnAvailability } from '../../services/usersService';
 import {
   STATUS_LABELS,
@@ -134,6 +135,7 @@ function TechnicianHome() {
                           {STATUS_LABELS[request.status] || request.status}
                         </span>
                         <SlaBadge sla={request.sla} />
+                        <AffectedBadge count={request.upvoteCount} />
                       </div>
                     </div>
                     <p className="technician-home-task-description">{request.description}</p>

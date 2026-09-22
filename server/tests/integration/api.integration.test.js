@@ -514,3 +514,21 @@ describe('smart assignment: technician list', () => {
     expect(res.body.technicians[1]).toMatchObject({ activeTasks: 2, recommended: false });
   });
 });
+
+// ---------------------------------------------------------------------------
+describe('technicians see how many students are affected', () => {
+  it('assigned tasks carry an upvoteCount', async () => {
+    requestsRepository.findRequestsAssignedToTechnician.mockResolvedValue([requestRow({ request_id: 31 }), requestRow({ request_id: 32 })]);
+    upvotesRepository.findAllUpvotes.mockResolvedValue([
+      { request_id: 31, user_id: 'a' },
+      { request_id: 31, user_id: 'b' },
+      { request_id: 31, user_id: 'c' },
+    ]);
+
+    const res = await request(app).get('/api/requests/assigned-to-me').set(as('tech-token'));
+
+    expect(res.status).toBe(200);
+    const byId = Object.fromEntries(res.body.requests.map((r) => [r.requestId, r.upvoteCount]));
+    expect(byId).toEqual({ 31: 3, 32: 0 });
+  });
+});

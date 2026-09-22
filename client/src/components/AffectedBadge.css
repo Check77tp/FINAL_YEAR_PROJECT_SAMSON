@@ -1,0 +1,11 @@
+.affected-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-badge);
+  background: var(--color-tertiary-fixed);
+  color: var(--color-on-tertiary-fixed-variant);
+  font-family: var(--font-body);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  white-space: nowrap;
+}

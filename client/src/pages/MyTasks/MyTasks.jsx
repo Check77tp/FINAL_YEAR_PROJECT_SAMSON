@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { getAssignedRequests } from '../../services/requestsService';
 import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
 import SlaBadge from '../../components/SlaBadge';
+import AffectedBadge from '../../components/AffectedBadge';
 import './MyTasks.css';
 import { useLiveVersion } from '../../hooks/useLive';
 
@@ -132,6 +133,7 @@ function MyTasks() {
                         {STATUS_LABELS[request.status] || request.status}
                       </span>
                       <SlaBadge sla={request.sla} />
+                      <AffectedBadge count={request.upvoteCount} />
                     </div>
                   </div>
                   <p className="my-tasks-card-description">{request.description}</p>

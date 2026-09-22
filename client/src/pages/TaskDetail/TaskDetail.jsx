@@ -5,6 +5,7 @@ import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon } from '../../utils/reques
 import { StarIcon, MapPinIcon } from '../../components/icons';
 import RequestTimeline from '../../components/RequestTimeline';
 import SlaBadge from '../../components/SlaBadge';
+import AffectedBadge from '../../components/AffectedBadge';
 import ResolutionProof from '../../components/ResolutionProof';
 import ResolutionProofForm from '../../components/ResolutionProofForm';
 import './TaskDetail.css';
@@ -88,6 +89,7 @@ function TaskDetail() {
         <h1 className="task-detail-title">#REQ-{request.requestId}</h1>
         <div className="task-detail-badges">
           <SlaBadge sla={request.sla} />
+          <AffectedBadge count={request.upvoteCount} />
           <span className={`task-detail-status task-detail-status-${request.status}`}>
             {STATUS_LABELS[request.status] || request.status}
           </span>

@@ -320,8 +320,14 @@ export async function listAllRequests() {
 
 // Technician action: only requests currently assigned to them.
 export async function listAssignedRequests(technicianId) {
-  const rows = await requestsRepository.findRequestsAssignedToTechnician(technicianId);
-  return rows.map(mapRequestRow);
+  const [rows, upvoteRows] = await Promise.all([
+    requestsRepository.findRequestsAssignedToTechnician(technicianId),
+    upvotesRepository.findAllUpvotes(),
+  ]);
+  // upvoteCount = how many other students said "me too". Technicians see it so
+  // widely-felt problems are fixed promptly.
+  const counts = countByRequest(upvoteRows);
+  return rows.map((row) => ({ ...mapRequestRow(row), upvoteCount: counts.get(row.request_id) || 0 }));
 }
 
 // Single-request detail with its status_history timeline. Access: a student

@@ -4,6 +4,7 @@ import { getRequestDetail, submitRating } from '../../services/requestsService';
 import { STATUS_LABELS, PRIORITY_LABELS, AVAILABILITY_LABELS, categoryIcon } from '../../utils/requestFormat';
 import { StarIcon, MapPinIcon } from '../../components/icons';
 import RequestTimeline from '../../components/RequestTimeline';
+import AffectedBadge from '../../components/AffectedBadge';
 import ResolutionProof from '../../components/ResolutionProof';
 import './RequestDetail.css';
 import { useLiveVersion } from '../../hooks/useLive';
@@ -105,6 +106,7 @@ function RequestDetail() {
               {PRIORITY_LABELS[request.priority] || request.priority} Priority
             </span>
           )}
+          <AffectedBadge count={request.upvoteCount} />
         </div>
         {(request.hostel || request.room) && (
           <span className="request-detail-location">
