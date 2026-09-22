@@ -225,3 +225,19 @@ export async function markOverdueNotified(requestIds) {
 
   if (error) throw error;
 }
+
+// student_id -> hostel of their most recent request that named one. Used to
+// reach students who never set a hostel in Settings but have reported before.
+export async function findLatestHostelPerStudent() {
+  const { data, error } = await supabase
+    .from('maintenance_requests')
+    .select('student_id, hostel, created_at')
+    .not('hostel', 'is', null)
+    .order('created_at', { ascending: false })
+    .limit(2000);
+
+  if (error) throw error;
+  const latest = new Map();
+  for (const row of data) if (!latest.has(row.student_id)) latest.set(row.student_id, row.hostel);
+  return latest;
+}

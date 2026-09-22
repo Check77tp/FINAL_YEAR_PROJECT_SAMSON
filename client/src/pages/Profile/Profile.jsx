@@ -4,6 +4,7 @@ import { updateOwnProfile } from '../../services/usersService';
 import { AVAILABILITY_LABELS } from '../../utils/requestFormat';
 import { CameraIcon } from '../../components/icons';
 import NotificationSettings from '../../components/NotificationSettings';
+import HostelSetting from '../../components/HostelSetting';
 import { AppearanceSettings } from '../../components/ThemeToggle';
 import './Profile.css';
 
@@ -204,6 +205,8 @@ function Profile() {
         )}
         {savedNote && !saveError && <p className="profile-saved-note">Saved.</p>}
       </section>
+
+      {user?.role === 'student' && <HostelSetting />}
 
       <AppearanceSettings />
 

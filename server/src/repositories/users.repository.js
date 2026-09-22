@@ -89,3 +89,46 @@ export async function findEmailByIdNumber(idNumber) {
   if (error) throw error;
   return data?.email ?? null;
 }
+
+// ---- Student hostel (users.hostel, added in migration 013) -----------------
+// Kept out of PROFILE_COLUMNS on purpose: authenticate() loads the profile on
+// every request, so selecting a brand-new column there would break login for
+// everyone if the migration had not been run yet.
+
+export async function findHostelByUserId(userId) {
+  const { data, error } = await supabase.from('users').select('hostel').eq('user_id', userId).maybeSingle();
+
+  if (error) throw error;
+  return data?.hostel ?? null;
+}
+
+export async function updateHostel(userId, hostel) {
+  const { error } = await supabase.from('users').update({ hostel }).eq('user_id', userId);
+
+  if (error) throw error;
+}
+
+// Only fills the hostel in if the student has not chosen one yet.
+export async function setHostelIfMissing(userId, hostel) {
+  const { error } = await supabase.from('users').update({ hostel }).eq('user_id', userId).is('hostel', null);
+
+  if (error) throw error;
+}
+
+export async function findStudentIdsByHostel(hostel) {
+  const { data, error } = await supabase
+    .from('users')
+    .select('user_id')
+    .eq('role', 'student')
+    .eq('hostel', hostel);
+
+  if (error) throw error;
+  return data.map((row) => row.user_id);
+}
+
+export async function findAllStudentIds() {
+  const { data, error } = await supabase.from('users').select('user_id').eq('role', 'student');
+
+  if (error) throw error;
+  return data.map((row) => row.user_id);
+}

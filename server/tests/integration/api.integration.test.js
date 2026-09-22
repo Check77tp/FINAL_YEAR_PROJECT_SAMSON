@@ -54,6 +54,7 @@ vi.mock('../../src/repositories/storage.repository.js');
 vi.mock('../../src/repositories/reports.repository.js');
 vi.mock('../../src/repositories/activity.repository.js');
 vi.mock('../../src/repositories/push.repository.js');
+vi.mock('../../src/repositories/announcements.repository.js');
 vi.mock('../../src/services/push.service.js');
 vi.mock('../../src/config/anthropic.js', () => ({ aiEnabled: false, aiModel: 'test', anthropic: null }));
 
@@ -64,6 +65,8 @@ import * as categoriesRepository from '../../src/repositories/categories.reposit
 import * as upvotesRepository from '../../src/repositories/upvotes.repository.js';
 import * as proofsRepository from '../../src/repositories/proofs.repository.js';
 import * as storageRepository from '../../src/repositories/storage.repository.js';
+import * as announcementsRepository from '../../src/repositories/announcements.repository.js';
+import * as pushService from '../../src/services/push.service.js';
 
 const STUDENT = USERS['student-token'];
 const STUDENT2 = USERS['student2-token'];
@@ -530,5 +533,71 @@ describe('technicians see how many students are affected', () => {
     expect(res.status).toBe(200);
     const byId = Object.fromEntries(res.body.requests.map((r) => [r.requestId, r.upvoteCount]));
     expect(byId).toEqual({ 31: 3, 32: 0 });
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe('announcements', () => {
+  const announcementRow = (over = {}) => ({
+    announcement_id: 1,
+    title: 'Water cut',
+    message: 'No water 10:00-12:00',
+    hostel: 'Kalingalinga',
+    created_by: USERS['admin-token'].user_id,
+    created_at: new Date().toISOString(),
+    expires_at: null,
+    author: { name: 'Admin One' },
+    ...over,
+  });
+
+  it('only administrators can post or delete announcements (403 otherwise)', async () => {
+    const body = { title: 'Water cut', message: 'No water 10:00-12:00', hostel: 'Kalingalinga' };
+    expect((await request(app).post('/api/announcements').set(as('student-token')).send(body)).status).toBe(403);
+    expect((await request(app).post('/api/announcements').set(as('tech-token')).send(body)).status).toBe(403);
+    expect((await request(app).delete('/api/announcements/1').set(as('student-token'))).status).toBe(403);
+  });
+
+  it('an administrator posts one, it is stored and pushed to the hostel', async () => {
+    announcementsRepository.insertAnnouncement.mockResolvedValue(announcementRow());
+    usersRepository.findStudentIdsByHostel.mockResolvedValue([STUDENT.user_id]);
+    requestsRepository.findLatestHostelPerStudent.mockResolvedValue(new Map());
+
+    const res = await request(app)
+      .post('/api/announcements')
+      .set(as('admin-token'))
+      .send({ title: 'Water cut', message: 'No water 10:00-12:00', hostel: 'Kalingalinga' });
+
+    expect(res.status).toBe(201);
+    expect(res.body.announcement).toMatchObject({ id: 1, hostel: 'Kalingalinga' });
+    expect(res.body.recipients).toBe(1);
+    expect(pushService.notifyUsers).toHaveBeenCalledWith([STUDENT.user_id], expect.objectContaining({ url: '/' }));
+  });
+
+  it('validation errors are 400 and nothing is stored', async () => {
+    const res = await request(app).post('/api/announcements').set(as('admin-token')).send({ title: 'x', message: 'y' });
+    expect(res.status).toBe(400);
+    expect(announcementsRepository.insertAnnouncement).not.toHaveBeenCalled();
+  });
+
+  it('a student only receives the announcements for their hostel (and all-hostel ones)', async () => {
+    announcementsRepository.findRecentAnnouncements.mockResolvedValue([
+      announcementRow({ announcement_id: 1, hostel: null }),
+      announcementRow({ announcement_id: 2, hostel: 'Kalingalinga' }),
+      announcementRow({ announcement_id: 3, hostel: 'Soweto' }),
+    ]);
+    usersRepository.findHostelByUserId.mockResolvedValue('Kalingalinga');
+
+    const res = await request(app).get('/api/announcements').set(as('student-token'));
+
+    expect(res.status).toBe(200);
+    expect(res.body.announcements.map((a) => a.id)).toEqual([1, 2]);
+  });
+
+  it('a student can set their hostel; an empty one is rejected', async () => {
+    const ok = await request(app).put('/api/announcements/hostel/me').set(as('student-token')).send({ hostel: 'Soweto' });
+    expect(ok.status).toBe(200);
+    expect(usersRepository.updateHostel).toHaveBeenCalledWith(STUDENT.user_id, 'Soweto');
+    const bad = await request(app).put('/api/announcements/hostel/me').set(as('student-token')).send({ hostel: '  ' });
+    expect(bad.status).toBe(400);
   });
 });

@@ -17,6 +17,7 @@ import reportsRoutes from './routes/reports.routes.js';
 import activityRoutes from './routes/activity.routes.js';
 import pushRoutes from './routes/push.routes.js';
 import eventsRoutes from './routes/events.routes.js';
+import announcementsRoutes from './routes/announcements.routes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { NODE_ENV } from './config/env.js';
 
@@ -41,6 +42,7 @@ app.use('/api/reports', reportsRoutes);
 app.use('/api/activity', activityRoutes);
 app.use('/api/push', pushRoutes);
 app.use('/api/events', eventsRoutes);
+app.use('/api/announcements', announcementsRoutes);
 
 app.use(errorHandler);
 

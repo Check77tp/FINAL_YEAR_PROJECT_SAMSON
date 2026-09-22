@@ -1,0 +1,56 @@
+/* 1. Default = mobile */
+.hostel-setting {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-level-1);
+}
+
+.hostel-setting-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.hostel-setting-note {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.hostel-setting-saved {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-status-resolved-text);
+}
+
+.hostel-setting-error {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-error);
+}
+
+.hostel-setting-select {
+  padding: 10px 12px;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-input);
+  background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+}
+
+/* 2. Tablet */
+@media (min-width: 768px) {
+  .hostel-setting {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .hostel-setting-select {
+    min-width: 220px;
+  }
+}

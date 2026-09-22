@@ -78,6 +78,11 @@ export function notifyUser(userId, payload) {
   return sendToUsers([userId], payload);
 }
 
+// Same payload to many users at once (e.g. an announcement to a hostel).
+export function notifyUsers(userIds, payload) {
+  return sendToUsers([...new Set(userIds)], payload);
+}
+
 export async function notifyAdministrators(payload) {
   if (!pushEnabled) return;
   try {

@@ -278,6 +278,14 @@ export async function createRequest({
       previousStatus: null,
       newStatus: 'open',
     });
+    // Learn the student's hostel from their first request, so announcements to
+    // that hostel can reach them. Best effort: never fails the submission.
+    try {
+      await usersRepository.setHostelIfMissing(studentId, hostel);
+    } catch {
+      /* column not migrated yet, or a transient error - ignore */
+    }
+
     announceRequestChange({
       requestId: row.request_id,
       userIds: [studentId],

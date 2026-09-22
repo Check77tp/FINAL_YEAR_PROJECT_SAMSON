@@ -1,0 +1,203 @@
+/* 1. Default = mobile */
+.announcements {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--margin-mobile);
+}
+
+.announcements-header {
+  margin-bottom: var(--spacing-md);
+}
+
+.announcements-title {
+  font-size: var(--font-size-headline-sm-mobile);
+  line-height: var(--line-height-headline-sm-mobile);
+  font-weight: var(--font-weight-headline-sm-mobile);
+  color: var(--color-on-surface);
+}
+
+.announcements-subtitle {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.announcements-form,
+.announcements-list-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-level-1);
+}
+
+.announcements-section-title {
+  font-size: var(--font-size-body-md);
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.announcements-label {
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-on-surface);
+}
+
+.announcements-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-input);
+  background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+}
+
+.announcements-textarea {
+  resize: vertical;
+}
+
+.announcements-count {
+  align-self: flex-end;
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.announcements-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xs);
+}
+
+.announcements-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.announcements-send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  border: none;
+  border-radius: var(--radius-button);
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-md);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.announcements-send:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.announcements-error {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-error);
+}
+
+.announcements-notice {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-status-resolved-text);
+}
+
+.announcements-muted {
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.announcements-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin: 0;
+  padding: 0;
+}
+
+.announcements-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-md);
+}
+
+.announcements-item-expired {
+  opacity: 0.65;
+}
+
+.announcements-item-body {
+  min-width: 0;
+}
+
+.announcements-item-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.announcements-chip {
+  padding: 1px 8px;
+  border-radius: var(--radius-badge);
+  background: var(--color-surface-container);
+  color: var(--color-on-surface-variant);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+}
+
+.announcements-chip-active {
+  background: var(--color-status-resolved-bg);
+  color: var(--color-status-resolved-text);
+}
+
+.announcements-item-message {
+  margin-top: 2px;
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface);
+  overflow-wrap: anywhere;
+}
+
+.announcements-item-meta {
+  margin-top: 4px;
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.announcements-delete {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-button);
+  background: transparent;
+  color: var(--color-error);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+/* 2. Tablet */
+@media (min-width: 768px) {
+  .announcements {
+    padding: var(--spacing-lg);
+  }
+
+  .announcements-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}

@@ -6,6 +6,7 @@ import { STATUS_LABELS, categoryIcon, formatDate } from '../../utils/requestForm
 import { PlusIcon, ClipboardListIcon, CheckCircleIcon } from '../../components/icons';
 import StatCard from '../../components/StatCard';
 import CommunityIssues from '../../components/CommunityIssues';
+import AnnouncementBanner from '../../components/AnnouncementBanner';
 import './StudentHome.css';
 import { useLiveVersion } from '../../hooks/useLive';
 
@@ -39,6 +40,8 @@ function StudentHome() {
           Track your existing hostel issues or report new ones quickly.
         </p>
       </header>
+
+      <AnnouncementBanner />
 
       <div className="student-home-stats">
         <StatCard icon={<ClipboardListIcon width={20} height={20} />} label="Active Requests" value={activeCount} tone="primary" />
