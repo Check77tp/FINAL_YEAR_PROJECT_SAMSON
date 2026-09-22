@@ -15,10 +15,42 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    getCurrentUser()
-      .then(setUser)
-      .catch(clearSession)
-      .finally(() => setLoading(false));
+    let cancelled = false;
+
+    // A network failure here (offline, or the server briefly unreachable)
+    // does NOT mean the session itself is invalid — only a genuine auth
+    // rejection (expired/invalid token, a real 401) should log the user
+    // out. Wiping a perfectly good session just because a background check
+    // couldn't reach the server would boot a student to the login screen
+    // every time they open the installed app with weak hostel wifi.
+    function attempt() {
+      getCurrentUser()
+        .then((profile) => {
+          if (!cancelled) setUser(profile);
+        })
+        .catch((err) => {
+          if (!cancelled && !err.isNetworkError) clearSession();
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    }
+
+    attempt();
+
+    // If that first attempt failed because we were offline, the token is
+    // still sitting in storage unused — retry once the browser reports a
+    // connection again instead of leaving the user stuck on the login
+    // screen until they manually reload.
+    function retryOnReconnect() {
+      if (!cancelled) attempt();
+    }
+    window.addEventListener('online', retryOnReconnect);
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener('online', retryOnReconnect);
+    };
   }, []);
 
   async function login({ idNumber, email, password, remember }) {

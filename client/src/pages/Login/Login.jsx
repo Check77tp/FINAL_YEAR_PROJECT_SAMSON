@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { IdCardIcon, LockIcon, EyeIcon, EyeOffIcon, ArrowRightIcon, GraduationCapIcon } from '../../components/icons';
@@ -6,8 +6,16 @@ import loginHero from '../../assets/login-hero.jpg';
 import './Login.css';
 
 function Login() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
+
+  // Covers the case where a valid session was quietly restored in the
+  // background (see useAuth's retry-on-reconnect) while the user was
+  // sitting on this screen after being bounced here by a connectivity
+  // blip — send them straight in instead of making them log in again.
+  useEffect(() => {
+    if (user) navigate('/', { replace: true });
+  }, [user, navigate]);
 
   // ID number is the default/primary credential per CLAUDE.md's
   // "Authentication: ID-Based Login" — email is a secondary, toggled path.

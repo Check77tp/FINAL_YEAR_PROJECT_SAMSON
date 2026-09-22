@@ -27,11 +27,19 @@ async function request(path, { method = 'GET', body, auth = false } = {}) {
     // isNetworkError lets callers (e.g. the offline draft queue) tell this
     // apart from a real validation/server error without parsing the
     // message text.
-    const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
+    //
+    // navigator.onLine only reflects whether the network adapter thinks it
+    // has a link (e.g. connected to a router) — it stays `true` even when
+    // that connection has no real internet behind it, which is a common
+    // case on hostel wifi. So `onLine === false` is trustworthy (definitely
+    // offline), but `onLine === true` is not proof of the opposite. When
+    // we're not sure, lead with "check your connection" rather than
+    // confidently blaming the server.
+    const definitelyOffline = typeof navigator !== 'undefined' && navigator.onLine === false;
     const networkError = new Error(
-      offline
+      definitelyOffline
         ? "You're offline. Check your internet connection and try again."
-        : 'Could not reach the server. It may be temporarily unavailable — please try again.'
+        : "Could not reach the server. Check your internet connection — if you're online, the server may be temporarily unavailable. Please try again."
     );
     networkError.isNetworkError = true;
     throw networkError;
