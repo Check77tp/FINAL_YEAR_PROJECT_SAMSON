@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getCategories } from '../../services/categoriesService';
 import { createRequest } from '../../services/requestsService';
@@ -6,15 +6,11 @@ import SimilarIssues from '../../components/SimilarIssues';
 import TriageSuggestion from '../../components/TriageSuggestion';
 import { saveDraft } from '../../services/draftQueue';
 import { categoryIcon, HOSTELS, PRIORITY_LABELS, PRIORITY_VALUES } from '../../utils/requestFormat';
-import { CameraIcon, XIcon } from '../../components/icons';
+import PhotoInput from '../../components/PhotoInput';
 import './SubmitRequest.css';
-
-const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
-const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 function SubmitRequest() {
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
 
   const [categories, setCategories] = useState(() => getCategories.peek() ?? null);
   const [categoriesError, setCategoriesError] = useState('');
@@ -24,7 +20,6 @@ function SubmitRequest() {
   const [room, setRoom] = useState('');
   const [priority, setPriority] = useState('medium');
   const [photoDataUrl, setPhotoDataUrl] = useState(null);
-  const [photoError, setPhotoError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
@@ -33,28 +28,6 @@ function SubmitRequest() {
       .then(setCategories)
       .catch((err) => setCategoriesError(err.message));
   }, []);
-
-  function handlePhotoChange(event) {
-    const file = event.target.files?.[0];
-    event.target.value = '';
-    if (!file) return;
-
-    setPhotoError('');
-
-    if (!ACCEPTED_TYPES.includes(file.type)) {
-      setPhotoError('Photo must be a JPEG, PNG, or WebP image.');
-      return;
-    }
-    if (file.size > MAX_PHOTO_BYTES) {
-      setPhotoError('Photo must be 5MB or smaller.');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => setPhotoDataUrl(reader.result);
-    reader.onerror = () => setPhotoError('Could not read that file — please try again.');
-    reader.readAsDataURL(file);
-  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -242,44 +215,7 @@ function SubmitRequest() {
           <span className="submit-request-optional">Optional</span>
         </div>
 
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          className="submit-request-file-input"
-          onChange={handlePhotoChange}
-        />
-
-        {photoDataUrl ? (
-          <div className="submit-request-photo-preview">
-            <img src={photoDataUrl} alt="Selected issue evidence" />
-            <button
-              type="button"
-              className="submit-request-photo-remove"
-              onClick={() => setPhotoDataUrl(null)}
-              aria-label="Remove photo"
-            >
-              <XIcon width={16} height={16} />
-            </button>
-          </div>
-        ) : (
-          <button
-            type="button"
-            className="submit-request-photo-dropzone"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <span className="submit-request-photo-dropzone-icon">
-              <CameraIcon width={22} height={22} />
-            </span>
-            <span className="submit-request-photo-dropzone-title">Tap to upload photo</span>
-            <span className="submit-request-photo-dropzone-note">JPG, PNG, or WebP up to 5MB</span>
-          </button>
-        )}
-        {photoError && (
-          <p className="submit-request-error" role="alert">
-            {photoError}
-          </p>
-        )}
+        <PhotoInput value={photoDataUrl} onChange={setPhotoDataUrl} previewAlt="Selected issue evidence" />
 
         {submitError && (
           <p className="submit-request-error" role="alert">

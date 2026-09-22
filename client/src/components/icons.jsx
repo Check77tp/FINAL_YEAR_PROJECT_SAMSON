@@ -321,3 +321,13 @@ export function MailIcon(props) {
     </svg>
   );
 }
+
+export function ImageIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <circle cx="9" cy="10" r="1.6" />
+      <path d="m21 16-5-5-8 8" />
+    </svg>
+  );
+}

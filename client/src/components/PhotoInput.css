@@ -1,0 +1,162 @@
+/* 1. Default = mobile */
+.photo-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.photo-input-file {
+  display: none;
+}
+
+.photo-input-preview {
+  position: relative;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  border: 1px solid var(--color-card-border);
+}
+
+.photo-input-preview img {
+  display: block;
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+}
+
+.photo-input-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  cursor: pointer;
+}
+
+.photo-input-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xs);
+}
+
+.photo-input-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 84px;
+  padding: 12px 8px;
+  border: 2px dashed var(--color-outline-variant);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-container-low);
+  color: var(--color-on-surface);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.photo-input-button svg {
+  color: var(--color-primary-brand);
+}
+
+.photo-input-button:hover:not(:disabled) {
+  border-color: var(--color-primary-brand);
+  background: var(--color-primary-fixed);
+}
+
+.photo-input-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.photo-input-note {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+  text-align: center;
+}
+
+.photo-input-error {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-error);
+}
+
+/* Webcam dialog (computers) */
+.photo-input-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm);
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.photo-input-modal-card {
+  width: 100%;
+  max-width: 560px;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-container-lowest);
+}
+
+.photo-input-video {
+  display: block;
+  width: 100%;
+  max-height: 60vh;
+  border-radius: var(--radius-md);
+  background: #000;
+}
+
+.photo-input-hint {
+  margin: 8px 0 0;
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.photo-input-modal-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+}
+
+.photo-input-capture,
+.photo-input-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 20px;
+  border-radius: var(--radius-button);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.photo-input-capture {
+  flex: 1;
+  border: none;
+  background: var(--color-primary-brand);
+  color: var(--color-on-primary);
+}
+
+.photo-input-capture:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.photo-input-secondary {
+  border: 1px solid var(--color-outline-variant);
+  background: transparent;
+  color: var(--color-on-surface);
+}
