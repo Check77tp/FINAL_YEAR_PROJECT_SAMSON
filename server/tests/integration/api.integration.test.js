@@ -678,3 +678,43 @@ describe('recurring issue detection', () => {
     expect((await request(app).get('/api/reports/recurring').set(as('tech-token'))).status).toBe(403);
   });
 });
+
+// ---------------------------------------------------------------------------
+describe('technician performance', () => {
+  beforeEach(() => {
+    const now = Date.now();
+    const h = (n) => new Date(now - n * 3600e3).toISOString();
+    usersRepository.findUsersByRole.mockResolvedValue([
+      { user_id: TECH.user_id, name: 'Tech One', availability_status: 'available' },
+      { user_id: TECH2.user_id, name: 'Tech Two', availability_status: 'available' },
+    ]);
+    reportsRepository.findAssignmentsForPerformance.mockResolvedValue([
+      { request_id: 1, technician_id: TECH.user_id, assigned_at: h(90), request: { status: 'closed', priority: 'medium', created_at: h(100) } },
+      { request_id: 2, technician_id: TECH2.user_id, assigned_at: h(30), request: { status: 'in_progress', priority: 'critical', created_at: h(40) } },
+    ]);
+    reportsRepository.findOpenAndResolvedHistory.mockResolvedValue([{ request_id: 1, new_status: 'resolved', changed_at: h(50) }]);
+    reportsRepository.findRatingsWithRequest.mockResolvedValue([{ request_id: 1, rating: 5 }]);
+  });
+
+  it('administrators see every technician, ranked, with the right numbers', async () => {
+    const res = await request(app).get('/api/reports/technician-performance?days=30').set(as('admin-token'));
+    expect(res.status).toBe(200);
+    expect(res.body.days).toBe(30);
+    expect(res.body.technicians[0]).toMatchObject({ name: 'Tech One', resolved: 1, onTimeRate: 100, avgRating: 5 });
+    expect(res.body.technicians[1]).toMatchObject({ name: 'Tech Two', active: 1, overdueNow: 1 });
+  });
+
+  it('rejects an unsupported window (400) and non-admins (403)', async () => {
+    expect((await request(app).get('/api/reports/technician-performance?days=13').set(as('admin-token'))).status).toBe(400);
+    expect((await request(app).get('/api/reports/technician-performance').set(as('student-token'))).status).toBe(403);
+    expect((await request(app).get('/api/reports/technician-performance').set(as('tech-token'))).status).toBe(403);
+  });
+
+  it('a technician sees only their own numbers and rank', async () => {
+    const res = await request(app).get('/api/reports/my-performance').set(as('tech-token'));
+    expect(res.status).toBe(200);
+    expect(res.body.performance).toMatchObject({ name: 'Tech One', resolved: 1 });
+    expect(res.body).toMatchObject({ rank: 1, outOf: 2 });
+    expect((await request(app).get('/api/reports/my-performance').set(as('student-token'))).status).toBe(403);
+  });
+});

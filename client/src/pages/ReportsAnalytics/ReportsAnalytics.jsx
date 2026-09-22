@@ -7,6 +7,7 @@ import BarChart from '../../components/BarChart';
 import LineChart from '../../components/LineChart';
 import HostelHeatmap from '../../components/HostelHeatmap';
 import RecurringIssues from '../../components/RecurringIssues';
+import TechnicianPerformance from '../../components/TechnicianPerformance';
 import { DownloadIcon, PrinterIcon, MailIcon } from '../../components/icons';
 import './ReportsAnalytics.css';
 import { useLiveVersion } from '../../hooks/useLive';
@@ -175,6 +176,8 @@ function ReportsAnalytics() {
           </section>
 
           {requests && <HostelHeatmap requests={requests} />}
+
+          <TechnicianPerformance />
 
           <RecurringIssues />
 

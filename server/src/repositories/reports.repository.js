@@ -50,3 +50,21 @@ export async function findRequestsForRecurrence(sinceIso) {
   if (error) throw error;
   return data;
 }
+
+// Every assignment with the request's status/priority/created_at, for the
+// technician performance maths.
+export async function findAssignmentsForPerformance() {
+  const { data, error } = await supabase
+    .from('technician_assignments')
+    .select('request_id, technician_id, assigned_at, request:maintenance_requests ( status, priority, created_at )');
+
+  if (error) throw error;
+  return data;
+}
+
+export async function findRatingsWithRequest() {
+  const { data, error } = await supabase.from('ratings').select('request_id, rating');
+
+  if (error) throw error;
+  return data;
+}

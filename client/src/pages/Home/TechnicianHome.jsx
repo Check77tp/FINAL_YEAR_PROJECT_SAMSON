@@ -6,6 +6,7 @@ import StatCard from '../../components/StatCard';
 import { ClipboardListIcon, CheckCircleIcon } from '../../components/icons';
 import SlaBadge from '../../components/SlaBadge';
 import AffectedBadge from '../../components/AffectedBadge';
+import MyPerformance from '../../components/MyPerformance';
 import { setOwnAvailability } from '../../services/usersService';
 import {
   STATUS_LABELS,
@@ -92,6 +93,8 @@ function TechnicianHome() {
         <StatCard icon={<ClipboardListIcon width={20} height={20} />} label="Assigned" value={active.length} tone="primary" />
         <StatCard icon={<CheckCircleIcon width={20} height={20} />} label="Completed" value={completedCount} tone="secondary" />
       </div>
+
+      <MyPerformance />
 
       <section className="technician-home-tasks">
         <div className="technician-home-tasks-header">

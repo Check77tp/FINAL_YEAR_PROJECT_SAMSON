@@ -1,0 +1,182 @@
+/* 1. Default = mobile: the table scrolls sideways rather than squashing */
+.technician-performance {
+  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-level-1);
+}
+
+.technician-performance-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+}
+
+.technician-performance-title {
+  font-size: var(--font-size-body-md);
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.technician-performance-note,
+.technician-performance-muted {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.technician-performance-error {
+  font-size: var(--font-size-label-sm);
+  color: var(--color-error);
+}
+
+.technician-performance-top {
+  margin-bottom: var(--spacing-xs);
+  font-size: var(--font-size-body-sm);
+  color: var(--color-on-surface);
+}
+
+.technician-performance-windows {
+  display: inline-flex;
+  align-self: flex-start;
+  flex-wrap: wrap;
+  padding: 3px;
+  gap: 3px;
+  border-radius: var(--radius-button);
+  background: var(--color-surface-container);
+}
+
+.technician-performance-window {
+  min-height: 32px;
+  padding: 4px 12px;
+  border: none;
+  border-radius: var(--radius-default);
+  background: transparent;
+  color: var(--color-on-surface-variant);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  cursor: pointer;
+}
+
+.technician-performance-window-on {
+  background: var(--color-surface-container-lowest);
+  color: var(--color-on-surface);
+  box-shadow: var(--shadow-level-1);
+}
+
+.technician-performance-scroll {
+  overflow-x: auto;
+}
+
+.technician-performance-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  font-size: var(--font-size-body-sm);
+}
+
+.technician-performance-table th,
+.technician-performance-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--color-divider);
+  text-align: center;
+  color: var(--color-on-surface);
+}
+
+.technician-performance-table thead th {
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.technician-performance-table th:first-child,
+.technician-performance-table td:first-child {
+  text-align: left;
+}
+
+.technician-performance-name {
+  font-weight: var(--font-weight-label-md);
+}
+
+.technician-performance-status {
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: var(--radius-badge);
+  font-size: 11px;
+  background: var(--color-surface-container);
+  color: var(--color-on-surface-variant);
+}
+
+.technician-performance-status-available {
+  background: var(--color-status-resolved-bg);
+  color: var(--color-status-resolved-text);
+}
+
+.technician-performance-status-on_job {
+  background: var(--color-status-in-progress-bg);
+  color: var(--color-status-in-progress-text);
+}
+
+.technician-performance-strong {
+  font-weight: 700;
+}
+
+.technician-performance-alert {
+  color: var(--color-error) !important;
+  font-weight: 700;
+}
+
+.technician-performance-bar {
+  position: relative;
+  display: inline-block;
+  width: 88px;
+  height: 20px;
+  border-radius: var(--radius-badge);
+  background: var(--color-surface-container);
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.technician-performance-bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--color-primary-fixed-dim);
+  transition: width 500ms ease;
+}
+
+.technician-performance-bar-label {
+  position: relative;
+  display: block;
+  line-height: 20px;
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  color: var(--color-on-surface);
+}
+
+.technician-performance-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: var(--font-weight-label-md);
+}
+
+.technician-performance-rating svg {
+  color: #f59e0b;
+}
+
+.technician-performance-rating small {
+  color: var(--color-on-surface-variant);
+}
+
+/* 2. Tablet */
+@media (min-width: 768px) {
+  .technician-performance-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+}
