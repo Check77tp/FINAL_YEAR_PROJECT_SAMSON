@@ -44,6 +44,19 @@
   cursor: pointer;
 }
 
+.manage-requests-tab-count {
+  display: inline-block;
+  min-width: 20px;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: var(--radius-badge);
+  background: var(--color-error);
+  color: var(--color-on-error);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  text-align: center;
+}
+
 .manage-requests-tab-selected {
   background: var(--color-surface-container-lowest);
   color: var(--color-on-surface);

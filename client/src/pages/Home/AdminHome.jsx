@@ -89,7 +89,7 @@ function AdminHome() {
             </div>
             {overdueCount !== null && (
               <Link
-                to="/manage-requests"
+                to="/manage-requests?filter=overdue"
                 className={`admin-home-stat admin-home-stat-link ${
                   overdueCount > 0 ? 'admin-home-stat-alert' : ''
                 }`}

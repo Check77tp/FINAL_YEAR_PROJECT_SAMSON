@@ -10,18 +10,31 @@ import {
   categoryIcon,
   technicianOptionLabel,
 } from '../../utils/requestFormat';
-import SlaBadge from '../../components/SlaBadge';
+import SlaBadge, { slaStateAt } from '../../components/SlaBadge';
 import './ManageRequests.css';
 import { useLiveVersion } from '../../hooks/useLive';
 
-const FILTERS = ['all', 'open', 'assigned', 'in_progress', 'resolved', 'closed'];
+// 'overdue' is not a status: it lists every request (still being worked on)
+// that has passed its SLA deadline, whatever its status.
+const FILTERS = ['all', 'overdue', 'open', 'assigned', 'in_progress', 'resolved', 'closed'];
+
+const isOverdue = (request) => slaStateAt(request.sla, Date.now()) === 'overdue';
+
+function filterLabel(filter) {
+  if (filter === 'all') return 'All';
+  if (filter === 'overdue') return 'Overdue';
+  return STATUS_LABELS[filter];
+}
 
 function ManageRequests() {
   const liveVersion = useLiveVersion(); // refetch when the server reports a change
   const [requests, setRequests] = useState(() => getAllRequests.peek() ?? null);
   const [technicians, setTechnicians] = useState(() => getTechnicians.peek() ?? []);
   const [error, setError] = useState('');
-  const [filter, setFilter] = useState('all');
+  // The dashboard's Overdue tile links here with ?filter=overdue.
+  const [filter, setFilter] = useState(() =>
+    new URLSearchParams(window.location.search).get('filter') === 'overdue' ? 'overdue' : 'all'
+  );
   const [selections, setSelections] = useState({});
   const [assigningId, setAssigningId] = useState(null);
   const [rowErrors, setRowErrors] = useState({});
@@ -49,7 +62,13 @@ function ManageRequests() {
           request.student?.idNumber?.toLowerCase().includes(q)
         );
       })
-    : (requests || []).filter((request) => filter === 'all' || request.status === filter);
+    : (requests || []).filter((request) => {
+        if (filter === 'all') return true;
+        if (filter === 'overdue') return isOverdue(request);
+        return request.status === filter;
+      });
+
+  const overdueCount = (requests || []).filter(isOverdue).length;
 
   // The server flags the best-suited technician; it is preselected so
   // assigning is one tap, but the admin can still pick anyone.
@@ -125,7 +144,10 @@ function ManageRequests() {
             className={`manage-requests-tab ${filter === status ? 'manage-requests-tab-selected' : ''}`}
             onClick={() => setFilter(status)}
           >
-            {status === 'all' ? 'All' : STATUS_LABELS[status]}
+            {filterLabel(status)}
+            {status === 'overdue' && overdueCount > 0 && (
+              <span className="manage-requests-tab-count">{overdueCount}</span>
+            )}
           </button>
         ))}
       </div>
@@ -150,6 +172,8 @@ function ManageRequests() {
               ? 'Try a different keyword, or clear the search.'
               : filter === 'all'
               ? 'No maintenance requests have been submitted yet.'
+              : filter === 'overdue'
+              ? 'Nothing is overdue right now — every open request is within its target time.'
               : `No requests with status "${STATUS_LABELS[filter]}".`}
           </p>
         </div>
