@@ -30,3 +30,10 @@
     display: block;
   }
 }
+
+/* The page area may never be wider than the space beside the sidebar, so a
+   wide child cannot push the whole page into horizontal scrolling. */
+.app-shell-content {
+  min-width: 0;
+  max-width: 100%;
+}

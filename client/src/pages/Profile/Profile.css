@@ -295,3 +295,23 @@
     font-weight: var(--font-weight-headline-md);
   }
 }
+
+/* Hardening: this page is ALWAYS one vertical column. Explicit, higher-
+   specificity rules (main.profile) so no other stylesheet or browser
+   extension can turn the sections into a horizontal row that overflows the
+   screen, and no section can grow wider than the column. */
+main.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+main.profile > * {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
