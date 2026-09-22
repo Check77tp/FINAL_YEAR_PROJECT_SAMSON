@@ -19,6 +19,7 @@ import pushRoutes from './routes/push.routes.js';
 import eventsRoutes from './routes/events.routes.js';
 import announcementsRoutes from './routes/announcements.routes.js';
 import schedulesRoutes from './routes/schedules.routes.js';
+import feedbackRoutes from './routes/feedback.routes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { NODE_ENV } from './config/env.js';
 
@@ -45,6 +46,7 @@ app.use('/api/push', pushRoutes);
 app.use('/api/events', eventsRoutes);
 app.use('/api/announcements', announcementsRoutes);
 app.use('/api/schedules', schedulesRoutes);
+app.use('/api/feedback', feedbackRoutes);
 
 app.use(errorHandler);
 

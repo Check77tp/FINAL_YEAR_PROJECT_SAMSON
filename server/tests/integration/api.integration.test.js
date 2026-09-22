@@ -57,6 +57,7 @@ vi.mock('../../src/repositories/push.repository.js');
 vi.mock('../../src/repositories/announcements.repository.js');
 vi.mock('../../src/repositories/comments.repository.js');
 vi.mock('../../src/repositories/schedules.repository.js');
+vi.mock('../../src/repositories/feedback.repository.js');
 vi.mock('../../src/services/push.service.js');
 vi.mock('../../src/config/anthropic.js', () => ({ aiEnabled: false, aiModel: 'test', anthropic: null }));
 
@@ -71,6 +72,7 @@ import * as announcementsRepository from '../../src/repositories/announcements.r
 import * as commentsRepository from '../../src/repositories/comments.repository.js';
 import * as reportsRepository from '../../src/repositories/reports.repository.js';
 import * as schedulesRepository from '../../src/repositories/schedules.repository.js';
+import * as feedbackRepository from '../../src/repositories/feedback.repository.js';
 import * as pushService from '../../src/services/push.service.js';
 
 const STUDENT = USERS['student-token'];
@@ -820,5 +822,66 @@ describe('preventive maintenance schedules', () => {
     requestsRepository.findRequestsByStudentId.mockResolvedValue([{ hostel: 'Kalingalinga' }]);
     const res = await request(app).get('/api/requests/community').set(as('student-token'));
     expect(res.body.requests.map((r) => r.requestId)).toEqual([2]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe('app feedback', () => {
+  const feedbackRow = (over = {}) => ({
+    feedback_id: 1,
+    user_id: STUDENT.user_id,
+    rating: 4,
+    category: 'suggestion',
+    message: 'Would love a dark mode',
+    created_at: new Date().toISOString(),
+    ...over,
+  });
+
+  it('any authenticated role can leave feedback, and it notifies administrators', async () => {
+    feedbackRepository.insertFeedback.mockResolvedValue(feedbackRow());
+
+    for (const token of ['student-token', 'tech-token', 'admin-token']) {
+      const res = await request(app)
+        .post('/api/feedback')
+        .set(as(token))
+        .send({ rating: 4, category: 'suggestion', message: 'Would love a dark mode' });
+      expect(res.status).toBe(201);
+    }
+    expect(pushService.notifyAdministrators).toHaveBeenCalledWith(expect.objectContaining({ url: '/app-feedback' }));
+  });
+
+  it('feedback is always attributed to the authenticated user, not a body field', async () => {
+    feedbackRepository.insertFeedback.mockResolvedValue(feedbackRow());
+    await request(app)
+      .post('/api/feedback')
+      .set(as('student-token'))
+      .send({ rating: 5, userId: STUDENT2.user_id });
+    expect(feedbackRepository.insertFeedback).toHaveBeenCalledWith(expect.objectContaining({ userId: STUDENT.user_id }));
+  });
+
+  it('validation errors are 400 and nothing is stored', async () => {
+    const res = await request(app).post('/api/feedback').set(as('student-token')).send({ rating: 9 });
+    expect(res.status).toBe(400);
+    expect(feedbackRepository.insertFeedback).not.toHaveBeenCalled();
+  });
+
+  it("a user can read their own submission history via GET /mine", async () => {
+    feedbackRepository.findFeedbackByUserId.mockResolvedValue([feedbackRow()]);
+    const res = await request(app).get('/api/feedback/mine').set(as('student-token'));
+    expect(res.status).toBe(200);
+    expect(res.body.items).toHaveLength(1);
+    expect(feedbackRepository.findFeedbackByUserId).toHaveBeenCalledWith(STUDENT.user_id);
+  });
+
+  it('only administrators can list all feedback (403 otherwise), and it includes the average rating', async () => {
+    feedbackRepository.findAllFeedback.mockResolvedValue([feedbackRow({ rating: 4 }), feedbackRow({ feedback_id: 2, rating: 2 })]);
+
+    const forbidden = await request(app).get('/api/feedback').set(as('student-token'));
+    expect(forbidden.status).toBe(403);
+
+    const res = await request(app).get('/api/feedback').set(as('admin-token'));
+    expect(res.status).toBe(200);
+    expect(res.body.count).toBe(2);
+    expect(res.body.averageRating).toBe(3);
   });
 });

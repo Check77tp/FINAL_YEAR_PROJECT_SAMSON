@@ -18,6 +18,8 @@ const UserManagement = lazy(() => import('./pages/UserManagement/UserManagement'
 const Announcements = lazy(() => import('./pages/Announcements/Announcements'));
 const PreventiveMaintenance = lazy(() => import('./pages/PreventiveMaintenance/PreventiveMaintenance'));
 const AdminRequestDetail = lazy(() => import('./pages/AdminRequestDetail/AdminRequestDetail'));
+const Feedback = lazy(() => import('./pages/Feedback/Feedback'));
+const AppFeedback = lazy(() => import('./pages/AppFeedback/AppFeedback'));
 
 // Each page is its own JS chunk, downloaded only when first visited — a
 // student never downloads the admin reports (or the chart library). After the
@@ -153,6 +155,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/feedback"
+            element={
+              <ProtectedRoute roles={['student', 'technician']}>
+                <Feedback />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/app-feedback"
+            element={
+              <ProtectedRoute roles={['administrator']}>
+                <AppFeedback />
               </ProtectedRoute>
             }
           />

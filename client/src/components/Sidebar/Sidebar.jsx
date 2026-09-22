@@ -9,6 +9,7 @@ import {
   CalendarIcon,
   GearIcon,
   PlusIcon,
+  StarIcon,
 } from '../icons';
 import './Sidebar.css';
 
@@ -16,11 +17,13 @@ const NAV_ITEMS_BY_ROLE = {
   student: [
     { to: '/', label: 'Dashboard', icon: GridIcon, end: true },
     { to: '/requests', label: 'My Requests', icon: ClipboardListIcon },
+    { to: '/feedback', label: 'Feedback', icon: StarIcon },
     { to: '/profile', label: 'Settings', icon: GearIcon },
   ],
   technician: [
     { to: '/', label: 'Dashboard', icon: GridIcon, end: true },
     { to: '/tasks', label: 'My Tasks', icon: ClipboardListIcon },
+    { to: '/feedback', label: 'Feedback', icon: StarIcon },
     { to: '/profile', label: 'Settings', icon: GearIcon },
   ],
   administrator: [
@@ -29,6 +32,7 @@ const NAV_ITEMS_BY_ROLE = {
     { to: '/user-management', label: 'User Management', icon: UsersGroupIcon },
     { to: '/announcements', label: 'Announcements', icon: MegaphoneIcon },
     { to: '/preventive-maintenance', label: 'Preventive', icon: CalendarIcon },
+    { to: '/app-feedback', label: 'App Feedback', icon: StarIcon },
     { to: '/reports', label: 'Reports & Analytics', icon: ChartBarIcon },
     { to: '/profile', label: 'Settings', icon: GearIcon },
   ],
