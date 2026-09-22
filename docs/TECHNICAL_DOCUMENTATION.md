@@ -40,7 +40,7 @@ A Progressive Web App for reporting and managing hostel maintenance at the Unive
 | Rule | The browser **never** talks to Supabase; all access goes through the Express REST API |
 | Data | Supabase PostgreSQL (with Row Level Security), Supabase Auth, Supabase Storage |
 | Lifecycle | `Open → Assigned → In Progress → Resolved → Closed`, enforced server-side, every transition recorded |
-| Extras | Upvotes (incl. campus-wide visibility at 30+ votes), SLA timers + overdue alerts/reminders, live updates (SSE), Web Push, AI triage, camera-capture proof of work, dark mode, analytics with heatmap/CSV/PDF export, weekly email, admin announcements, per-request comments, recurring-issue detection, technician performance, preventive-maintenance scheduling |
+| Extras | Upvotes (incl. campus-wide visibility at 30+ votes), SLA timers + overdue alerts/reminders, live updates (SSE), Web Push, AI triage, camera-capture proof of work, dark mode, analytics with heatmap/CSV/PDF export, weekly email, admin announcements (seen by students and technicians), per-request comments, recurring-issue detection, technician performance, preventive-maintenance scheduling (clearly labelled on the technician's own view), in-app app feedback |
 
 ---
 
@@ -90,7 +90,7 @@ cp .env.example .env          # VITE_API_BASE_URL=http://localhost:5000/api
 
 ### Create the database
 In the Supabase dashboard → **SQL Editor**, run the files in `server/sql/` **in
-numeric order** (`001` … `015`); see [section 5.4](#54-migrations). Then create the
+numeric order** (`001` … `016`); see [section 5.4](#54-migrations). Then create the
 first administrator account (section 15, "First administrator").
 
 ### Run
@@ -214,6 +214,8 @@ The client holds **no Supabase key** and no secrets.
 
 **maintenance_schedule_runs** — `run_id` PK, `schedule_id` FK, `request_id` FK, `created_at` (which request each schedule produced, so a new task is never created while the previous one is still open)
 
+**app_feedback** — `feedback_id` PK, `user_id` FK, `rating` 1–5, `category` (`bug` | `suggestion` | `general`, default `general`), `message` text null, `created_at`. A review of the **app itself** (not of one technician's work — that is `ratings` above); exists so a student, who has no direct line to the developer the way an administrator does, still has a channel to be heard.
+
 ### 5.3 Security in the database
 - **Row Level Security is enabled on every table**, as a second line of defence behind the server: students see only their own rows, technicians only their assigned work, administrators broad access. Helper: `public.current_user_role()`.
 - Foreign keys enforce referential integrity everywhere.
@@ -239,9 +241,10 @@ Run **in order** in the Supabase SQL Editor. Each file is written to be run once
 | `013_announcements_and_user_hostel.sql` | `announcements` table, `users.hostel`. **Safe to re-run** |
 | `014_request_comments.sql` | `request_comments`. **Safe to re-run** |
 | `015_preventive_maintenance.sql` | `maintenance_schedules`, `maintenance_schedule_runs`. **Safe to re-run** |
+| `016_app_feedback.sql` | `app_feedback`. **Safe to re-run** |
 
 > Categories are managed in the `categories` table. Add e.g. *Carpentry* or *Internet/IT* by inserting rows; the UI picks them up.
-> Migrations `013`–`015` use `create table if not exists` / `drop policy if exists` so running them again is harmless — useful if you are not sure whether one already ran.
+> Migrations `013`–`016` use `create table if not exists` / `drop policy if exists` so running them again is harmless — useful if you are not sure whether one already ran.
 
 ### 5.5 Storage
 | Bucket | Contents | Paths |
@@ -287,6 +290,7 @@ Layers only call **downward**. A route never touches the database; a repository 
 | `recurrence.service` | Detects faults repeating at the same room or across a hostel |
 | `performance.service` | Per-technician resolution/on-time/rating maths over a time window |
 | `schedules.service` | Preventive-maintenance schedules; creates requests when they fall due |
+| `feedback.service` | App-itself reviews (rating + category + comment), rate limiting, admin listing with the average rating |
 | `ratings.service`, `categories.service`, `activity.service` | Ratings, category list, recent activity |
 
 ### 6.2 Request pipeline
@@ -365,7 +369,7 @@ When resolving, a technician may attach a photo and note. The photo is validated
 Push delivery never blocks or fails the action that triggered it.
 
 ### 7.9 Admin announcements
-Title 3–80 chars, message 5–500 chars, optional expiry (must be in the future). `hostel: null` targets every student; a named hostel targets students who **chose** it in Settings **plus** students whose **latest request** was there (deduplicated) — so a student never has to set their hostel manually to receive notices, though doing so is more reliable. Sending is a side effect (never blocks creating the announcement); a student sees an announcement if it is not expired and (`hostel === null` or `hostel === their hostel`).
+Title 3–80 chars, message 5–500 chars, optional expiry (must be in the future). `hostel: null` targets every student; a named hostel targets students who **chose** it in Settings **plus** students whose **latest request** was there (deduplicated) — so a student never has to set their hostel manually to receive notices, though doing so is more reliable. Sending is a side effect (never blocks creating the announcement); a student sees an announcement if it is not expired and (`hostel === null` or `hostel === their hostel`). A **technician** sees every active announcement regardless of hostel (`selectForTechnician`) — unlike a student, a technician is not tied to one hostel and can be assigned a task anywhere, so a hostel-scoped notice ("water off in Block C") is still relevant context for them.
 
 ### 7.10 Comments on a request
 Only the reporting student, the currently assigned technician, and administrators may read or post (403 otherwise) — exactly the same audience as reading the request itself. Body 1–1000 chars after trimming; no comments once a request is `closed`; 15 posts/minute per user. The author is always the authenticated user, never a request-body field. Posting notifies the *other* people in the conversation, never the author.
@@ -384,7 +388,12 @@ Room text is normalised (case/whitespace) so "Block C, Room 24" and "block c,  r
 Pure function (`performance.service.computeTechnicianPerformance`) over a chosen window (7/30/90/365 days, or 0 = all time — `ALLOWED_WINDOWS`). Per technician: `resolved` (finished in the window), `avgResolutionHours` (measured from **assignment**, not submission — so time an administrator took to assign is not counted against the technician), `onTimeRate` (% resolved within the request's SLA target, measured end-to-end from submission), `active` jobs on hand, `overdueNow`, and `avgRating` from students. A reassigned request counts only for the most recent assignee. No work in the window gives `null` averages, never `0` or `NaN`. Administrators see every technician (`GET /reports/technician-performance`); a technician sees only their own numbers plus their rank (`GET /reports/my-performance`).
 
 ### 7.13 Preventive maintenance
-An administrator-defined recurring task (`maintenance_schedules`: category, hostel, optional room, priority, frequency in days, next due date). An hourly job (`schedules.service.runDueSchedules`) finds schedules whose `next_due_at` has passed and, for each: **advances `next_due_at` first** (so a failure cannot cause the same schedule to fire again on the next hourly check), then — **only if the previous task it generated is finished** (not `open`/`assigned`/`in_progress`) — creates a normal maintenance request via the same `requests.service.createRequest` path used for student submissions (so it gets a `status_history` row, SLA, admin notification, everything). The request is reported by the administrator who owns the schedule and its description is prefixed `"Preventive maintenance: "` (`utils/preventive.js`), which excludes it from the student "Already reported" feed (7.5), from recurring-issue detection (7.11), and from learning a hostel for the reporting admin. A schedule resumed after being paused jumps its due date to the next future occurrence rather than firing immediately for a stale date. An administrator can also **run a schedule immediately** (`POST /schedules/:id/run-now`), subject to the same "previous task finished" rule.
+An administrator-defined recurring task (`maintenance_schedules`: category, hostel, optional room, priority, frequency in days, next due date — one of `7, 14, 21, 30, 90, 180, 365` days, `FREQUENCY_DAYS`). An hourly job (`schedules.service.runDueSchedules`) finds schedules whose `next_due_at` has passed and, for each: **advances `next_due_at` first** (so a failure cannot cause the same schedule to fire again on the next hourly check), then — **only if the previous task it generated is finished** (not `open`/`assigned`/`in_progress`) — creates a normal maintenance request via the same `requests.service.createRequest` path used for student submissions (so it gets a `status_history` row, SLA, admin notification, everything). The request is reported by the administrator who owns the schedule and its description is prefixed `"Preventive maintenance: "` (`utils/preventive.js`), which excludes it from the student "Already reported" feed (7.5), from recurring-issue detection (7.11), and from learning a hostel for the reporting admin. A schedule resumed after being paused jumps its due date to the next future occurrence rather than firing immediately for a stale date. An administrator can also **run a schedule immediately** (`POST /schedules/:id/run-now`), subject to the same "previous task finished" rule.
+
+On the assigned **technician's** side, a task generated this way is visually distinguished from a student-reported fault rather than left to blend in: it appears in its own "My Maintenance Jobs" panel on the dashboard (not mixed into "My Active Tasks"), carries a client-side "Recurring Maintenance" badge wherever it appears (dashboard, My Tasks, task detail — `components/PreventiveBadge.jsx`, detected the same way as the server, by the description prefix), has the prefix itself stripped from the displayed description now that the badge says it (`displayDescription()` in `utils/requestFormat.js` — display-only, the stored description is untouched), and its "Reported By" section reads "Maintenance Schedule" with a plain explanation instead of naming the administrator as if they had personally filed it.
+
+### 7.14 App feedback
+A review of the **app itself** — a star rating (1–5, required) plus a category (`bug` | `suggestion` | `general`, defaults to `general` if unrecognised) and an optional comment (≤ 1000 chars) — separate from `ratings` (7.7's "Rate This Repair", which rates one technician's work on one resolved request). Any authenticated role may submit one; rate-limited to 5 per hour per user (same in-memory pattern as comments, 7.10). Every submission sends a non-blocking push notification to administrators. A user can read back their own submission history (`GET /feedback/mine`); only administrators can list every submission (`GET /feedback`), which also returns the average rating so far. This exists because an administrator already has a direct line to the developer as the project's stakeholder, but a student typically does not — this is that channel.
 
 ---
 
@@ -454,13 +463,20 @@ All administrator-only (`server/src/routes/schedules.routes.js` applies `require
 
 | Method & path | Body / notes | Response |
 |---|---|---|
-| `GET /schedules` | | `{ schedules, frequencies: [7,14,30,90,180,365] }` |
+| `GET /schedules` | | `{ schedules, frequencies: [7,14,21,30,90,180,365] }` |
 | `POST /schedules` | `title`, `categoryId`, `hostel`, `frequencyDays`; optional `description`, `room`, `priority`, `firstDueAt` | `201 { schedule }` |
 | `PATCH /schedules/:id` | `{ active }` — pause/resume | `{ id, active }` |
 | `DELETE /schedules/:id` | (existing generated tasks are kept) | `{ id, deleted: true }` |
 | `POST /schedules/:id/run-now` | creates the task immediately; `400` if the previous one is still open | `201 { scheduleId, requestId }` |
 
-### 8.7 Live updates and push
+### 8.7 Feedback
+| Method & path | Role | Body / notes | Response |
+|---|---|---|---|
+| `POST /feedback` | any | `rating` (1–5), `category?` (`bug`/`suggestion`/`general`), `message?` (≤ 1000 chars) | `201 { feedback }` |
+| `GET /feedback/mine` | any | the caller's own submissions | `{ items }` |
+| `GET /feedback` | administrator | every submission | `{ items, averageRating, count }` |
+
+### 8.8 Live updates and push
 | Method & path | Notes |
 |---|---|
 | `GET /events` | **Server-Sent Events** stream (`text/event-stream`), authenticated. Events: `ready`, `request` with `{type:"request_changed", requestId, message, actorId}`. Heartbeat every 25 s |
@@ -486,6 +502,8 @@ All administrator-only (`server/src/routes/schedules.routes.js` applies `require
 | `/preventive-maintenance` | Preventive Maintenance | administrator |
 | `/reports` | Reports & Analytics (incl. Technician Performance, Needs a Permanent Fix) | administrator |
 | `/profile` | Account Settings | all |
+| `/feedback` | Feedback (rate the app + own submission history) | student, technician |
+| `/app-feedback` | App Feedback (every submission + average rating) | administrator |
 
 `ProtectedRoute` redirects and hides pages by role — a **convenience only**; the server enforces access.
 
@@ -493,14 +511,15 @@ All administrator-only (`server/src/routes/schedules.routes.js` applies `require
 ```
 client/src/
   pages/        one folder per screen (Page.jsx + Page.css)
-  components/   shared UI: Sidebar, TopNav, StatCard, SlaBadge, AffectedBadge, charts,
+  components/   shared UI: Sidebar, TopNav, StatCard, SlaBadge, AffectedBadge,
+                PreventiveBadge (marks a technician's recurring-maintenance jobs), charts,
                 UpvoteButton, CommunityIssues, SimilarIssues, TriageSuggestion,
                 ResolutionProof(Form), PhotoInput (camera capture / file picker),
                 HostelHeatmap, RecurringIssues, TechnicianPerformance, MyPerformance,
                 AnnouncementBanner, HostelSetting, CommentsThread,
                 NotificationSettings, ThemeToggle
   services/     api.js (fetch wrapper), apiCache.js, requests/users/reports/
-                announcements/schedules/... service modules, draftQueue/draftSync
+                announcements/schedules/feedback/... service modules, draftQueue/draftSync
                 (offline), pushService, liveEvents, theme
   hooks/        useAuth (session), useLive (live updates), useDraftSync
   styles/       variables.css (design tokens), theme.css (dark theme)
@@ -528,6 +547,7 @@ client/src/
 | Manifest | `client/public/manifest.json` | Name, PNG + maskable icons, standalone display, shortcuts (*Report an issue*, *My requests*) |
 | Service worker | `client/public/service-worker.js` | `/assets/*` **cache-first**; page loads **network-first** with a 2.5 s timeout then cached shell; other GETs network-first; handles `push` and `notificationclick` |
 | Offline drafts | `services/draftQueue.js`, `draftSync.js`, `hooks/useDraftSync.js` | New requests written offline are stored in IndexedDB and submitted when the browser fires `online` (implemented in-page because Background Sync is unavailable on iOS/Firefox) |
+| Session resilience | `services/api.js`, `hooks/useAuth.jsx` | `navigator.onLine` only reflects the network adapter, not real internet access, so a failed fetch that *might* just be a bad connection now says "check your internet connection" rather than confidently blaming the server. A failed session check on app load no longer clears a valid session over a network blip — only a genuine auth rejection does; a network failure retries automatically on the browser's `online` event, and `Login.jsx` redirects away once that retry restores the session |
 | Live updates | `services/liveEvents.js`, `hooks/useLive.jsx`, server `events.*` | SSE via `fetch` (EventSource can't send the bearer token); exponential-backoff reconnect; catches up on reconnect / tab focus |
 | Push | `services/pushService.js`, server `push.*` | VAPID Web Push; per-device subscription; logout removes the subscription; re-enabled silently on next login if the user had opted in |
 | Theme | `services/theme.js`, `index.html` | `system` / `light` / `dark`; applied before first paint |
@@ -574,7 +594,7 @@ Integrations degrade gracefully:
 ---
 
 ## 13. Testing and CI
-253 automated tests (183 unit + 70 integration). Run `npm test` in `server/`. GitHub Actions
+275 automated tests (199 unit + 76 integration). Run `npm test` in `server/`. GitHub Actions
 (`.github/workflows/ci.yml`) runs the server tests and the client lint + build on every push
 and pull request, with no secrets. Full detail in [TESTING.md](TESTING.md).
 
@@ -634,6 +654,7 @@ with `role = 'administrator'` and an `id_number` (or register a student and chan
 | Overdue monitor logs "(has sql/011 been run?)" | Migration `011` missing | Run it |
 | Preventive maintenance monitor logs "(has sql/015 been run?)" | Migration `015` missing | Run it |
 | Posting an announcement / comment fails, or a student's hostel won't save | Migration `013` / `014` missing | Run it (both are safe to re-run) |
+| Sending app feedback fails | Migration `016` missing | Run it (safe to re-run) |
 | "Email is not configured" (503) | SMTP variables missing | Set `SMTP_*`, `APP_URL`; restart |
 | Notifications toggle greyed out / "blocked" | Browser permission denied, or unsupported browser | Allow notifications for the site; on iPhone add to Home Screen first |
 | "Push notifications are not enabled on the server yet" | VAPID keys missing | Set `VAPID_*` and restart |
@@ -653,7 +674,7 @@ Use Supabase's dashboard backups. Uploaded photos live in Supabase Storage.
 ## 16. Extending the system
 
 ### Add a field to requests (e.g. "urgent flag")
-1. New migration in `server/sql/` (`016_...sql`), run it in Supabase.
+1. New migration in `server/sql/` (`017_...sql`), run it in Supabase.
 2. Repository: add the column to the relevant `SELECT` / insert.
 3. Service: map it in `mapRequestRow`, apply any rule.
 4. Route: validate the new body field.

@@ -3,7 +3,7 @@
 How the system is tested, what each kind of test proves, how to run them, and
 how they run automatically on every push.
 
-**Totals: 253 automated tests** — 183 unit + 70 integration, across 18 test files
+**Totals: 275 automated tests** — 199 unit + 76 integration, across 19 test files
 — plus a CI pipeline and browser-based verification of the front end.
 
 ---
@@ -50,7 +50,7 @@ formatter. Only these are replaced with fakes:
   the service asked the database to do*.
 - Push notifications and the AI client (side effects).
 
-| Area | Scenarios covered (70 tests) |
+| Area | Scenarios covered (76 tests) |
 |---|---|
 | **Platform** | Health endpoint is public · missing token → 401 · invalid token → 401 with the standard error shape · live-update stream requires auth |
 | **Role-based access** | 8 cases proving each role is refused (403) on endpoints it must not use, e.g. student → all-requests / assign / analytics, technician → submit a request, administrator → student-only endpoints |
@@ -63,11 +63,12 @@ formatter. Only these are replaced with fakes:
 | **AI triage** | Suggests a category and forces hazards to critical (safety floor) · too-short description → 400 · rate limit → 429 after 10 a minute |
 | **Smart assignment** | Technicians returned best-first with workload and one recommendation |
 | **Affected-by count** | A technician's assigned tasks carry the right `upvoteCount` |
-| **Announcements** | Admin-only to post/delete (403 for students/technicians) · posting stores it and pushes the right audience · validation (short title/message) → 400, nothing stored · a student receives only their hostel's + all-hostel notices · setting/rejecting an empty hostel |
+| **Announcements** | Admin-only to post/delete (403 for students/technicians) · posting stores it and pushes the right audience · validation (short title/message) → 400, nothing stored · a student receives only their hostel's + all-hostel notices · a technician receives every active notice regardless of hostel · setting/rejecting an empty hostel |
 | **Comments** | The reporting student, assigned technician and an admin can all read and post · always attributed to the authenticated user · another student / unassigned technician → 403 · empty body and closed requests → 400 · requires authentication |
 | **Recurring issue detection** | Administrators get the repeated faults (room/hostel patterns); students and technicians → 403 |
 | **Technician performance** | Administrators see every technician ranked with correct numbers · an unsupported time window → 400, non-admins → 403 · a technician sees only their own numbers and rank |
 | **Preventive maintenance schedules** | Administrator-only (403 for students/technicians) · create + list a schedule · validation (unsupported frequency) → 400 · "run now" creates a request through the normal submission path · "run now" refused while the previous task is open → 400 · pause/resume/delete, 404 for unknown ids · preventive tasks never appear in the student "Already reported" feed |
+| **App feedback** | Any authenticated role can submit a review of the app itself · always attributed to the authenticated user, not a body field · validation (rating out of range) → 400, nothing stored · a user reads their own submission history · only administrators can list every submission (403 otherwise), which includes the average rating |
 
 ### The tests catch real bugs (mutation check)
 
@@ -83,7 +84,7 @@ The bugs were reverted and all tests pass again.
 
 ---
 
-## 4. What the unit tests cover (183, across 17 files)
+## 4. What the unit tests cover (199, across 18 files)
 
 Lifecycle transitions and role restrictions · proof-of-work ordering and the
 optional/mandatory switch · SLA states and boundaries · overdue detection, first
@@ -93,11 +94,19 @@ upvote rules, feed ranking and the campus-wide (30+ vote) visibility rule · AI
 triage safety floor and rate limit · push delivery and dead-subscription
 cleanup · live-event routing · weekly-email statistics, schedule and HTML
 escaping · analytics maths (resolution time, workload, trends) · announcement
-validation, audience resolution and who-sees-what · comment access control and
+validation, audience resolution and who-sees-what (including that a
+technician sees every active notice) · comment access control and
 flood limiting · recurring-issue detection (room/hostel thresholds, room-text
-normalisation) · preventive-schedule validation, due-date advancement and
-"don't stack while the last task is open" · the authentication and role
-middleware.
+normalisation) · preventive-schedule validation, due-date advancement,
+the 21-day ("every 3 weeks") frequency option and
+"don't stack while the last task is open" · app-feedback validation, the
+per-user rate limit and the average-rating calculation · the authentication
+and role middleware.
+
+Front-end-only changes (the offline/network error wording, the login retry-on-
+reconnect behaviour, the Recurring Maintenance badge and description cleanup)
+have no server-side unit tests since they hold no business rule — they are
+covered by manual verification (see §7).
 
 ---
 
@@ -117,7 +126,7 @@ push / pull request
 - It uses Node 22 and caches `node_modules` for speed.
 - It needs **no secrets**, because the tests never touch a real database.
 - The pipeline was rehearsed locally from a clean checkout with no `.env`:
-  unit + integration tests, lint and build all passed (105 + 48 at the time; 183 + 70 now).
+  unit + integration tests, lint and build all passed (105 + 48 at the time; 199 + 76 now).
 
 Optional next step: in Netlify/Render (or GitHub branch protection) require the
 CI check to pass before deploying or merging.

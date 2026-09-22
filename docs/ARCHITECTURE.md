@@ -135,6 +135,7 @@ erDiagram
   users ||--o{ maintenance_schedules : owns
   maintenance_schedules ||--o{ maintenance_schedule_runs : generates
   maintenance_schedule_runs ||--|| maintenance_requests : "produced"
+  users ||--o{ app_feedback : "reviews the app"
 
   users {
     uuid user_id PK
@@ -173,6 +174,14 @@ erDiagram
     text photo_url
     text note
     uuid submitted_by FK
+  }
+  app_feedback {
+    int feedback_id PK
+    uuid user_id FK
+    int rating "1-5"
+    enum category "bug | suggestion | general"
+    text message
+    timestamptz created_at
   }
 ```
 
@@ -296,12 +305,13 @@ network round trips from most requests.
 | **Proof of work** | `requests.service.js` | Technicians can attach a photo (and note) when resolving; it is optional by default and can be made mandatory with `REQUIRE_RESOLUTION_PROOF=true` |
 | **Hostel heatmap** | `HostelHeatmap.jsx` | Hostel × category counts; answers "where should maintenance go this week?" |
 | **Dark mode** | `styles/theme.css` | Overrides colour tokens only, so every component switches automatically |
-| **Admin announcements** | `announcements.service.js` | One hostel or all hostels, optional expiry; audience = students who set that hostel + students whose latest request was there |
+| **Admin announcements** | `announcements.service.js` | One hostel or all hostels, optional expiry; audience = students who set that hostel + students whose latest request was there; technicians see every active notice, since they are not tied to one hostel |
 | **Comments** | `comments.service.js` | Only the reporting student, assigned technician and admins may read/write; no comments once closed; flood-limited |
 | **Recurring-issue detection** | `recurrence.service.js` | Same room 3+/60 days, or same hostel 6+/30 days, for the same category; suggests a permanent fix |
 | **Technician performance** | `performance.service.js` | Resolved, avg. time (from assignment), on-time rate, rating, per window; admins see all, technicians see their own + rank |
 | **Preventive maintenance** | `schedules.service.js` | Recurring schedule → auto-generated request when due; never stacks a new task while the last one is open |
 | **Camera-capture photos** | `PhotoInput.jsx` | "Take photo" (camera) or "Choose from files"; compressed client-side before upload |
+| **App feedback** | `feedback.service.js` | A star rating + category + optional comment reviewing the app itself (not one technician's job) — the channel a student has to be heard, mirroring the direct access an administrator already has to the developer; rate-limited; administrators see every submission and the average rating |
 
 ---
 
@@ -340,6 +350,8 @@ All routes are under `/api`. "Scoped" means the service checks ownership as well
 | | `GET /announcements` | any signed-in user (scoped by role/hostel) |
 | | `GET /announcements/hostel/me`, `PUT /announcements/hostel/me` | student |
 | Preventive maintenance | `GET/POST /schedules`, `PATCH/DELETE /schedules/:id`, `POST /schedules/:id/run-now` | administrator |
+| Feedback | `POST /feedback`, `GET /feedback/mine` | any signed-in user |
+| | `GET /feedback` | administrator |
 | Live and push | `GET /events` (Server-Sent Events) | any signed-in user |
 | | `GET /push/public-key` | public |
 | | `POST /push/subscribe`, `POST /push/unsubscribe` | any signed-in user |
@@ -366,15 +378,16 @@ All routes are under `/api`. "Scoped" means the service checks ownership as well
 
 ## 12. Testing
 
-- **253 automated tests** (Vitest): **183 unit tests** covering the business
-  rules with repositories mocked, and **70 integration tests** that drive the real
+- **275 automated tests** (Vitest): **199 unit tests** covering the business
+  rules with repositories mocked, and **76 integration tests** that drive the real
   Express app over HTTP (routes + middleware + services, database faked) — see
   [TESTING.md](TESTING.md). The unit tests cover: lifecycle transitions and role restrictions,
   proof-of-work ordering, SLA states, overdue detection and reminder spacing, technician
   ranking and performance maths, upvote rules and campus-wide visibility, AI-triage safety
   floor and rate limit, push delivery and cleanup, live-event routing, weekly-email
-  statistics/schedule/escaping, analytics maths, announcement audience/validation, comment
-  access control, recurring-issue detection, preventive-schedule generation, and the
+  statistics/schedule/escaping, analytics maths, announcement audience/validation (including
+  who a technician sees), comment access control, recurring-issue detection,
+  preventive-schedule generation, app-feedback validation/rate-limiting/averaging, and the
   auth/role middleware.
 - **Browser verification** (Playwright, headless Chromium) of the front-end flows
   at phone and desktop widths, including the offline path, live updates arriving

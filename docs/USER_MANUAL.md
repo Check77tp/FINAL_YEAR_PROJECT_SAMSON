@@ -160,21 +160,40 @@ repair**. Tap 1–5 stars (5 is best) and, if you wish, add a comment. You can r
 
 ![Completed request with photo, timeline and rating](screenshots/05-request-detail-work-completed.png)
 
+### 2.6 Give feedback about the app
+Rating a repair (2.5) is about one technician's work on one request. If instead you
+want to say something about the **app itself** — a bug, a suggestion, or just how
+it's working for you overall — open **Feedback** in the menu. This is different
+from anything else in the system: it is the one channel that goes straight to the
+people building the app, for a student who does not otherwise have a direct line
+to them the way an administrator does.
+
+1. Tap a **star rating** (1–5) for the app overall.
+2. Choose what it's about — **General feedback**, **A suggestion**, or **Something is broken**.
+3. *(Optional)* Add details.
+4. Press **Send Feedback**.
+
+Your past feedback is listed below the form so you can see what you've already sent.
+
+![Feedback form](screenshots/manual/n11-feedback-form.png)
+
 ---
 
 ## 3. Technicians
 
 ### 3.1 Your dashboard
+- **Announcements** from administrators appear at the top, the same as on a student's dashboard (2.1a) — you see every active notice, whatever hostel it targets, since your next job could be anywhere.
 - Choose your **status** at the top — **Available**, **On Job** or **Off Duty**. Administrators use this when deciding who to assign, so keep it accurate.
 - See how many jobs are **Assigned** to you and how many you have **Completed**.
 - **My Performance** — your scorecard for the last 30 days: jobs resolved, average time, your on-time rate, and your rating from students. It also shows your rank among your colleagues, and warns you if any of your jobs are overdue.
-- **My Active Tasks** lists your current jobs, with their priority and a deadline badge.
+- **My Active Tasks** lists faults students have reported to you, with their priority and a deadline badge.
+- **My Maintenance Jobs** lists your scheduled preventive-maintenance checks separately (see 4.7) — kept apart from student-reported faults so you can tell at a glance which is which.
 
 ![Technician dashboard with My Performance](screenshots/manual/n09-technician-my-performance.png)
 
 ### 3.2 See your tasks
 Open **My Tasks**. Each card shows the request number, priority, status, a
-deadline badge (for example *Due in 42h* or *Overdue 3h*), a **"+N students affected"** badge when several students backed the same issue with "Me too" (see 2.3) — tackle those first — the description and the location.
+deadline badge (for example *Due in 42h* or *Overdue 3h*), a **"+N students affected"** badge when several students backed the same issue with "Me too" (see 2.3) — tackle those first — the description and the location. A task that came from a preventive-maintenance schedule rather than a student report carries a **"Recurring Maintenance"** badge, on this list, the dashboard and the task's own page — opening it shows "Maintenance Schedule" instead of a reporting student, since nobody personally filed it.
 
 ![My tasks](screenshots/manual/m13-my-tasks.png)
 
@@ -200,6 +219,11 @@ automatically reduced in size so they upload quickly on mobile data.
 ![Proof of work](screenshots/10-technician-proof-of-work.png)
 
 > You can only update tasks that are **assigned to you**.
+
+### 3.5 Give feedback about the app
+Same as for students (2.6): open **Feedback** in the menu to send a star rating,
+a category (general / suggestion / bug) and an optional comment about the app
+itself — not about one job. It's the way to reach the development team directly.
 
 ---
 
@@ -317,6 +341,17 @@ You do not need to do anything for these:
 - **Weekly summary email** — every Monday at 08:00 (Lusaka time) to all administrators.
 - **Preventive maintenance tasks** — created automatically when a schedule (4.7) falls due.
 
+### 4.9 App Feedback
+Students and technicians can send a star rating and a comment about the app
+itself at any time (see 2.6 / 3.5) — not tied to any particular request. Open
+**App Feedback** to read what has come in: the **average rating** and **total
+reviews** at the top, then every submission with who sent it, filterable by
+category (**Bug**, **Suggestion**, **General**). You also get a push
+notification the moment a new one arrives. This is the channel for feedback
+from people who don't otherwise have a direct line to the development team.
+
+![App Feedback](screenshots/manual/n12-app-feedback-admin.png)
+
 ---
 
 ## 5. Settings, notifications and dark mode
@@ -357,7 +392,8 @@ Hostel Wi-Fi is not always reliable, so the app is built to cope:
 
 - **Pages you have visited** still open quickly, even on a poor connection.
 - **Students can write a new request with no connection.** It appears in **My Requests** under *drafts* and is sent automatically when you are back online. You do not need to do anything.
-- Other actions (assigning, changing status, rating) need a connection; you will see a clear message if you are offline.
+- Other actions (assigning, changing status, rating) need a connection; you will see a message telling you to check your connection if the app can't reach the server — being connected to Wi-Fi does not always mean you have real internet access, so this is worth checking first before assuming something is broken.
+- **A brief drop in connection will not sign you out.** If the app can't confirm your session because you're offline for a moment, it keeps you signed in and quietly checks again once your connection returns, instead of sending you back to the login screen.
 
 ---
 
@@ -423,7 +459,10 @@ Check **Settings → Push Notifications** is on for this device, and that notifi
 Pages update by themselves. If you lost your connection for a while, reload the page (or press **Refresh Status** on a request).
 
 **I was signed out unexpectedly.**
-Sessions expire for your security. Sign in again and tick **Remember this device** on your own phone.
+Sessions expire for your security, and this can also happen after a very long time offline. A brief drop in connection will not sign you out by itself (see [section 6](#6-working-offline)). If it does happen, sign in again and tick **Remember this device** on your own phone.
+
+**How is sending feedback different from rating a repair?**
+Rating a repair (2.5) is about one technician's work on one finished job. Sending feedback (2.6) is about the app itself — a bug, a suggestion, or a general impression — and goes straight to the development team, not to any technician.
 
 **Who do I contact for help?**
 Press the **ⓘ** icon for the status guide, or contact your hostel's maintenance administrator.
