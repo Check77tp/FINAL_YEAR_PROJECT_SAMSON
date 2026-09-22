@@ -16,6 +16,7 @@ const ReportsAnalytics = lazy(() => import('./pages/ReportsAnalytics/ReportsAnal
 const Profile = lazy(() => import('./pages/Profile/Profile'));
 const UserManagement = lazy(() => import('./pages/UserManagement/UserManagement'));
 const Announcements = lazy(() => import('./pages/Announcements/Announcements'));
+const PreventiveMaintenance = lazy(() => import('./pages/PreventiveMaintenance/PreventiveMaintenance'));
 const AdminRequestDetail = lazy(() => import('./pages/AdminRequestDetail/AdminRequestDetail'));
 
 // Each page is its own JS chunk, downloaded only when first visited — a
@@ -128,6 +129,14 @@ function App() {
             element={
               <ProtectedRoute roles={['administrator']}>
                 <UserManagement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/preventive-maintenance"
+            element={
+              <ProtectedRoute roles={['administrator']}>
+                <PreventiveMaintenance />
               </ProtectedRoute>
             }
           />

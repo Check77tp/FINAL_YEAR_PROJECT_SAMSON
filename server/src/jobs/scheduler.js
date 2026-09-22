@@ -5,12 +5,14 @@
 import { NODE_ENV } from '../config/env.js';
 import { runOverdueCheck } from '../services/overdue.service.js';
 import { runWeeklyDigestIfDue } from '../services/digest.service.js';
+import { runDueSchedules } from '../services/schedules.service.js';
 
 const OVERDUE_CHECK_EVERY_MS = 60 * 60 * 1000; // hourly: alerts/reminders go out on the first check after they fall due
 const FIRST_RUN_DELAY_MS = 30 * 1000; // let the server finish starting first
 
 let overdueWarned = false;
 let digestWarned = false;
+let preventiveWarned = false;
 const DIGEST_CHECK_EVERY_MS = 60 * 60 * 1000; // hourly; the service decides whether it is actually due
 
 async function safeOverdueCheck() {
@@ -40,6 +42,19 @@ async function safeDigestCheck() {
   }
 }
 
+async function safePreventiveCheck() {
+  try {
+    const created = await runDueSchedules();
+    if (created > 0) console.log(`Preventive maintenance: created ${created} task(s)`);
+    preventiveWarned = false;
+  } catch (err) {
+    if (!preventiveWarned) {
+      console.error('Preventive maintenance job failed (has sql/015 been run?):', err.message);
+      preventiveWarned = true;
+    }
+  }
+}
+
 export function startScheduler() {
   if (NODE_ENV === 'test') return;
 
@@ -48,4 +63,7 @@ export function startScheduler() {
 
   setTimeout(safeDigestCheck, FIRST_RUN_DELAY_MS);
   setInterval(safeDigestCheck, DIGEST_CHECK_EVERY_MS);
+
+  setTimeout(safePreventiveCheck, FIRST_RUN_DELAY_MS);
+  setInterval(safePreventiveCheck, OVERDUE_CHECK_EVERY_MS); // hourly
 }

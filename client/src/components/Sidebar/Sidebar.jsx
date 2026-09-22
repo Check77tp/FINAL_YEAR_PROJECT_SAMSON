@@ -6,6 +6,7 @@ import {
   ChartBarIcon,
   UsersGroupIcon,
   MegaphoneIcon,
+  CalendarIcon,
   GearIcon,
   PlusIcon,
 } from '../icons';
@@ -27,6 +28,7 @@ const NAV_ITEMS_BY_ROLE = {
     { to: '/manage-requests', label: 'Manage Requests', icon: ClipboardListIcon },
     { to: '/user-management', label: 'User Management', icon: UsersGroupIcon },
     { to: '/announcements', label: 'Announcements', icon: MegaphoneIcon },
+    { to: '/preventive-maintenance', label: 'Preventive', icon: CalendarIcon },
     { to: '/reports', label: 'Reports & Analytics', icon: ChartBarIcon },
     { to: '/profile', label: 'Settings', icon: GearIcon },
   ],

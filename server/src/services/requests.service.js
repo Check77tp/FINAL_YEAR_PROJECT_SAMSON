@@ -10,6 +10,7 @@ import { countByRequest } from './upvotes.service.js';
 import { notifyUser, notifyAdministrators } from './push.service.js';
 import { computeSla } from '../utils/sla.js';
 import { announceRequestChange } from './events.service.js';
+import { isPreventiveDescription } from '../utils/preventive.js';
 import { httpError } from '../utils/httpError.js';
 
 const STATUS_LABELS = { in_progress: 'In Progress', resolved: 'Resolved', closed: 'Closed' };
@@ -281,7 +282,7 @@ export async function createRequest({
     // Learn the student's hostel from their first request, so announcements to
     // that hostel can reach them. Best effort: never fails the submission.
     try {
-      await usersRepository.setHostelIfMissing(studentId, hostel);
+      if (!isPreventiveDescription(description)) await usersRepository.setHostelIfMissing(studentId, hostel);
     } catch {
       /* column not migrated yet, or a transient error - ignore */
     }

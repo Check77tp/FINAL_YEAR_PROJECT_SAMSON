@@ -8,6 +8,7 @@
 import * as upvotesRepository from '../repositories/upvotes.repository.js';
 import * as requestsRepository from '../repositories/requests.repository.js';
 import { httpError } from '../utils/httpError.js';
+import { isPreventiveDescription } from '../utils/preventive.js';
 
 const UPVOTABLE_STATUSES = ['open', 'assigned', 'in_progress'];
 const COMMUNITY_FEED_LIMIT = 12;
@@ -37,6 +38,8 @@ export function rankCommunityRequests({ rows, upvoteRows, studentId, hostel }) {
 
   return rows
     .filter((row) => row.student_id !== studentId)
+    // Scheduled preventive tasks are not student reports - nobody can "me too" them.
+    .filter((row) => !isPreventiveDescription(row.description))
     .filter(
       (row) =>
         !hostel ||

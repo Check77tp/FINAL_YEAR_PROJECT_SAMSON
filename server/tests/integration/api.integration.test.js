@@ -56,6 +56,7 @@ vi.mock('../../src/repositories/activity.repository.js');
 vi.mock('../../src/repositories/push.repository.js');
 vi.mock('../../src/repositories/announcements.repository.js');
 vi.mock('../../src/repositories/comments.repository.js');
+vi.mock('../../src/repositories/schedules.repository.js');
 vi.mock('../../src/services/push.service.js');
 vi.mock('../../src/config/anthropic.js', () => ({ aiEnabled: false, aiModel: 'test', anthropic: null }));
 
@@ -69,6 +70,7 @@ import * as storageRepository from '../../src/repositories/storage.repository.js
 import * as announcementsRepository from '../../src/repositories/announcements.repository.js';
 import * as commentsRepository from '../../src/repositories/comments.repository.js';
 import * as reportsRepository from '../../src/repositories/reports.repository.js';
+import * as schedulesRepository from '../../src/repositories/schedules.repository.js';
 import * as pushService from '../../src/services/push.service.js';
 
 const STUDENT = USERS['student-token'];
@@ -716,5 +718,94 @@ describe('technician performance', () => {
     expect(res.body.performance).toMatchObject({ name: 'Tech One', resolved: 1 });
     expect(res.body).toMatchObject({ rank: 1, outOf: 2 });
     expect((await request(app).get('/api/reports/my-performance').set(as('student-token'))).status).toBe(403);
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe('preventive maintenance schedules', () => {
+  const scheduleRow = (over = {}) => ({
+    schedule_id: 1, title: 'Inspect geysers', description: null, category_id: 2, hostel: 'Kalingalinga', room: null,
+    priority: 'low', frequency_days: 30, next_due_at: new Date(Date.now() + 5 * 86400e3).toISOString(), active: true,
+    created_by: USERS['admin-token'].user_id, created_at: new Date().toISOString(), last_generated_at: null,
+    category: { category_id: 2, name: 'Plumbing' }, ...over,
+  });
+
+  beforeEach(() => {
+    schedulesRepository.findLatestRunPerSchedule.mockResolvedValue(new Map());
+  });
+
+  it('is administrator-only (403 for students and technicians)', async () => {
+    for (const token of ['student-token', 'tech-token']) {
+      expect((await request(app).get('/api/schedules').set(as(token))).status).toBe(403);
+      expect((await request(app).post('/api/schedules').set(as(token)).send({})).status).toBe(403);
+      expect((await request(app).post('/api/schedules/1/run-now').set(as(token))).status).toBe(403);
+    }
+  });
+
+  it('an administrator creates and lists a schedule', async () => {
+    schedulesRepository.insertSchedule.mockResolvedValue(scheduleRow());
+    schedulesRepository.findAllSchedules.mockResolvedValue([scheduleRow()]);
+
+    const created = await request(app)
+      .post('/api/schedules')
+      .set(as('admin-token'))
+      .send({ title: 'Inspect geysers', categoryId: 2, hostel: 'Kalingalinga', frequencyDays: 30 });
+    expect(created.status).toBe(201);
+    expect(created.body.schedule).toMatchObject({ title: 'Inspect geysers', frequencyDays: 30, hostel: 'Kalingalinga' });
+    expect(schedulesRepository.insertSchedule).toHaveBeenCalledWith(expect.objectContaining({ createdBy: USERS['admin-token'].user_id }));
+
+    const list = await request(app).get('/api/schedules').set(as('admin-token'));
+    expect(list.status).toBe(200);
+    expect(list.body.schedules).toHaveLength(1);
+    expect(list.body.frequencies).toContain(30);
+  });
+
+  it('validation: unsupported frequency is 400', async () => {
+    const res = await request(app)
+      .post('/api/schedules')
+      .set(as('admin-token'))
+      .send({ title: 'Inspect geysers', categoryId: 2, hostel: 'Kalingalinga', frequencyDays: 11 });
+    expect(res.status).toBe(400);
+    expect(schedulesRepository.insertSchedule).not.toHaveBeenCalled();
+  });
+
+  it('"run now" creates a preventive request through the normal request flow', async () => {
+    schedulesRepository.findScheduleById.mockResolvedValue(scheduleRow());
+    requestsRepository.insertRequest.mockResolvedValue(requestRow({ request_id: 77 }));
+
+    const res = await request(app).post('/api/schedules/1/run-now').set(as('admin-token'));
+
+    expect(res.status).toBe(201);
+    expect(res.body).toMatchObject({ scheduleId: 1, requestId: 77 });
+    expect(requestsRepository.insertRequest).toHaveBeenCalledWith(
+      expect.objectContaining({ description: expect.stringMatching(/^Preventive maintenance: Inspect geysers/) })
+    );
+    expect(requestsRepository.insertStatusHistory).toHaveBeenCalledWith({ requestId: 77, previousStatus: null, newStatus: 'open' });
+    expect(schedulesRepository.insertRun).toHaveBeenCalledWith({ scheduleId: 1, requestId: 77 });
+  });
+
+  it('"run now" is refused while the previous task is still open (400)', async () => {
+    schedulesRepository.findScheduleById.mockResolvedValue(scheduleRow());
+    schedulesRepository.findLatestRunPerSchedule.mockResolvedValue(new Map([[1, { request_id: 5, status: 'open' }]]));
+    expect((await request(app).post('/api/schedules/1/run-now').set(as('admin-token'))).status).toBe(400);
+    expect(requestsRepository.insertRequest).not.toHaveBeenCalled();
+  });
+
+  it('pause/resume and delete work; unknown ids are 404', async () => {
+    schedulesRepository.findScheduleById.mockResolvedValue(scheduleRow());
+    expect((await request(app).patch('/api/schedules/1').set(as('admin-token')).send({ active: false })).status).toBe(200);
+    expect((await request(app).delete('/api/schedules/1').set(as('admin-token'))).status).toBe(200);
+    schedulesRepository.findScheduleById.mockResolvedValue(null);
+    expect((await request(app).delete('/api/schedules/9').set(as('admin-token'))).status).toBe(404);
+  });
+
+  it("preventive tasks never appear in a student's Already-reported feed", async () => {
+    requestsRepository.findActiveRequestsForCommunity.mockResolvedValue([
+      { request_id: 1, student_id: USERS['admin-token'].user_id, description: 'Preventive maintenance: Inspect geysers', status: 'open', hostel: 'Kalingalinga', priority: 'low', created_at: '2026-09-01', category: { category_id: 2, name: 'Plumbing' } },
+      { request_id: 2, student_id: STUDENT2.user_id, description: 'Tap leaks', status: 'open', hostel: 'Kalingalinga', priority: 'low', created_at: '2026-09-02', category: { category_id: 2, name: 'Plumbing' } },
+    ]);
+    requestsRepository.findRequestsByStudentId.mockResolvedValue([{ hostel: 'Kalingalinga' }]);
+    const res = await request(app).get('/api/requests/community').set(as('student-token'));
+    expect(res.body.requests.map((r) => r.requestId)).toEqual([2]);
   });
 });

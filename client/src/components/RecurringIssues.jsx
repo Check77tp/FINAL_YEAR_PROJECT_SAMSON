@@ -67,6 +67,17 @@ function RecurringIssues({ limit, showLink = false }) {
                   Requests {issue.requestIds.map((id) => `#${id}`).join(', ')}
                   {issue.openCount > 0 ? ` · ${issue.openCount} still open` : ''}
                 </p>
+                <Link
+                  className="recurring-issues-plan"
+                  to={`/preventive-maintenance?${new URLSearchParams({
+                    title: `Inspect ${issue.category.name.toLowerCase()} - ${issue.room || 'whole building'}`,
+                    hostel: issue.hostel,
+                    room: issue.room || '',
+                    categoryId: String(issue.category.id),
+                  })}`}
+                >
+                  Plan a preventive check &rarr;
+                </Link>
               </div>
             </li>
           );
