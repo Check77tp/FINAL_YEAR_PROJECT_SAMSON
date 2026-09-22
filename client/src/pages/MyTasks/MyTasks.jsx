@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getAssignedRequests } from '../../services/requestsService';
-import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon, formatDate } from '../../utils/requestFormat';
+import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon, formatDate, displayDescription } from '../../utils/requestFormat';
 import SlaBadge from '../../components/SlaBadge';
 import AffectedBadge from '../../components/AffectedBadge';
+import PreventiveBadge from '../../components/PreventiveBadge';
 import './MyTasks.css';
 import { useLiveVersion } from '../../hooks/useLive';
 
@@ -134,9 +135,10 @@ function MyTasks() {
                       </span>
                       <SlaBadge sla={request.sla} />
                       <AffectedBadge count={request.upvoteCount} />
+                      <PreventiveBadge description={request.description} />
                     </div>
                   </div>
-                  <p className="my-tasks-card-description">{request.description}</p>
+                  <p className="my-tasks-card-description">{displayDescription(request.description)}</p>
                   {(request.hostel || request.room) && (
                     <p className="my-tasks-card-location">
                       {[request.hostel, request.room].filter(Boolean).join(', ')}

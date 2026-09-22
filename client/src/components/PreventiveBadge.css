@@ -1,0 +1,13 @@
+.preventive-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-badge);
+  background: var(--color-secondary-fixed);
+  color: var(--color-on-secondary-fixed-variant);
+  font-family: var(--font-body);
+  font-size: var(--font-size-label-sm);
+  font-weight: var(--font-weight-label-md);
+  white-space: nowrap;
+}

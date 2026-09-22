@@ -6,6 +6,7 @@ import StatCard from '../../components/StatCard';
 import { ClipboardListIcon, CheckCircleIcon } from '../../components/icons';
 import SlaBadge from '../../components/SlaBadge';
 import AffectedBadge from '../../components/AffectedBadge';
+import PreventiveBadge from '../../components/PreventiveBadge';
 import MyPerformance from '../../components/MyPerformance';
 import AnnouncementBanner from '../../components/AnnouncementBanner';
 import { setOwnAvailability } from '../../services/usersService';
@@ -16,6 +17,7 @@ import {
   categoryIcon,
   formatDate,
   isPreventiveRequest,
+  displayDescription,
 } from '../../utils/requestFormat';
 import './TechnicianHome.css';
 import { useLiveVersion } from '../../hooks/useLive';
@@ -47,9 +49,10 @@ function TaskCard({ request }) {
           </span>
           <SlaBadge sla={request.sla} />
           <AffectedBadge count={request.upvoteCount} />
+          <PreventiveBadge description={request.description} />
         </div>
       </div>
-      <p className="technician-home-task-description">{request.description}</p>
+      <p className="technician-home-task-description">{displayDescription(request.description)}</p>
       {(request.hostel || request.room) && (
         <p className="technician-home-task-location">
           {[request.hostel, request.room].filter(Boolean).join(', ')}

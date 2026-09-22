@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getRequestDetail, updateRequestStatus } from '../../services/requestsService';
-import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon } from '../../utils/requestFormat';
+import { STATUS_LABELS, PRIORITY_LABELS, categoryIcon, displayDescription, isPreventiveRequest } from '../../utils/requestFormat';
 import { StarIcon, MapPinIcon } from '../../components/icons';
 import RequestTimeline from '../../components/RequestTimeline';
 import SlaBadge from '../../components/SlaBadge';
 import AffectedBadge from '../../components/AffectedBadge';
+import PreventiveBadge from '../../components/PreventiveBadge';
 import CommentsThread from '../../components/CommentsThread';
 import ResolutionProof from '../../components/ResolutionProof';
 import ResolutionProofForm from '../../components/ResolutionProofForm';
@@ -91,6 +92,7 @@ function TaskDetail() {
         <div className="task-detail-badges">
           <SlaBadge sla={request.sla} />
           <AffectedBadge count={request.upvoteCount} />
+          <PreventiveBadge description={request.description} />
           <span className={`task-detail-status task-detail-status-${request.status}`}>
             {STATUS_LABELS[request.status] || request.status}
           </span>
@@ -109,14 +111,24 @@ function TaskDetail() {
       </header>
 
       <section className="task-detail-section">
-        <h2 className="task-detail-section-title">Reported By</h2>
-        <p className="task-detail-reporter">{request.student?.name}</p>
-        <p className="task-detail-reporter-id">Student ID: {request.student?.idNumber}</p>
+        <h2 className="task-detail-section-title">
+          {isPreventiveRequest(request.description) ? 'Maintenance Schedule' : 'Reported By'}
+        </h2>
+        {isPreventiveRequest(request.description) ? (
+          <p className="task-detail-reporter">
+            Generated automatically by a preventive maintenance schedule — not reported by a student.
+          </p>
+        ) : (
+          <>
+            <p className="task-detail-reporter">{request.student?.name}</p>
+            <p className="task-detail-reporter-id">Student ID: {request.student?.idNumber}</p>
+          </>
+        )}
       </section>
 
       <section className="task-detail-section">
         <h2 className="task-detail-section-title">Description</h2>
-        <p className="task-detail-description">{request.description}</p>
+        <p className="task-detail-description">{displayDescription(request.description)}</p>
       </section>
 
       <section className="task-detail-section">

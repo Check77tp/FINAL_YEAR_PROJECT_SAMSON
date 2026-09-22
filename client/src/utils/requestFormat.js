@@ -90,6 +90,15 @@ export function isPreventiveRequest(description) {
   return typeof description === 'string' && description.startsWith(PREVENTIVE_PREFIX);
 }
 
+// The prefix itself is what a technician's PreventiveBadge (see
+// components/PreventiveBadge.jsx) reads to tell a scheduled check apart from
+// a reported fault, so once that badge is shown alongside the description
+// there is no need to also spell it out again in the text itself — this
+// strips it for display, leaving the description otherwise untouched.
+export function displayDescription(description) {
+  return isPreventiveRequest(description) ? description.slice(PREVENTIVE_PREFIX.length) : description;
+}
+
 const CATEGORY_ICONS = {
   plumbing: DropletIcon,
   electrical: BoltIcon,
