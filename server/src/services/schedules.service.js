@@ -15,7 +15,7 @@ const PRIORITIES = ['low', 'medium', 'high', 'critical'];
 const ACTIVE_STATUSES = ['open', 'assigned', 'in_progress'];
 
 // The choices offered in the UI.
-export const FREQUENCY_DAYS = [7, 14, 30, 90, 180, 365];
+export const FREQUENCY_DAYS = [7, 14, 21, 30, 90, 180, 365];
 
 // Pure: the next due date after `dueAt`, stepping forward by the frequency
 // until it is in the future (so a server that was off for months does not

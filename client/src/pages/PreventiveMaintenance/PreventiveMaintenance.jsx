@@ -15,6 +15,7 @@ import './PreventiveMaintenance.css';
 const FREQUENCY_LABELS = {
   7: 'Every week',
   14: 'Every 2 weeks',
+  21: 'Every 3 weeks',
   30: 'Every month',
   90: 'Every 3 months',
   180: 'Every 6 months',

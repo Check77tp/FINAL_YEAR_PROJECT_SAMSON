@@ -78,7 +78,7 @@ describe('createSchedule validation', () => {
   });
 
   it('offers the expected frequencies', () => {
-    expect(FREQUENCY_DAYS).toEqual([7, 14, 30, 90, 180, 365]);
+    expect(FREQUENCY_DAYS).toEqual([7, 14, 21, 30, 90, 180, 365]);
   });
 });
 
