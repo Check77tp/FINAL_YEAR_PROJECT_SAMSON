@@ -1,6 +1,6 @@
 # Hostel Maintenance Request and Tracking System
 
--This is site is currently under construction. Further details will be added soon as the site approaches completion.  You can find the live app on: unzamaintenance.netlify.app  
+-This site is currently under construction. Further details will be added soon as the site approaches completion.  You can find the live app on: unzamaintenance.netlify.app  
 -For now, this is some information to know about the project:
 
 A Progressive Web App (PWA) that lets university hostel students submit maintenance requests, and lets administrators and technicians manage them through a full lifecycle from submission to resolution — replacing an informal, verbal/paper-based reporting process.
