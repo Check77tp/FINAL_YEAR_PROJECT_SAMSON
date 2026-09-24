@@ -8,6 +8,11 @@ tracked and analysed.
 This document explains *how the system is built and why*. Diagrams use
 [Mermaid](https://mermaid.js.org/), which GitHub renders automatically.
 
+Two companion documents go deeper on one view each:
+[LOGICAL_ARCHITECTURE.md](LOGICAL_ARCHITECTURE.md) (layers, packages and
+dependency rules) and [PHYSICAL_ARCHITECTURE.md](PHYSICAL_ARCHITECTURE.md)
+(the real deployed nodes and what happens if one goes down).
+
 ---
 
 ## 1. The big picture
